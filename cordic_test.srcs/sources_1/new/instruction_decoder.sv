@@ -24,9 +24,7 @@
 module instruction_decoder(
     input [31:0] inst,
     input clk,
-    input reset,
-    output reg_write,
-    output outcome
+    input reset
     );
     ////////////////////////////////////////////////////////////////////////////////////////
     // Base instuction fields division, all formats of instructions can be defined with those
@@ -43,7 +41,35 @@ module instruction_decoder(
     parameter integer funct7_idx = 25;
     parameter integer funct7_len = 7; // TODO: Remake as union
     /////////////////////////////////////////////////////////////////////////////////////////
-    
+    class Decoder;
+        function int decode(bit [31:0] instruction);
+            if(instruction[6:0] == 7'b0110011) // R-type instruction format
+                    begin
+                        case (instruction[14:12])
+                            3'b111: if(instruction[25:31] == 7'h0) // AND
+                                    begin
+                                        $display("AND instruction, destination: R%0d, src1: R%0d, src2: R%0d", instruction[7:11], instruction[15:19], instruction[20:24]);
+                                        return 1;
+                                    end
+                            3'b110: if(instruction[25:31] == 7'h0) // OR
+                                    begin
+                                        $display("OR instruction, destination: R%0d, src1: R%0d, src2: R%0d", instruction[7:11], instruction[15:19], instruction[20:24]);
+                                        return 1;
+                                    end
+                            
+                            endcase;
+                    end else if(instruction[6:0] == 7'b0010011) // I-type instruction format
+                    begin
+                        case (instruction[14:12])
+                            3'b000: // Implement ADDI (NOP) instruction
+                                begin
+                                    $display("ADDI instruction, destination: R%0d, source: R%0d, immediate: %0h", instruction[7:11], instruction[15:19], instruction[20:31]);
+                                    return 2;
+                                end
+                        endcase
+                    end
+        endfunction
+    endclass
     //////////////////////////////////////////////////////////
     // Wires for R-type instruction format
     wire [opcode_len-1:0] opcode;
