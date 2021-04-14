@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <instruction>
+        <architecture>
+            <RV32I>
+                <R-type>
+
+                </R-type>
+                <I-type>
+
+                </I-type>
+                <S-type>
+
+                </S-type>
+            </RV32I>
+            <RV64I>
+
+            </RV64I>
+            <RV32M>
+
+            </RV32M>
+            <RV64M>
+
+            </RV64M>
+            <RV32A>
+
+            </RV32A>
+            <RV64A>
+
+            </RV64A>
+            <RV32F>
+
+            </RV32F>
+            <RV64F>
+
+            </RV64F>
+            <RV32D>
+
+            </RV32D>
+            <RV64D>
+
+            </RV64D>
+
+        </architecture>
+    </instruction>

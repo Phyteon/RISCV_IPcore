@@ -69,6 +69,8 @@
 #!*.bmm
 #!*.xmp
 # DO NOT ignore these paths:
-!cordic_test.srcs/sources_1/new/**
+!cordic_test.srcs/sources_1/new/*.sv
+!cordic_test.srcs/sources_1/new/python/sources/**
+!cordic_test.srcs/sources_1/new/python/resources/**
 
 # End of https://www.toptal.com/developers/gitignore/api/vivado

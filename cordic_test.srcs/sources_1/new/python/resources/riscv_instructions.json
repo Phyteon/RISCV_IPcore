@@ -1,0 +1,86 @@
+
+{
+  "Architecture" :
+  [
+    {"RV32I" : [
+      {"R-type" : [
+        {"Fields" : [
+          {"opcode" : [
+            {"Size" : 7},
+            {"Index" : 0}
+          ]},
+          {"rd" : [
+            {"Size" : 5},
+            {"Index" : 7}
+          ]},
+          {"funct3" : [
+            {"Size" : 3},
+            {"Index" : 12}
+          ]},
+          {"rs1" : [
+            {"Size" : 5},
+            {"Index" : 15}
+          ]},
+          {"rs2" : [
+            {"Size" : 5},
+            {"Index" : 20}
+          ]},
+          {"funct7" : [
+            {"Size" : 7},
+            {"Index" : 25}
+          ]}
+        ]},
+        {"Instructions" : [
+          {"OR" : [
+            {"Implemented" : "true"}
+          ]},
+          {"AND" : [
+            {"Implemented" : "true"}
+          ]}
+        ]}
+      ]},
+      {"I-type" : [
+        {"Fields" : [
+          {"opcode" : [
+            {"Size" : 7},
+            {"Index" : 0}
+          ]},
+          {"rd" : [
+            {"Size" : 5},
+            {"Index" : 7}
+          ]},
+          {"funct3" : [
+            {"Size" : 3},
+            {"Index" : 12}
+          ]},
+          {"rs1" : [
+            {"Size" : 5},
+            {"Index" : 15}
+          ]},
+          {"imm[11:0]" : [
+            {"Size" : 12},
+            {"Index" : 20}
+          ]}
+        ]},
+        {"Instructions" : [
+          {"ADDI" : [
+            {"Implemented" : "true"}
+          ]}
+        ]}
+      ]},
+      {"S-type" : []},
+      {"B-type" : []},
+      {"U-type" : []},
+      {"J-type" : []}
+    ]},
+    {"RV64I" : []},
+    {"RV32M" : []},
+    {"RV64M" : []},
+    {"RV32A" : []},
+    {"RV64A" : []},
+    {"RV32F" : []},
+    {"RV64F" : []},
+    {"RV32D" : []},
+    {"RV64D" : []}
+  ]
+}
