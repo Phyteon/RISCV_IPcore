@@ -1,130 +1,319 @@
 
 {
-  "Architecture" :
-  [
-    {
-      "RV32I": [
-        {
-          "R-type": [
-            {
-              "Fields": [
-                {
-                  "opcode": [
-                    {
-                      "Size": 7,
-                      "Index": 0
-                    }
-                  ],
-                  "rd": [
-                    {
-                      "Size": 5,
-                      "Index": 7
-                    }
-                  ],
-                  "funct3": [
-                    {
-                      "Size": 3,
-                      "Index": 12
-                    }
-                  ],
-                  "rs1": [
-                    {
-                      "Size": 5,
-                      "Index": 15
-                    }
-                  ],
-                  "rs2": [
-                    {
-                      "Size": 5,
-                      "Index": 20
-                    }
-                  ],
-                  "funct7": [
-                    {
-                      "Size": 7,
-                      "Index": 25
-                    }
-                  ]
-                }
-              ],
-              "Instructions": [
-                {
-                  "OR": [
-                    {
-                      "Implemented": "true"
-                    }
-                  ],
-                  "AND": [
-                    {
-                      "Implemented": "true"
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "I-type": [
-            {
-              "Fields": [
-                {
-                  "opcode": [
-                    {
-                      "Size": 7,
-                      "Index": 0
-                    }
-                  ],
-                  "rd": [
-                    {
-                      "Size": 5,
-                      "Index": 7
-                    }
-                  ],
-                  "funct3": [
-                    {
-                      "Size": 3,
-                      "Index": 12
-                    }
-                  ],
-                  "rs1": [
-                    {
-                      "Size": 5,
-                      "Index": 15
-                    }
-                  ],
-                  "imm[11:0]": [
-                    {
-                      "Size": 12,
-                      "Index": 20
-                    }
-                  ]
-                }
-              ],
-              "Instructions": [
-                {
-                  "ADDI": [
-                    {
-                      "Implemented": "true"
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "S-type": [],
-          "B-type": [],
-          "U-type": [],
-          "J-type": []
-        }
-      ],
-      "RV64I": [],
-      "RV32M": [],
-      "RV64M": [],
-      "RV32A": [],
-      "RV64A": [],
-      "RV32F": [],
-      "RV64F": [],
-      "RV32D": [],
-      "RV64D": []
-    }
-  ]
+  "RV32I": {
+    "Formats": [
+      {
+        "Typename": "R-type",
+        "Fields": [
+          {
+            "FieldName": "opcode",
+            "Size": 7,
+            "Index": 0
+          },
+          {
+            "FieldName": "rd",
+            "Size": 5,
+            "Index": 7
+          },
+          {
+            "FieldName": "funct3",
+            "Size": 3,
+            "Index": 12
+          },
+          {
+            "FieldName": "rs1",
+            "Size": 5,
+            "Index": 15
+          },
+          {
+            "FieldName": "rs2",
+            "Size": 5,
+            "Index": 20
+          },
+          {
+            "FieldName": "funct7",
+            "Size": 7,
+            "Index": 25
+          }
+        ]
+      },
+      {
+        "Typename": "I-type",
+        "Fields": [
+          {
+            "FieldName": "opcode",
+            "Size": 7,
+            "Index": 0
+          },
+          {
+            "FieldName": "rd",
+            "Size": 5,
+            "Index": 7
+          },
+          {
+            "FieldName": "funct3",
+            "Size": 3,
+            "Index": 12
+          },
+          {
+            "FieldName": "rs1",
+            "Size": 5,
+            "Index": 15
+          },
+          {
+            "FieldName": "imm[11:0]",
+            "Size": 12,
+            "Index": 20
+          }
+        ]
+      },
+      {
+        "Typename": "S-type",
+        "Fields": []
+      },
+      {
+        "Typename": "B-type",
+        "Fields": []
+      },
+      {
+        "Typename": "U-type",
+        "Fields": []
+      },
+      {
+        "Typename": "J-type",
+        "Fields": []
+      }
+    ],
+    "Instructions": [
+      {
+        "Name": "LUI",
+        "Implemented": "false",
+        "Format": "U-type",
+        "BasicInfo": ""
+      },
+      {
+        "Name": "AUIPC",
+        "Implemented": "false",
+        "Format": "J-type"
+      },
+      {
+        "Name": "JAL",
+        "Implemented": "false",
+        "Format": "J-type"
+      },
+      {
+        "Name": "JALR",
+        "Implemented": "false",
+        "Format": "I-type"
+      },
+      {
+        "Name": "BEQ",
+        "Implemented": "false",
+        "Format": "B-type"
+      },
+      {
+        "Name": "BNE",
+        "Implemented": "false",
+        "Format": "B-type"
+      },
+      {
+        "Name": "BLT",
+        "Implemented": "false",
+        "Format": "B-type"
+      },
+      {
+        "Name": "BGE",
+        "Implemented": "false",
+        "Format": "B-type"
+      },
+      {
+        "Name": "BLTU",
+        "Implemented": "false",
+        "Format": "B-type"
+      },
+      {
+        "Name": "BGEU",
+        "Implemented": "false",
+        "Format": "B-type"
+      },
+      {
+        "Name": "LB",
+        "Implemented": "false",
+        "Format": "I-type"
+      },
+      {
+        "Name": "LH",
+        "Implemented": "false",
+        "Format": "I-type"
+      },
+      {
+        "Name": "LW",
+        "Implemented": "false",
+        "Format": "I-type"
+      },
+      {
+        "Name": "LBU",
+        "Implemented": "false",
+        "Format": "I-type"
+      },
+      {
+        "Name": "LHU",
+        "Implemented": "false",
+        "Format": "I-type"
+      },
+      {
+        "Name": "SB",
+        "Implemented": "false",
+        "Format": "S-type"
+      },
+      {
+        "Name": "SH",
+        "Implemented": "false",
+        "Format": "S-type"
+      },
+      {
+        "Name": "SW",
+        "Implemented": "false",
+        "Format": "S-type"
+      },
+      {
+        "Name": "ADDI",
+        "Implemented": "true",
+        "Format": "I-type",
+        "BasicInfo": "Adds the sign-extended 12-bit immediate to register rs1.\nArithmetic overflow is ignored."
+      },
+      {
+        "Name": "SLTI",
+        "Implemented": "false",
+        "Format": "I-type",
+        "BasicInfo": "Writes 1 to destination register if source register\nvalue is less than immediate. Else writes 0 (signed check)."
+      },
+      {
+        "Name": "SLTIU",
+        "Implemented": "false",
+        "Format": "I-type",
+        "BasicInfo": "Writes 1 to destination register if source register\nvalue is less than immediate. Else writes 0 (unsigned check)."
+      },
+      {
+        "Name": "XORI",
+        "Implemented": "false",
+        "Format": "I-type",
+        "BasicInfo": "Performs logical XOR operation on sign-extended immediate\nand source register value, stores in destination register."
+      },
+      {
+        "Name": "ORI",
+        "Implemented": "false",
+        "Format": "I-type",
+        "BasicInfo": "Performs logical OR operation on sign-extended immediate\nand source register value, stores in destination register."
+      },
+      {
+        "Name": "ANDI",
+        "Implemented": "false",
+        "Format": "I-type",
+        "BasicInfo": "Performs logical AND operation on sign-extended immediate\nand source register value, stores in destination register."
+      },
+      {
+        "Name": "SLLI",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SRLI",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SRAI",
+        "Implemented": "false"
+      },
+      {
+        "Name": "ADD",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SUB",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SLL",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SLT",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SLTU",
+        "Implemented": "false"
+      },
+      {
+        "Name": "XOR",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SRL",
+        "Implemented": "false"
+      },
+      {
+        "Name": "SRA",
+        "Implemented": "false"
+      },
+      {
+        "Name": "OR",
+        "Implemented": "true"
+      },
+      {
+        "Name": "AND",
+        "Implemented": "true"
+      },
+      {
+        "Name": "FENCE",
+        "Implemented": "false"
+      },
+      {
+        "Name": "FENCE.I",
+        "Implemented": "false"
+      },
+      {
+        "Name": "ECALL",
+        "Implemented": "false"
+      },
+      {
+        "Name": "EBREAK",
+        "Implemented": "false"
+      },
+      {
+        "Name": "CSRRW",
+        "Implemented": "false"
+      },
+      {
+        "Name": "CSRRS",
+        "Implemented": "false"
+      },
+      {
+        "Name": "CSRRC",
+        "Implemented": "false"
+      },
+      {
+        "Name": "CSRRWI",
+        "Implemented": "false"
+      },
+      {
+        "Name": "CSRRSI",
+        "Implemented": "false"
+      },
+      {
+        "Name": "CSRRCI",
+        "Implemented": "false"
+      }
+    ]
+  },
+  "RV64I": {},
+  "RV32M": {},
+  "RV64M": {},
+  "RV32A": {},
+  "RV64A": {},
+  "RV32F": {},
+  "RV64F": {},
+  "RV32D": {},
+  "RV64D": {}
 }
+
