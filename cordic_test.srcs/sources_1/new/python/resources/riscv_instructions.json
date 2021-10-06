@@ -94,87 +94,104 @@
       {
         "Name": "AUIPC",
         "Implemented": "false",
-        "Format": "J-type"
+        "Format": "J-type",
+        "BasicInfo": ""
       },
       {
         "Name": "JAL",
         "Implemented": "false",
-        "Format": "J-type"
+        "Format": "J-type",
+        "BasicInfo": ""
       },
       {
         "Name": "JALR",
         "Implemented": "false",
-        "Format": "I-type"
+        "Format": "I-type",
+        "BasicInfo": ""
       },
       {
         "Name": "BEQ",
         "Implemented": "false",
-        "Format": "B-type"
+        "Format": "B-type",
+        "BasicInfo": ""
       },
       {
         "Name": "BNE",
         "Implemented": "false",
-        "Format": "B-type"
+        "Format": "B-type",
+        "BasicInfo": ""
       },
       {
         "Name": "BLT",
         "Implemented": "false",
-        "Format": "B-type"
+        "Format": "B-type",
+        "BasicInfo": ""
       },
       {
         "Name": "BGE",
         "Implemented": "false",
-        "Format": "B-type"
+        "Format": "B-type",
+        "BasicInfo": ""
       },
       {
         "Name": "BLTU",
         "Implemented": "false",
-        "Format": "B-type"
+        "Format": "B-type",
+        "BasicInfo": ""
       },
       {
         "Name": "BGEU",
         "Implemented": "false",
-        "Format": "B-type"
+        "Format": "B-type",
+        "BasicInfo": ""
       },
       {
         "Name": "LB",
         "Implemented": "false",
-        "Format": "I-type"
+        "Format": "I-type",
+        "BasicInfo": ""
       },
       {
         "Name": "LH",
         "Implemented": "false",
-        "Format": "I-type"
+        "Format": "I-type",
+        "BasicInfo": ""
       },
       {
         "Name": "LW",
         "Implemented": "false",
-        "Format": "I-type"
+        "Format": "I-type",
+        "BasicInfo": ""
       },
       {
         "Name": "LBU",
         "Implemented": "false",
-        "Format": "I-type"
+        "Format": "I-type",
+        "BasicInfo": ""
       },
       {
         "Name": "LHU",
         "Implemented": "false",
-        "Format": "I-type"
+        "Format": "I-type",
+        "BasicInfo": ""
       },
       {
         "Name": "SB",
         "Implemented": "false",
-        "Format": "S-type"
+        "Format": "S-type",
+        "BasicInfo": ""
       },
       {
         "Name": "SH",
         "Implemented": "false",
-        "Format": "S-type"
+        "Format": "S-type",
+        "BasicInfo": ""
       },
       {
         "Name": "SW",
         "Implemented": "false",
-        "Format": "S-type"
+        "Format": "S-type",
+        "BasicInfo": ""
       },
       {
         "Name": "ADDI",
@@ -214,95 +231,141 @@
       },
       {
         "Name": "SLLI",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SRLI",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SRAI",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "ADD",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SUB",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SLL",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SLT",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SLTU",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "XOR",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SRL",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "SRA",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "OR",
-        "Implemented": "true"
+        "Implemented": "true",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "AND",
-        "Implemented": "true"
+        "Implemented": "true",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "FENCE",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "FENCE.I",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "ECALL",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "EBREAK",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "CSRRW",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "CSRRS",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "CSRRC",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "CSRRWI",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "CSRRSI",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       },
       {
         "Name": "CSRRCI",
-        "Implemented": "false"
+        "Implemented": "false",
+        "Format": "",
+        "BasicInfo": ""
       }
     ]
   },
