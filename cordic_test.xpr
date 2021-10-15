@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="36" Path="D:/VivadoProjects/cordic_test/cordic_test.xpr">
+<Project Version="7" Minor="36" Path="D:/VivadoProjects/cordic_test/RISCV_IPcore/cordic_test.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="4fb69e8af22e4883ad6ac395785c46ad"/>
@@ -21,7 +21,7 @@
     <Option Name="ActiveSimSet" Val="sim_1"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
-    <Option Name="IPRepoPath" Val="$PPRDIR/../ip_repo/cordic_ip_1.0"/>
+    <Option Name="IPRepoPath" Val="$PPRDIR/../../ip_repo/cordic_ip_1.0"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
     <Option Name="IPCachePermission" Val="read"/>
     <Option Name="IPCachePermission" Val="write"/>
@@ -63,11 +63,11 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_1_0/mb_design_axi_gpio_1_0.xci">
-          <Proxy FileSetName="mb_design_axi_gpio_1_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_0_0/mb_design_axi_gpio_0_0.xci">
           <Proxy FileSetName="mb_design_axi_gpio_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_1_0/mb_design_axi_gpio_1_0.xci">
+          <Proxy FileSetName="mb_design_axi_gpio_1_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_2_0/mb_design_axi_gpio_2_0.xci">
           <Proxy FileSetName="mb_design_axi_gpio_2_0"/>
@@ -92,6 +92,30 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/new/instruction_decoder.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/Register_Class.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/Architecture_AClass.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/Instruction_Classes.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -130,6 +154,14 @@
       </File>
       <File Path="$PPRDIR/mb_design_tb_behav.wcfg">
         <FileInfo>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sim_1/new/riscv_core_tb.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>

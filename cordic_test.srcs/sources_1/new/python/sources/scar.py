@@ -4,7 +4,6 @@
 # Imports:
 import sys
 import json
-import re
 from isas import ISA
 # End imports
 
