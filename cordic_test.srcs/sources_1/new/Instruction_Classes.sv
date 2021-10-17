@@ -20,6 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 import Architecture_AClass::*;
+import Field_Classes::*;
+
 package Instruction_Classes;
     typedef enum {
                    Rtype,
@@ -43,16 +45,33 @@ package Instruction_Classes;
                          } InstructionSet;
     
     virtual class Instruction extends Architecture_AClass::Architecture;
-        local InstructionFormat format;
-        local InstructionSet set;
-        local ivector(logic) contents;
-        function ivector(logic) GetWholeContents();
+        // Public field that holds the format of the instruction
+        const InstructionFormat Format;
+        // Public field that holds the set from which the instruction originates
+        const InstructionSet Set;
+        // Public vector holding binary contents of the instruction
+        const `ivector(logic) Contents;
+        // Private list of fields
+        local Field_Classes::InstructionField Fields[];
         
+        function Field_Classes::InstructionField[] GetFields();
+            // TODO: implement in derived classes
         endfunction
     endclass
     
     class RTypeInstruction extends Instruction;
-    
+        function new(input `ivector(logic) _contents);
+            this.Contents = _contents;
+            this.Format = Rtype;
+            this.Set = RV32I;
+            this.Fields = new [6];
+            this.Fields[0] = Field_Classes::OPCODE_field::new;
+            this.Fields[1] = Field_Classes::RD_field::new;
+            this.Fields[2] = Field_Classes::FUNCT3_field::new;
+            this.Fields[3] = Field_Classes::RS1_field::new;
+            this.Fields[4] = Field_Classes::RS2_field::new;
+            this.Fields[5] = Field_Classes::FUNCT7_field::new;
+        endfunction
     endclass
 endpackage
 

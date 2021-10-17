@@ -8,12 +8,13 @@ abstract class Architecture {
 }
 
 abstract class Instruction {
-  # InstructionFormat format
-  # InstructionSet set
-  # logic [InstructionBitWidth - 1 : 0] contents
-  + logic [InstructionBitWidth - 1 : 0] GetWholeContents()
+  + const InstructionFormat Format
+  + const InstructionSet Set
+  + const logic [InstructionBitWidth - 1 : 0] Contents
+  - InstructionField Fields []
   + InstructionFormat GetFormat()
   + InstructionSet GetInstrSet()
+  + InstructionField [] GetFields()
 }
 
 class RTypeInstruction {
@@ -67,7 +68,7 @@ class UTypeInstruction {
 abstract class InstructionField {
   + int BitWidth
   + int BeginIdx
-  + string Property
+  + string Info
 }
 
 class RD_field {
