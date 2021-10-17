@@ -21,62 +21,76 @@
 
 import Architecture_AClass::*;
 
+// Defines section to avoid magic numbers (all numbers should be defined in some way)
 // In accordance with "The RISC-V Instruction Set Manual. Volume I: User-Level ISA. Document Version 2.2" from May 7, 2017
+`define RD_field_BeginIdx 7
+`define RD_field_BitWidth 5
+`define OPCODE_field_BeginIdx 0
+`define OPCODE_field_BitWidth 7
+`define FUNCT3_field_BeginIdx 12
+`define FUNCT3_field_BitWidth 3
+`define FUNCT7_field_BeginIdx 25
+`define FUNCT7_field_BitWidth 7
+`define RS1_field_BeginIdx 15
+`define RS1_field_BitWidth 5
+`define RS2_field_BeginIdx 20
+`define RS2_field_BitWidth 5
+
 package Field_Classes;
 
     virtual class InstructionField extends Architecture_AClass::Architecture;
-        const int BitWidth;
-        const int BeginIdx;
+        const `uint BitWidth;
+        const `uint BeginIdx;
         const string Info;
-        function int ExtractFromInstr(input `ivector(logic) _inst);
-            return _inst[BeginIdx : BitWidth - 1]; // TODO: Check the conversion here
+        function `uint ExtractFromInstr(input `ivector(logic) _inst);
+            return `to_uint(_inst[BeginIdx : BitWidth - 1]); // TODO: Check the conversion here
         endfunction
     endclass
     
     class RD_field extends InstructionField;
         function new();
-            this.BitWidth = 5; 
-            this.BeginIdx = 7;
+            this.BitWidth = `RD_field_BitWidth; 
+            this.BeginIdx = `RD_field_BeginIdx;
             this.Info = "RD_field";
         endfunction
     endclass
     
     class OPCODE_field extends InstructionField;
         function new();
-            this.BitWidth = 7;
-            this.BeginIdx = 0;
+            this.BitWidth = `OPCODE_field_BitWidth;
+            this.BeginIdx = `OPCODE_field_BeginIdx;
             this.Info = "OPCODE_field";
         endfunction
     endclass
     
     class FUNCT3_field extends InstructionField;
         function new();
-            this.BitWidth = 3;
-            this.BeginIdx = 12;
+            this.BitWidth = `FUNCT3_field_BitWidth;
+            this.BeginIdx = `FUNCT3_field_BeginIdx;
             this.Info = "FUNCT3_field";
         endfunction
     endclass
     
     class FUNCT7_field extends InstructionField;
         function new();
-            this.BitWidth = 7;
-            this.BeginIdx = 25;
+            this.BitWidth = `FUNCT7_field_BitWidth;
+            this.BeginIdx = `FUNCT7_field_BeginIdx;
             this.Info = "FUNCT7_field";
         endfunction
     endclass
     
     class RS1_field extends InstructionField;
         function new();
-            this.BitWidth = 5;
-            this.BeginIdx = 15;
+            this.BitWidth = `RS1_field_BitWidth;
+            this.BeginIdx = `RS1_field_BeginIdx;
             this.Info = "RS1_field";
         endfunction
     endclass
     
     class RS2_field extends InstructionField;
         function new();
-            this.BitWidth = 5;
-            this.BeginIdx = 20;
+            this.BitWidth = `RS2_field_BitWidth;
+            this.BeginIdx = `RS2_field_BeginIdx;
             this.Info = "RS2_field";
         endfunction
     endclass
