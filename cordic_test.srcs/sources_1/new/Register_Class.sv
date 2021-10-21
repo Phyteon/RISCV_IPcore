@@ -19,9 +19,22 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
-module Register_Class();
-    class Register;
-
+import Architecture_AClass::*;
+package Register_Class;
+    class Register extends Architecture_AClass::Architecture;
+        local `rvector(logic) contents;
+        
+        function new(input `rvector(logic) _contents);
+            this.contents = _contents;
+        endfunction
+        
+        function `rvector(logic) Read();
+            return this.contents;
+        endfunction
+        
+        function Write(input `rvector(logic) writeval);
+            this.contents = writeval;
+        endfunction
+        
     endclass
-endmodule
+endpackage
