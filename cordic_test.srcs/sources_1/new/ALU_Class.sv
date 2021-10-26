@@ -21,12 +21,15 @@
 
 import Architecture_AClass::*;
 
+// Global package alias
+`define alupkg ALU_Class
+
 `define OPERATION_ENUM_VEC_BITWIDTH 32
-`define ALU_INTERNALS_INITIAL_STATE 'h0000_0000
+`define ALU_INTERNALS_INITIAL_STATE `NULL_REG_VAL
 `define aluvector(dtype) dtype [`REGISTER_GLOBAL_BITWIDTH : 0] // Extra bit for overflow indication
 
 package ALU_Class;
-    typedef enum logic[`OPERATION_ENUM_VEC_BITWIDTH - 1 : 0]
+    typedef enum `rvtype [`OPERATION_ENUM_VEC_BITWIDTH - 1 : 0]
                         {  ALU_ADD = 1,
                            ALU_SUB = 2,
                            ALU_XOR = 3,
@@ -36,21 +39,21 @@ package ALU_Class;
                            ALU_SLT = 7,
                            ALU_NAND = 8 } OperationType;
                                     
-    class ALU extends Architecture_AClass::Architecture;
-        local `rvector left_operand;
-        local `rvector right_operand;
-        local `aluvector(`rvtype) outcome;
+    class ALU extends `archpkg::Architecture;
+        `_protected `rvector left_operand;
+        `_protected `rvector right_operand;
+        `_protected `aluvector(`rvtype) outcome;
         
         
-        function new();
+        `_public function new();
             this.left_operand = `ALU_INTERNALS_INITIAL_STATE;
             this.right_operand = `ALU_INTERNALS_INITIAL_STATE;
             this.outcome = `ALU_INTERNALS_INITIAL_STATE;
         endfunction
         
-        function `rvector PerformOperation(input OperationType operation);
+        `_public function `rvector PerformOperation(input OperationType operation);
             unique case(operation)
-                1: this.outcome = this.left_operand + this.right_operand;
+                1: this.outcome = this.left_operand + this.right_operand; // Will this correctly overflow if needed?
                 2: this.outcome = this.left_operand - this.right_operand;
                 3: this.outcome = this.left_operand ^ this.right_operand;
                 4: this.outcome = this.left_operand & this.right_operand;

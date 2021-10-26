@@ -19,26 +19,29 @@
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Revision 0.5 - Adjusted to changes from Architecture_AClass package
+// Revision 0.5 (26.10.2021) - Adjusted to changes from Architecture_AClass package
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
 import Architecture_AClass::*;
 
+// Global package alias
+`define regpkg Register_Class
+
 package Register_Class;
     class Register extends `archpkg::Architecture;
-        local `rvector contents;
+        `_protected `rvector contents;
         
-        function new(input `rvector _contents);
+        `_public function new(input `rvector _contents);
             this.contents = _contents;
         endfunction
         
-        function `rvector Read();
+        `_public function `rvector Read();
             return this.contents;
         endfunction
         
-        function Write(input `rvector writeval);
+        `_public function Write(input `rvector writeval);
             this.contents = writeval;
         endfunction
         

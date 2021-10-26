@@ -1,26 +1,36 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: AGH University of Science and Technology
+// Engineer: Filip P.
 // 
 // Create Date: 14.10.2021 23:00:44
-// Design Name: 
+// Design Name: NA
 // Module Name: Instruction_Classes
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
+// Project Name: RISC-V IP Core
+// Target Devices: NA
+// Tool Versions: NA
 // Description: 
+//
+// This file contains classes defining instruction types used throughout the project.
 // 
 // Dependencies: 
 // 
+// Architecture_AClass package
+// Field_Class package
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
 // 
+// In accordance with "The RISC-V Instruction Set Manual. Volume I: User-Level ISA.
+// Document Version 2.2" from May 7, 2017
 //////////////////////////////////////////////////////////////////////////////////
 
 import Architecture_AClass::*;
 import Field_Classes::*;
+
+// Global package alias
+`define instrpkg Instruction_Classes
 
 //// Macro definitions - number of fields ////
 `define RTypeInstruction_NumOfFields 6
@@ -86,103 +96,98 @@ package Instruction_Classes;
                    RV64D
                          } InstructionSet;
     
-    virtual class Instruction extends Architecture_AClass::Architecture;
-        // Public field that holds the format of the instruction
-        const InstructionFormat Format;
-        // Public field that holds the set from which the instruction originates
-        const InstructionSet Set;
-        // Public vector holding binary contents of the instruction
-        const `ivector(`rvtype) Contents;
-        // Private list of fields
-        Field_Classes::InstructionField Fields[];
-        
+    virtual class Instruction extends `archpkg::Architecture;
+        `_public const InstructionFormat Format;
+        `_public const InstructionSet Set;
+        `_public const `ivector Contents;
+        `_public `fieldpkg::InstructionField Fields[];
     endclass
     
     class RTypeInstruction extends Instruction;
-        function new(input `ivector(`rvtype) _contents);
+        `_public function new(input `ivector _contents);
             this.Contents = _contents;
             this.Format = Rtype;
             this.Set = RV32I;
             this.Fields = new [`RTypeInstruction_NumOfFields];
-            this.Fields[0] = Field_Classes::OPCODE_field::new;
-            this.Fields[1] = Field_Classes::RD_field::new;
-            this.Fields[2] = Field_Classes::FUNCT3_field::new;
-            this.Fields[3] = Field_Classes::RS1_field::new;
-            this.Fields[4] = Field_Classes::RS2_field::new;
-            this.Fields[5] = Field_Classes::FUNCT7_field::new;
+            this.Fields[0] = `fieldpkg::OPCODE_field::new;
+            this.Fields[1] = `fieldpkg::RD_field::new;
+            this.Fields[2] = `fieldpkg::FUNCT3_field::new;
+            this.Fields[3] = `fieldpkg::RS1_field::new;
+            this.Fields[4] = `fieldpkg::RS2_field::new;
+            this.Fields[5] = `fieldpkg::FUNCT7_field::new;
         endfunction
     endclass
     
     class ITypeInstruction extends Instruction;
-        function new(input `ivector(`rvtype) _contents);
+        `_public function new(input `ivector _contents);
             this.Contents = _contents;
             this.Format = Itype;
             this.Set = RV32I;
             this.Fields = new [`ITypeInstruction_NumOfFields];
-            this.Fields[0] = Field_Classes::OPCODE_field::new;
-            this.Fields[1] = Field_Classes::RD_field::new;
-            this.Fields[2] = Field_Classes::FUNCT3_field::new;
-            this.Fields[3] = Field_Classes::RS1_field::new;
-            this.Fields[4] = Field_Classes::IMM_field::new(`ITypeInstruction_IMM_field_BitWidth, `ITypeInstruction_IMM_field_BeginIdx, "IMM_field[11:0]");
+            this.Fields[0] = `fieldpkg::OPCODE_field::new;
+            this.Fields[1] = `fieldpkg::RD_field::new;
+            this.Fields[2] = `fieldpkg::FUNCT3_field::new;
+            this.Fields[3] = `fieldpkg::RS1_field::new;
+            this.Fields[4] = `fieldpkg::IMM_field::new(`ITypeInstruction_IMM_field_BitWidth, `ITypeInstruction_IMM_field_BeginIdx, "IMM_field[11:0]");
         endfunction
     endclass
     
     class STypeInstruction extends Instruction;
-        function new(input `ivector(`rvtype) _contents);
+        `_public function new(input `ivector _contents);
             this.Contents = _contents;
             this.Format = Stype;
             this.Set = RV32I;
             this.Fields = new [`STypeInstruction_NumOfFields];
-            this.Fields[0] = Field_Classes::OPCODE_field::new;
-            this.Fields[1] = Field_Classes::IMM_field::new(`STypeInstruction_IMM1_field_BitWidth, `STypeInstruction_IMM1_field_BeginIdx, "IMM_field[4:0]");
-            this.Fields[2] = Field_Classes::FUNCT3_field::new;
-            this.Fields[3] = Field_Classes::RS1_field::new;
-            this.Fields[4] = Field_Classes::RS2_field::new;
-            this.Fields[5] = Field_Classes::IMM_field::new(`STypeInstruction_IMM2_field_BitWidth, `STypeInstruction_IMM2_field_BeginIdx, "IMM_field[11:5]");
+            this.Fields[0] = `fieldpkg::OPCODE_field::new;
+            this.Fields[1] = `fieldpkg::IMM_field::new(`STypeInstruction_IMM1_field_BitWidth, `STypeInstruction_IMM1_field_BeginIdx, "IMM_field[4:0]");
+            this.Fields[2] = `fieldpkg::FUNCT3_field::new;
+            this.Fields[3] = `fieldpkg::RS1_field::new;
+            this.Fields[4] = `fieldpkg::RS2_field::new;
+            this.Fields[5] = `fieldpkg::IMM_field::new(`STypeInstruction_IMM2_field_BitWidth, `STypeInstruction_IMM2_field_BeginIdx, "IMM_field[11:5]");
         endfunction
     endclass
     
     class BTypeInstruction extends Instruction;
-        function new(input `ivector(`rvtype) _contents);
+        `_public function new(input `ivector _contents);
             this.Contents = _contents;
             this.Format = Btype;
             this.Set = RV32I;
             this.Fields = new [`BTypeInstruction_NumOfFields];
-            this.Fields[0] = Field_Classes::OPCODE_field::new;
-            this.Fields[1] = Field_Classes::IMM_field::new(`BTypeInstruction_IMM1_field_BitWidth, `BTypeInstruction_IMM1_field_BeginIdx, "IMM_field[11]");
-            this.Fields[2] = Field_Classes::IMM_field::new(`BTypeInstruction_IMM2_field_BitWidth, `BTypeInstruction_IMM2_field_BeginIdx, "IMM_field[4:1]");
-            this.Fields[3] = Field_Classes::FUNCT3_field::new;
-            this.Fields[4] = Field_Classes::RS1_field::new;
-            this.Fields[5] = Field_Classes::RS2_field::new;
-            this.Fields[6] = Field_Classes::IMM_field::new(`BTypeInstruction_IMM3_field_BitWidth, `BTypeInstruction_IMM3_field_BeginIdx, "IMM_field[10:5]");
-            this.Fields[7] = Field_Classes::IMM_field::new(`BTypeInstruction_IMM4_field_BitWidth, `BTypeInstruction_IMM4_field_BeginIdx, "IMM_field[12]");
+            this.Fields[0] = `fieldpkg::OPCODE_field::new;
+            this.Fields[1] = `fieldpkg::IMM_field::new(`BTypeInstruction_IMM1_field_BitWidth, `BTypeInstruction_IMM1_field_BeginIdx, "IMM_field[11]");
+            this.Fields[2] = `fieldpkg::IMM_field::new(`BTypeInstruction_IMM2_field_BitWidth, `BTypeInstruction_IMM2_field_BeginIdx, "IMM_field[4:1]");
+            this.Fields[3] = `fieldpkg::FUNCT3_field::new;
+            this.Fields[4] = `fieldpkg::RS1_field::new;
+            this.Fields[5] = `fieldpkg::RS2_field::new;
+            this.Fields[6] = `fieldpkg::IMM_field::new(`BTypeInstruction_IMM3_field_BitWidth, `BTypeInstruction_IMM3_field_BeginIdx, "IMM_field[10:5]");
+            this.Fields[7] = `fieldpkg::IMM_field::new(`BTypeInstruction_IMM4_field_BitWidth, `BTypeInstruction_IMM4_field_BeginIdx, "IMM_field[12]");
         endfunction
     endclass
     
     class UTypeInstruction extends Instruction;
-        function new(input `ivector(`rvtype) _contents);
+        `_public function new(input `ivector _contents);
             this.Contents = _contents;
             this.Format = Utype;
             this.Set = RV32I;
             this.Fields = new [`UTypeInstruction_NumOfFields];
-            this.Fields[0] = Field_Classes::OPCODE_field::new;
-            this.Fields[1] = Field_Classes::RD_field::new;
-            this.Fields[2] = Field_Classes::IMM_field::new(`UTypeInstruction_IMM_field_BitWidth, `UTypeInstruction_IMM_field_BeginIdx, "IMM_field[31:12]");
+            this.Fields[0] = `fieldpkg::OPCODE_field::new;
+            this.Fields[1] = `fieldpkg::RD_field::new;
+            this.Fields[2] = `fieldpkg::IMM_field::new(`UTypeInstruction_IMM_field_BitWidth, `UTypeInstruction_IMM_field_BeginIdx, "IMM_field[31:12]");
         endfunction
     endclass
     
     class JTypeInstruction extends Instruction;
-        function new(input `ivector(`rvtype) _contents);
+        `_public function new(input `ivector _contents);
             this.Contents = _contents;
             this.Format = Jtype;
             this.Set = RV32I;
             this.Fields = new [`JTypeInstruction_NumOfFields];
-            this.Fields[0] = Field_Classes::OPCODE_field::new;
-            this.Fields[1] = Field_Classes::RD_field::new;
-            this.Fields[2] = Field_Classes::IMM_field::new(`JTypeInstruction_IMM1_field_BitWidth, `JTypeInstruction_IMM1_field_BeginIdx, "IMM_field[19:12]");
-            this.Fields[3] = Field_Classes::IMM_field::new(`JTypeInstruction_IMM2_field_BitWidth, `JTypeInstruction_IMM2_field_BeginIdx, "IMM_field[11]");
-            this.Fields[4] = Field_Classes::IMM_field::new(`JTypeInstruction_IMM3_field_BitWidth, `JtypeInstruction_IMM3_field_BeginIdx, "IMM_field[10:1]");
-            this.Fields[5] = Field_Classes::IMM_field::new(`JTypeInstruction_IMM4_field_BitWidth, `JTypeInstruction_IMM4_field_BeginIdx, "IMM_field[20]");
+            this.Fields[0] = `fieldpkg::OPCODE_field::new;
+            this.Fields[1] = `fieldpkg::RD_field::new;
+            this.Fields[2] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM1_field_BitWidth, `JTypeInstruction_IMM1_field_BeginIdx, "IMM_field[19:12]");
+            this.Fields[3] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM2_field_BitWidth, `JTypeInstruction_IMM2_field_BeginIdx, "IMM_field[11]");
+            this.Fields[4] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM3_field_BitWidth, `JtypeInstruction_IMM3_field_BeginIdx, "IMM_field[10:1]");
+            this.Fields[5] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM4_field_BitWidth, `JTypeInstruction_IMM4_field_BeginIdx, "IMM_field[20]");
         endfunction
     endclass
 endpackage

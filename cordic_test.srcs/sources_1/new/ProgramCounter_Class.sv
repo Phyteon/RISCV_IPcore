@@ -1,18 +1,24 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: AGH University of Science and Technology
+// Engineer: Filip P.
 // 
 // Create Date: 22.10.2021 00:10:14
-// Design Name: 
+// Design Name: NA
 // Module Name: ProgramCounter_Class
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
+// Project Name: RISC-V IP Core
+// Target Devices: NA
+// Tool Versions: NA
 // Description: 
+//
+// This file contains ProgramCounter class which is an extention of Register class.
+// Not essential to the project.
 // 
 // Dependencies: 
 // 
+// Architecture_AClass package
+// Register_Class package
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
@@ -22,12 +28,15 @@
 import Architecture_AClass::*;
 import Register_Class::*;
 
-`define InstructionAddressByteSize (RegisterBitWidth/8)
+// Global package alias
+`define progcntpkg ProgramCounter_class
+
+`define InstructionAddressByteSize (`REGISTER_GLOBAL_BITWIDTH/8)
 
 package ProgramCounter_Class;
-    class ProgramCounter extends Register_Class::Register;
+    class ProgramCounter extends `regpkg::Register;
         
-        function new(input `rvector(`rvtype) _address);
+        function new(input `rvector _address);
             super.new(_address);
         endfunction
         

@@ -34,6 +34,8 @@
 // Constant-value representing macros meant for global usage
 `define INSTRUCTION_GLOBAL_BITWIDTH 32
 `define REGISTER_GLOBAL_BITWIDTH 32
+`define NULL_REG_VAL 'h0000_0000
+
 
 // Global aliases macros
 `define ivector `archpkg::insvector
@@ -41,18 +43,28 @@
 `define uint int unsigned
 `define sint int signed
 `define rvtype `archpkg::riscvtype // Common type for processor internals
+`define _private local // Can be altered so that all private fields will become public
+`define _protected protected // Can be altered so that all protected fields will become public
+`define _public // Mainly to express intention
+
 
 // Global utility macros or function-like macros
 `define static_cast_to_uint(val) unsigned'(val)
+`define dynamic_cast_to_uint(target, val) $cast(target, val)
 `define static_cast_to_sint(val) signed'(val)
+`define dynamic_cast_to_sint(target, val) $cast(target, val)
 `define static_cast_to_regvector(val) `rvector'(val)
 `define static_cast_to_insvector(val) `ivector'(val)
+`define unpacked_arr(_type, _size, _identifier) _type _identifier [_size - 1 : 0]
+`define unpacked_dynamic_arr(_type, _identifier) _type _identifier []
+`define packed_arr(_type, _size, _identifier) _type [_size - 1 : 0] _identifier
+`define packed_dynamic_arr(_type, _identifier) _type [] _identifier
 
 package Architecture_AClass;
 
     typedef logic riscvtype;
-    typedef `rvtype [`REGISTER_GLOBAL_BITWIDTH - 1 : 0] regvector;
-    typedef `rvtype [`INSTRUCTION_GLOBAL_BITWIDTH - 1 : 0] insvector;
+    typedef `packed_arr(`rvtype, `REGISTER_GLOBAL_BITWIDTH, regvector);
+    typedef `packed_arr(`rvtype, `INSTRUCTION_GLOBAL_BITWIDTH, insvector);
 
     virtual class Architecture;
     endclass
