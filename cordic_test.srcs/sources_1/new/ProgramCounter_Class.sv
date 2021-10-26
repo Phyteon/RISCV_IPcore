@@ -27,7 +27,7 @@ import Register_Class::*;
 package ProgramCounter_Class;
     class ProgramCounter extends Register_Class::Register;
         
-        function new(input `rvector(logic) _address);
+        function new(input `rvector(`rvtype) _address);
             super.new(_address);
         endfunction
         

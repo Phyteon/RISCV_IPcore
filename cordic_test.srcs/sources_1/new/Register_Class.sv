@@ -22,17 +22,17 @@
 import Architecture_AClass::*;
 package Register_Class;
     class Register extends Architecture_AClass::Architecture;
-        local `rvector(logic) contents;
+        local `rvector(`rvtype) contents;
         
-        function new(input `rvector(logic) _contents);
+        function new(input `rvector(`rvtype) _contents);
             this.contents = _contents;
         endfunction
         
-        function `rvector(logic) Read();
+        function `rvector(`rvtype) Read();
             return this.contents;
         endfunction
         
-        function Write(input `rvector(logic) writeval);
+        function Write(input `rvector(`rvtype) writeval);
             this.contents = writeval;
         endfunction
         

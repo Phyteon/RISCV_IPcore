@@ -27,7 +27,7 @@ import Architecture_AClass::*;
 package Multiplexer_Class;
 
 class Multiplexer extends Architecture_AClass::Architecture;
-    local `rvector(logic) [] inputs;
+    local `rvector(`rvtype) [] inputs;
     local `uint chosen_input;
     
     function new (input `uint _num_of_inputs);
@@ -37,12 +37,12 @@ class Multiplexer extends Architecture_AClass::Architecture;
             inputs[n] = `MUX_INITIAL_INPUT_STATE;
     endfunction
     
-    function UpdateInputsState(input `rvector(logic) [] _inputs);
+    function UpdateInputsState(input `rvector(`rvtype) [] _inputs);
         foreach (_inputs[n])
             this.inputs[n] = _inputs[n]; // TODO: dispute about assigning method
     endfunction
     
-    function UpdateOneInputState(input `rvector(logic) _input, input `uint _num_of_in);
+    function UpdateOneInputState(input `rvector(`rvtype) _input, input `uint _num_of_in);
         this.inputs[_num_of_in] = _input;
     endfunction
     
@@ -50,7 +50,7 @@ class Multiplexer extends Architecture_AClass::Architecture;
         this.chosen_input = num_of_in;
     endfunction
     
-    function `rvector(logic) GetOutput();
+    function `rvector(`rvtype) GetOutput();
         return this.inputs[chosen_input];
     endfunction
     

@@ -92,17 +92,14 @@ package Instruction_Classes;
         // Public field that holds the set from which the instruction originates
         const InstructionSet Set;
         // Public vector holding binary contents of the instruction
-        const `ivector(logic) Contents;
+        const `ivector(`rvtype) Contents;
         // Private list of fields
-        local Field_Classes::InstructionField Fields[];
+        Field_Classes::InstructionField Fields[];
         
-        function Field_Classes::InstructionField[] GetFields();
-            return this.Fields;
-        endfunction
     endclass
     
     class RTypeInstruction extends Instruction;
-        function new(input `ivector(logic) _contents);
+        function new(input `ivector(`rvtype) _contents);
             this.Contents = _contents;
             this.Format = Rtype;
             this.Set = RV32I;
@@ -117,7 +114,7 @@ package Instruction_Classes;
     endclass
     
     class ITypeInstruction extends Instruction;
-        function new(input `ivector(logic) _contents);
+        function new(input `ivector(`rvtype) _contents);
             this.Contents = _contents;
             this.Format = Itype;
             this.Set = RV32I;
@@ -131,7 +128,7 @@ package Instruction_Classes;
     endclass
     
     class STypeInstruction extends Instruction;
-        function new(input `ivector(logic) _contents);
+        function new(input `ivector(`rvtype) _contents);
             this.Contents = _contents;
             this.Format = Stype;
             this.Set = RV32I;
@@ -146,7 +143,7 @@ package Instruction_Classes;
     endclass
     
     class BTypeInstruction extends Instruction;
-        function new(input `ivector(logic) _contents);
+        function new(input `ivector(`rvtype) _contents);
             this.Contents = _contents;
             this.Format = Btype;
             this.Set = RV32I;
@@ -163,7 +160,7 @@ package Instruction_Classes;
     endclass
     
     class UTypeInstruction extends Instruction;
-        function new(input `ivector(logic) _contents);
+        function new(input `ivector(`rvtype) _contents);
             this.Contents = _contents;
             this.Format = Utype;
             this.Set = RV32I;
@@ -175,7 +172,7 @@ package Instruction_Classes;
     endclass
     
     class JTypeInstruction extends Instruction;
-        function new(input `ivector(logic) _contents);
+        function new(input `ivector(`rvtype) _contents);
             this.Contents = _contents;
             this.Format = Jtype;
             this.Set = RV32I;
