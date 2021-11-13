@@ -53,14 +53,14 @@ package ALU_Class;
         
         `_public function `rvector PerformOperation(input OperationType operation);
             unique case(operation)
-                1: this.outcome = this.left_operand + this.right_operand; // Will this correctly overflow if needed?
-                2: this.outcome = this.left_operand - this.right_operand;
-                3: this.outcome = this.left_operand ^ this.right_operand;
-                4: this.outcome = this.left_operand & this.right_operand;
-                5: this.outcome = ~(this.left_operand | this.right_operand); // TODO: Check if it doesn't cause overflow here!!!
-                6: this.outcome = this.left_operand | this.right_operand;
-                7: this.outcome = this.left_operand < this.right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
-                8: this.outcome = ~(this.left_operand & this.right_operand);
+                ALU_ADD: this.outcome = this.left_operand + this.right_operand; // Will this correctly overflow if needed?
+                ALU_SUB: this.outcome = this.left_operand - this.right_operand;
+                ALU_XOR: this.outcome = this.left_operand ^ this.right_operand;
+                ALU_AND: this.outcome = this.left_operand & this.right_operand;
+                ALU_NOR: this.outcome = ~(this.left_operand | this.right_operand); // TODO: Check if it doesn't cause overflow here!!!
+                ALU_OR: this.outcome = this.left_operand | this.right_operand;
+                ALU_SLT: this.outcome = this.left_operand < this.right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
+                ALU_NAND: this.outcome = ~(this.left_operand & this.right_operand);
                 default: ; // Do nothing
             endcase
         

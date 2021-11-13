@@ -25,10 +25,10 @@ import Instruction_Classes::*;
 
 package ControlUnit_Class;
     class ControlUnit extends Architecture_AClass::Architecture;
-    `rvector(logic) [] Steering;
+    `_public `packed_dynamic_arr(`rvector, Steering);
     
     function new(input `uint steering_out_num);
-        this.Steering = new [steering_out_num];
+        this.Steering = new [steering_out_num]; // If it cannot be allocated that way, maybe parametrize the input number
     endfunction
     
     endclass

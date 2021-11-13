@@ -25,6 +25,8 @@
 
 import Architecture_AClass::*;
 
+`define muxpkg Multiplexer_Class // Create alias for the package
+
 `define MUX_INITIAL_INPUT_STATE `NULL_REG_VAL
 `define MUX_INITIAL_CHOSEN_STATE 0
 

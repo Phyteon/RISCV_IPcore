@@ -186,7 +186,7 @@ package Instruction_Classes;
             this.Fields[1] = `fieldpkg::RD_field::new;
             this.Fields[2] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM1_field_BitWidth, `JTypeInstruction_IMM1_field_BeginIdx, "IMM_field[19:12]");
             this.Fields[3] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM2_field_BitWidth, `JTypeInstruction_IMM2_field_BeginIdx, "IMM_field[11]");
-            this.Fields[4] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM3_field_BitWidth, `JtypeInstruction_IMM3_field_BeginIdx, "IMM_field[10:1]");
+            this.Fields[4] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM3_field_BitWidth, `JTypeInstruction_IMM3_field_BeginIdx, "IMM_field[10:1]");
             this.Fields[5] = `fieldpkg::IMM_field::new(`JTypeInstruction_IMM4_field_BitWidth, `JTypeInstruction_IMM4_field_BeginIdx, "IMM_field[20]");
         endfunction
     endclass

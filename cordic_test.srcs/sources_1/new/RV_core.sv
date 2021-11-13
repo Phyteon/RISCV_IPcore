@@ -20,13 +20,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 import Architecture_AClass::*;
-import Register_Class::*;
+import RegistryFile_Class::*;
 import Instruction_Classes::*;
 import ProgramCounter_Class::*;
 import Multiplexer_Class::*;
 import ControlUnit_Class::*;
 
+
 module RV_core();
+
+// Classes initialisation
+
+`regfilepkg::RegistryFile registers; // Register bank
+
+`muxpkg::Multiplexer alu_mux;
+
 
 
 
