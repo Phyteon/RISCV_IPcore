@@ -24,6 +24,8 @@
 // 
 // In accordance with "The RISC-V Instruction Set Manual. Volume I: User-Level ISA.
 // Document Version 2.2" from May 7, 2017
+//
+// BitWidth must be passed as class parameter to allow vector slicing.
 //////////////////////////////////////////////////////////////////////////////////
 
 import Architecture_AClass::*;
@@ -45,11 +47,11 @@ import Architecture_AClass::*;
 `define RS1_field_BitWidth 5
 `define RS2_field_BeginIdx 20
 `define RS2_field_BitWidth 5
+`define DEFAULT_PARAM 1
 
 package Field_Classes;
 
-    virtual class InstructionField extends `archpkg::Architecture;
-        `_public const `uint BitWidth;
+    virtual class InstructionField #(BitWidth = `DEFAULT_PARAM) extends `archpkg::Architecture;
         `_public const `uint BeginIdx;
         `_public const string Info;
         
@@ -62,7 +64,6 @@ package Field_Classes;
     
     class RD_field extends InstructionField;
         `_public function new();
-            this.BitWidth = `RD_field_BitWidth; 
             this.BeginIdx = `RD_field_BeginIdx;
             this.Info = "RD_field";
         endfunction
@@ -70,7 +71,6 @@ package Field_Classes;
     
     class OPCODE_field extends InstructionField;
         `_public function new();
-            this.BitWidth = `OPCODE_field_BitWidth;
             this.BeginIdx = `OPCODE_field_BeginIdx;
             this.Info = "OPCODE_field";
         endfunction
@@ -78,7 +78,6 @@ package Field_Classes;
     
     class FUNCT3_field extends InstructionField;
         `_public function new();
-            this.BitWidth = `FUNCT3_field_BitWidth;
             this.BeginIdx = `FUNCT3_field_BeginIdx;
             this.Info = "FUNCT3_field";
         endfunction
@@ -86,7 +85,6 @@ package Field_Classes;
     
     class FUNCT7_field extends InstructionField;
         `_public function new();
-            this.BitWidth = `FUNCT7_field_BitWidth;
             this.BeginIdx = `FUNCT7_field_BeginIdx;
             this.Info = "FUNCT7_field";
         endfunction
@@ -94,7 +92,6 @@ package Field_Classes;
     
     class RS1_field extends InstructionField;
         `_public function new();
-            this.BitWidth = `RS1_field_BitWidth;
             this.BeginIdx = `RS1_field_BeginIdx;
             this.Info = "RS1_field";
         endfunction
@@ -102,15 +99,13 @@ package Field_Classes;
     
     class RS2_field extends InstructionField;
         `_public function new();
-            this.BitWidth = `RS2_field_BitWidth;
             this.BeginIdx = `RS2_field_BeginIdx;
             this.Info = "RS2_field";
         endfunction
     endclass
     
     class IMM_field extends InstructionField;
-        `_public function new(input int _BitWidth, input int _BeginIdx, input string _Info);
-            this.BitWidth = _BitWidth;
+        `_public function new(input int _BeginIdx, input string _Info);
             this.BeginIdx = _BeginIdx;
             this.Info = _Info;
         endfunction
