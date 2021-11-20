@@ -20,6 +20,7 @@
 // Revision:
 // Revision 0.01 - File Created
 // Revision 0.5 (26.10.2021) - Adjusted to changes in Architecture_AClass package
+// Revision 0.7 (20.11.2021) - BitWidth is now a class parameter
 // Additional Comments:
 // 
 // In accordance with "The RISC-V Instruction Set Manual. Volume I: User-Level ISA.
