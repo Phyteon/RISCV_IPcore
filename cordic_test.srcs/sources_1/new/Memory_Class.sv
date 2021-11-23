@@ -33,12 +33,6 @@ import Architecture_AClass::*;
 `define DATA_MEMORY_SIZE_IN_CELLS 1024 // When MemoryCell is 32 bits wide, this translates to 4kB of memory
 `define PROGRAM_MEMORY_SIZE_IN_CELLS 1024 // When MemoryCell is 32 bits wide, this translates to 4kB of memory
 
-//// COMPILATION SWITCH
-// If the define is HARVARD_SOFT_ARCHITECTURE, then the program memory and data memory will have common address space.
-// If the define is HARVARD_HARD_ARCHITECTURE, then the program memory and data memory will have different address spaces.
-`define HARVARD_SOFT_ARCHITECTURE
-
-
 `define memorycell `mempkg::MemoryCell
 
 package Memory_Class;
@@ -56,24 +50,6 @@ package Memory_Class;
     
     /////////////////////////////////
     // Typedef:
-    //      DataMemory
-    // Info:
-    //      This type represents data memory. Fixed in size, dependent on MemoryCell type.
-    //      To be used when constructing "hard" Harvard architecture.
-    /////////////////////////////////
-    typedef `packed_arr(`memorycell, `DATA_MEMORY_SIZE_IN_CELLS, DataMemory);
-    
-    /////////////////////////////////
-    // Typedef:
-    //      ProgramMemory
-    // Info:
-    //      This type represents program memory. Fixed in size, dependent on MemoryCell type.
-    //      To be used when constructing "hard" Harvard architecture.
-    /////////////////////////////////
-    typedef `packed_arr(`memorycell, `PROGRAM_MEMORY_SIZE_IN_CELLS, ProgramMemory);
-    
-    /////////////////////////////////
-    // Typedef:
     //      MemoryType
     // Info:
     //      This type represents memory. Fixed in size, dependent on MemoryCell type.
@@ -82,6 +58,6 @@ package Memory_Class;
     typedef `packed_arr(`memorycell, (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS), MemoryType);
     
     class Memory extends Architecture_AClass::Architecture;
-    
+        `_protected MemoryType main_memory;
     endclass
 endpackage

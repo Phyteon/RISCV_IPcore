@@ -65,6 +65,9 @@
 `define packed_arr(_type, _size, _identifier) _type [_size - 1 : 0] _identifier
 `define packed_dynamic_arr(_type, _identifier) _type [] _identifier
 
+// Compilation-time macros
+`define throw_compilation_error(msg) SomeObviouslyWrongSyntax
+
 package Architecture_AClass;
     //// Global type definitions ////
     
