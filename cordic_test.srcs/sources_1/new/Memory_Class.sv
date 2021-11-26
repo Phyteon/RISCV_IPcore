@@ -100,11 +100,6 @@ package Memory_Class;
             unique case(remainder)
                 0: this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES] = data;
                 
-                `ifdef MISALIGNED_MEM_ACCESS
-                    1: 
-                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][1:`MEMORY_CELL_SIZE_IN_BYTES - 1] = data[0:`MEMORY_CELL_SIZE_IN_BYTES - 2];
-                        this.main_memory[
-                `endif
             endcase
         endfunction
     endclass
