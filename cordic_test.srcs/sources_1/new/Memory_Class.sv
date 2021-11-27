@@ -95,11 +95,22 @@ package Memory_Class;
             return intermediate_val;
         endfunction
         
-        `_public function Write(input `uint address, input `memorycell data);
-            `uint remainder = address % `MEMORY_CELL_SIZE_IN_BYTES;
-            unique case(remainder)
-                0: this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES] = data;
-                
+        `_public function Write(input `uint address, input `memorycell data, input `uint bytes);
+            `uint memcell_remainder = address % `MEMORY_CELL_SIZE_IN_BYTES;
+            unique case(bytes)
+                1: this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][memcell_remainder] = data;
+                2:
+                    if(memcell_remainder == 0) 
+                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][0:1] = data[0:1];
+                    else if(memcell_remainder == 2)
+                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][2:3] = data[0:1];
+                    else
+                        $error("Misalingned address!");
+                4:
+                    if(memcell_remainder != 0) $error("Misaligned address"!);
+                    else this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES] = data;
+                default:
+                    $error("Unimplemented address range used!");
             endcase
         endfunction
     endclass
