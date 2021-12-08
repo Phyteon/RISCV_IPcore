@@ -63,17 +63,17 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_0_0/mb_design_axi_gpio_0_0.xci">
-          <Proxy FileSetName="mb_design_axi_gpio_0_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_1_0/mb_design_axi_gpio_1_0.xci">
           <Proxy FileSetName="mb_design_axi_gpio_1_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_2_0/mb_design_axi_gpio_2_0.xci">
+          <Proxy FileSetName="mb_design_axi_gpio_2_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_cordic_ip_0_0/mb_design_cordic_ip_0_0.xci">
           <Proxy FileSetName="mb_design_cordic_ip_0_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_2_0/mb_design_axi_gpio_2_0.xci">
-          <Proxy FileSetName="mb_design_axi_gpio_2_0"/>
+        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_0_0/mb_design_axi_gpio_0_0.xci">
+          <Proxy FileSetName="mb_design_axi_gpio_0_0"/>
         </CompFileExtendedInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/bd/mb_design/hdl/mb_design_wrapper.v">
@@ -195,6 +195,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/new/TB_Clocking_Module.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="mb_design_wrapper"/>
@@ -273,6 +281,7 @@
       </Config>
     </FileSet>
     <FileSet Name="Modules_TB" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/Modules_TB">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/Modules_TB/new/Memory_TB.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -313,7 +322,9 @@
   <Runs Version="1" Minor="10">
     <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7s50csga324-1" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2018"/>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2018">
+          <Desc>Vivado Synthesis Defaults</Desc>
+        </StratHandle>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
@@ -358,7 +369,9 @@
     </Run>
     <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7s50csga324-1" ConstrsSet="constrs_1" Description="Default settings for Implementation." WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2018"/>
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2018">
+          <Desc>Default settings for Implementation.</Desc>
+        </StratHandle>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>
