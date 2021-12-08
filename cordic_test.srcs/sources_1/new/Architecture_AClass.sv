@@ -37,6 +37,8 @@
 `define BYTE_SIZE 8
 `define NULL_REG_VAL 'h0000_0000
 
+// Clocking methodology
+`define CLOCK_ACTIVE_EDGE posedge
 
 // Global aliases macros
 `define ivector `archpkg::insvector
