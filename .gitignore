@@ -74,6 +74,6 @@
 !cordic_test.srcs/sources_1/new/python/resources/**
 !cordic_test.srcs/sources_1/new/*.txt
 !cordic_test.srcs/sources_1/new/*.jar
-!cordic_test.srcs/sim1/new/**
+!cordic_test.srcs/sim_1/new/**
 
 # End of https://www.toptal.com/developers/gitignore/api/vivado
