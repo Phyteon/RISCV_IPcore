@@ -107,7 +107,7 @@ package Memory_Class;
                     else
                         $error("Misalingned address!");
                 4:
-                    if(memcell_remainder != 0) $error("Misaligned address"!);
+                    if(memcell_remainder != 0) $error("Misaligned address!");
                     else this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES] = data;
                 default:
                     $error("Unimplemented address range used!");
