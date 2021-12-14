@@ -44,7 +44,7 @@ module Memory_Module(
         // Array for switching between memory access modes
         `packed_arr(`rvtype, `READ_WRITE_CTRL_NUM_OF_INPUTS, read_write_control);
         
-        always @ (`CLOCK_ACTIVE_EDGE clk or posedge reset) begin
+        always @ (`CLOCK_ACTIVE_EDGE clk) begin
             if (reset) outbus = `RESET_REG_VAL;
             else begin
                 begin: sequential_block
@@ -59,6 +59,7 @@ module Memory_Module(
                 end: sequential_block
             end
         end
+        
     
     `elsif MEMORY_MODULE_IMPLEMENTATION
     

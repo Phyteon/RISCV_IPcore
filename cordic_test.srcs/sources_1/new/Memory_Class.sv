@@ -142,6 +142,16 @@ package Memory_Class;
             $display("Timestamp=%0t [Memory Driver] starting ...", $time);
             // Synchronise task to clock signal
             @(`CLOCK_ACTIVE_EDGE memif.clk);
+            
+            forever begin
+                MemoryTransactionItem item;
+                $display("Timestamp=%0t [Memory Driver] waiting for item...", $time);
+                
+                driver_mailbox.get(item);
+                item.log("Memory Driver");
+                // TODO: Add pin driving here
+            end // forever loop
+            
         endtask
     endclass
     
@@ -154,9 +164,8 @@ interface MemoryInterface(input `rvtype clk);
     `rvector memaddr;
     `rvector inbus;
     `rvtype reset;
-    `rvtype rdy;
     `rvector outbus;
-    
-    modport Testbench (output memwrite, output memread, output memaddr, output inbus, output reset, input rdy, input outbus);
-    modport DUT (input memwrite, input memread, input memaddr, input inbus, input reset, output rdy, output outbus);
+    // TODO: Add clocking blocks
+    modport Testbench (output memwrite, output memread, output memaddr, output inbus, output reset, input outbus);
+    modport DUT (input memwrite, input memread, input memaddr, input inbus, input reset, output outbus);
 endinterface
