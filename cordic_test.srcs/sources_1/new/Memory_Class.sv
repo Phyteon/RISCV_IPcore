@@ -39,6 +39,7 @@ import Architecture_AClass::*;
 `define MEMORY_CELL_SIZE_IN_BYTES (($bits(`memorycell))/`BYTE_SIZE)
 `define BYTE_MASK 'h0000_00FF
 `define WORD_MASK 'h0000_FFFF
+`define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
 
 //// Compilation switch - misaligned memory access support
 `define ALIGNED_MEM_ACCESS // If ALIGNED_MEM_ACCESS is defined, only aligned access to memory is supported
@@ -116,29 +117,36 @@ package Memory_Class;
     endclass
     
     class MemoryTransactionItem;
-        rand `rvector memaddr;
-        rand `rvector inbus;
-        rand `rvtype memwrite;
-        rand `rvtype memread;
-        `rvector outbus;
+        `_public rand `rvector memaddr;
+        `_public rand `rvector inbus;
+        `_public rand `rvtype memwrite;
+        `_public rand `rvtype memread;
+        `_public `rvector outbus;
+        
+        function new();
+        
+        endfunction;
         
         constraint c_memaddr {
-            memaddr < (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `BYTE_SIZE;
-            memaddr[1:0] == 2'b0; // Only testing aligned addresses
+            memaddr < (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES;
+            memaddr[0][1:0] == 2'b0; // Only testing aligned addresses
+        };
+        constraint c_memreadwrite {
+            (memwrite & memread) != 1; 
         };
         
-        function void log(input string tag="");
+        `_public function void log(input string tag="");
             $display("Timestamp=%0t [%s] memaddr=0x%0h memwrite=%0d memread=%0d inbus=%0d outbus=0x%0h",
                       $time,        tag, memaddr,      memwrite,    memread,    inbus,    outbus);
         endfunction
     endclass
     
     class MemoryVerificationDriver;
-        virtual MemoryInterface memif;
-        event driver_done;
-        mailbox driver_mailbox;
+        `_public virtual MemoryInterface memif;
+        `_public event driver_done;
+        `_public mailbox driver_mailbox;
         
-        task run();
+        `_public task run();
             $display("Timestamp=%0t [Memory Driver] starting ...", $time);
             // Synchronise task to clock signal
             @(`CLOCK_ACTIVE_EDGE memif.clk);
@@ -149,11 +157,131 @@ package Memory_Class;
                 
                 driver_mailbox.get(item);
                 item.log("Memory Driver");
-                // TODO: Add pin driving here
+                
+                // Driving the pins
+                memif.memwrite <= item.memwrite;
+                memif.memread <= item.memread;
+                memif.memaddr <= item.memaddr;
+                memif.inbus <= item.inbus;
+                
+                // Transaction is done on the next active clock edge
+                @(`CLOCK_ACTIVE_EDGE memif.clk);
+                ->driver_done;
+                
             end // forever loop
-            
         endtask
     endclass
+    
+    class MemoryMonitor;
+        `_public virtual MemoryInterface memif;
+        `_public mailbox scoreboard_mailbox;
+        
+        `_public task run();
+            $display("Timestamp=%0t [Memory Monitor] starting ...", $time);
+            
+            forever begin
+                @(`CLOCK_ACTIVE_EDGE memif.clk);
+                // Wait for valid transaction
+                if ((memif.memwrite ^ memif.memread) || ~(memif.memwrite || memif.memread)) begin
+                    MemoryTransactionItem item = new;
+                    item.memaddr = memif.memaddr;
+                    item.memwrite = memif.memwrite;
+                    item.memread = memif.memread;
+                    item.inbus = memif.inbus;
+                    if(memif.memread) begin
+                        @(`CLOCK_ACTIVE_EDGE memif.clk);
+                        item.outbus = memif.outbus;
+                    end //if
+                    item.log("Memory Monitor");
+                    scoreboard_mailbox.put(item);
+                end //if
+            end // forever loop
+        endtask
+    endclass
+    
+    class MemoryScoreboard;
+        `_public mailbox scoreboard_mailbox;
+        `_public `unpacked_arr(MemoryTransactionItem, `MEMORY_TESTBENCH_SCOREBOARD_SIZE, database);
+        `_private MemoryTransactionItem previous;
+        
+        task run();
+            forever begin
+                MemoryTransactionItem item;
+                scoreboard_mailbox.get(item);
+                item.log("Memory scoreboard");
+                
+                // Scenario 1: memory write
+                if ((item.memwrite == 1) && (item.memread == 0)) begin
+                    if (database[item.memaddr] == null)
+                        database[item.memaddr] = new;
+                    database[item.memaddr] = item;
+                    previous = item;
+                    $display("Timestamp=%0t [Memory Scoreboard] Store memaddr=0x%0h memwrite=0x%0h inbus=0x%0h",
+                              $time,                                  item.memaddr, item.memwrite, item.inbus);
+                end //if
+                
+                // Scenario 2: memory read
+                if ((item.memwrite == 0) && (item.memread == 1)) begin
+                    if (database[item.memaddr] == null)
+                        $display("Timestamp=%0t [Memory Scoreboard] Uninitialised addr read memaddr=0x%0h memread=0x%0h outbus=0x%0h",
+                                 $time,                                                     item.memaddr, item.memread, item.outbus);
+                    else
+                        if (item.outbus != database[item.memaddr].outbus)
+                            $display("Timestamp=%0t [Memory Scoreboard] ERROR 0x01! memaddr=0x%0h memread=0x%0h outbus=0x%0h",
+                                     $time,                                         item.memaddr, item.memread, item.outbus);
+                        else
+                            $display("Timestamp=%0t [Memory Scoreboard] PASS memaddr=0x%0h memread=0x%0h outbus=0x%0h",
+                                     $time,                                  item.memaddr, item.memread, item.outbus); 
+                    previous = item;
+                end //if
+                
+                // Scenario 3: memory idle state 1
+                if (~(item.memwrite || item.memread)) begin
+                    if (item.outbus != previous.outbus)
+                        $display("Timestamp=%0t [Memory Scoreboard] ERROR 0x02! memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
+                                 $time,                                         item.memaddr, item.memwrite, item.memread, item.outbus);
+                    else
+                        $display("Timestamp=%0t [Memory Scoreboard] PASS memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
+                                 $time,                                  item.memaddr, item.memwrite, item.memread, item.outbus);
+                end //if
+                
+            end // forever loop
+        endtask
+    endclass
+    
+    class MemoryVerificationEnvironment;
+        MemoryVerificationDriver driver;
+        MemoryMonitor monitor;
+        MemoryScoreboard scoreboard;
+        mailbox scoreboard_mailbox; // Top level mailbox for scoreboard <-> monitor transactions
+        virtual MemoryInterface memif;
+        
+        function new();
+            driver = new;
+            monitor = new;
+            scoreboard = new;
+            scoreboard_mailbox = new;
+        endfunction
+        
+        virtual task run();
+            driver.memif = memif;
+            monitor.memif = memif;
+            monitor.scoreboard_mailbox = scoreboard_mailbox;
+            scoreboard.scoreboard_mailbox = scoreboard_mailbox;
+            
+            fork
+                scoreboard.run();
+                driver.run();
+                monitor.run();
+            join_any // If any task finishes, continue execution
+        endtask
+    endclass
+    
+    class MemoryTest;
+        MemoryVerificationEnvironment environment;
+    endclass
+    
+    
     
 endpackage
 

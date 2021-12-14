@@ -39,6 +39,7 @@
 
 // Clocking methodology
 `define CLOCK_ACTIVE_EDGE posedge
+`define CLOCK_TRAILING_EDGE negedge
 
 // Global aliases macros
 `define ivector `archpkg::insvector
