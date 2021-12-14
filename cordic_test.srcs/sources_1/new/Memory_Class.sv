@@ -114,4 +114,49 @@ package Memory_Class;
             endcase
         endfunction
     endclass
+    
+    class MemoryTransactionItem;
+        rand `rvector memaddr;
+        rand `rvector inbus;
+        rand `rvtype memwrite;
+        rand `rvtype memread;
+        `rvector outbus;
+        
+        constraint c_memaddr {
+            memaddr < (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `BYTE_SIZE;
+            memaddr[1:0] == 2'b0; // Only testing aligned addresses
+        };
+        
+        function void log(input string tag="");
+            $display("Timestamp=%0t [%s] memaddr=0x%0h memwrite=%0d memread=%0d inbus=%0d outbus=0x%0h",
+                      $time,        tag, memaddr,      memwrite,    memread,    inbus,    outbus);
+        endfunction
+    endclass
+    
+    class MemoryVerificationDriver;
+        virtual MemoryInterface memif;
+        event driver_done;
+        mailbox driver_mailbox;
+        
+        task run();
+            $display("Timestamp=%0t [Memory Driver] starting ...", $time);
+            // Synchronise task to clock signal
+            @(`CLOCK_ACTIVE_EDGE memif.clk);
+        endtask
+    endclass
+    
 endpackage
+
+
+interface MemoryInterface(input `rvtype clk);
+    `rvtype memwrite;
+    `rvtype memread;
+    `rvector memaddr;
+    `rvector inbus;
+    `rvtype reset;
+    `rvtype rdy;
+    `rvector outbus;
+    
+    modport Testbench (output memwrite, output memread, output memaddr, output inbus, output reset, input rdy, input outbus);
+    modport DUT (input memwrite, input memread, input memaddr, input inbus, input reset, output rdy, output outbus);
+endinterface

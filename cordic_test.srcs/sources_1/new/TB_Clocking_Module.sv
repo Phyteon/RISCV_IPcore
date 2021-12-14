@@ -52,8 +52,14 @@ module TB_Clocking_Module#(frequency = `DEFAULT_TB_CLOCK_FREQ, phase = `DEFAULT_
     end
 
     always @(posedge start_clk or negedge start_clk) begin
-        if (start_clk)
+        if (start_clk) begin: clk_sequence
+            clk = 1;
+            while (start_clk) begin: switching_sequence
+                #(clk_dt_cycle_period) clk = 0;
+                #(period - clk_dt_cycle_period) clk = 1;
+            end: switching_sequence
+        end: clk_sequence
     end
-
+    
 
 endmodule

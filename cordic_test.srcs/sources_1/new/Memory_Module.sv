@@ -23,6 +23,7 @@ import Memory_Class::*;
 
 `define READ_WRITE_CTRL_NUM_OF_INPUTS 2
 `define MemoryIdleState(mode) // Macro purely for documentation & code readability - may be later used for debugging
+`define RESET_REG_VAL 'h0000_0000
 
 //// Compilation switches - if MEMORY_MODULE_DESIGN is defined, high level OOP implementation will be used
 `define MEMORY_MODULE_DESIGN
@@ -34,6 +35,7 @@ module Memory_Module(
                     input `rvtype memread, // HIGH is read, LOW is inactive
                     input `rvector memaddr,
                     input `rvector inbus,
+                    input `rvtype reset,
                     output `rvector outbus
                     );
     `ifdef MEMORY_MODULE_DESIGN
@@ -42,15 +44,20 @@ module Memory_Module(
         // Array for switching between memory access modes
         `packed_arr(`rvtype, `READ_WRITE_CTRL_NUM_OF_INPUTS, read_write_control);
         
-        always @ (`CLOCK_ACTIVE_EDGE clk) begin
-            read_write_control[0] = memwrite;
-            read_write_control[1] = memread;
-            unique case(read_write_control)
-                0: `MemoryIdleState("Default mode");
-                1: main_memory.Write(memaddr, inbus, `MEMORY_CELL_SIZE_IN_BYTES);
-                2: outbus = main_memory.Read(memaddr, `MEMORY_CELL_SIZE_IN_BYTES);
-                3: `MemoryIdleState("Forbidden state");
-            endcase
+        always @ (`CLOCK_ACTIVE_EDGE clk or posedge reset) begin
+            if (reset) outbus = `RESET_REG_VAL;
+            else begin
+                begin: sequential_block
+                    read_write_control[0] = memwrite;
+                    read_write_control[1] = memread;
+                    unique case(read_write_control)
+                        0: `MemoryIdleState("Default mode");
+                        1: main_memory.Write(memaddr, inbus, `MEMORY_CELL_SIZE_IN_BYTES);
+                        2: outbus = main_memory.Read(memaddr, `MEMORY_CELL_SIZE_IN_BYTES);
+                        3: `MemoryIdleState("Forbidden state");
+                    endcase
+                end: sequential_block
+            end
         end
     
     `elsif MEMORY_MODULE_IMPLEMENTATION
