@@ -203,7 +203,7 @@ package Memory_Class;
     
     class MemoryScoreboard;
         `_public mailbox scoreboard_mailbox;
-        `_public `unpacked_arr(MemoryTransactionItem, `MEMORY_TESTBENCH_SCOREBOARD_SIZE, database); // Lookup table
+        `_private `unpacked_arr(MemoryTransactionItem, `MEMORY_TESTBENCH_SCOREBOARD_SIZE, database); // Lookup table
         `_private MemoryTransactionItem previous;
         
         task run();
@@ -263,14 +263,13 @@ package Memory_Class;
             monitor = new;
             scoreboard = new;
             scoreboard_mailbox = new;
-        endfunction
-        
-        virtual task run();
             driver.memif = memif;
             monitor.memif = memif;
             monitor.scoreboard_mailbox = scoreboard_mailbox;
             scoreboard.scoreboard_mailbox = scoreboard_mailbox;
-            
+        endfunction
+        
+        virtual task run();
             fork
                 scoreboard.run();
                 driver.run(); // mailbox for driver <-> generator exchange is initialised on test class level
@@ -280,8 +279,8 @@ package Memory_Class;
     endclass
     
     class MemoryTest;
-        MemoryVerificationEnvironment environment;
-        mailbox driver_mailbox;
+        `_private MemoryVerificationEnvironment environment;
+        `_private mailbox driver_mailbox;
         
         function new();
             driver_mailbox = new();
@@ -321,6 +320,6 @@ interface MemoryInterface(input `rvtype clk);
     `rvtype reset;
     `rvector outbus;
     // TODO: Add clocking blocks
-    modport Testbench (output memwrite, output memread, output memaddr, output inbus, output reset, input outbus);
-    modport DUT (input memwrite, input memread, input memaddr, input inbus, input reset, output outbus);
+    modport Testbench (input clk, output memwrite, output memread, output memaddr, output inbus, output reset, input outbus);
+    modport DUT (input clk, input memwrite, input memread, input memaddr, input inbus, input reset, output outbus);
 endinterface

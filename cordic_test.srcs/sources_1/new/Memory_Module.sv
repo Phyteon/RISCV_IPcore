@@ -23,37 +23,29 @@ import Memory_Class::*;
 
 `define READ_WRITE_CTRL_NUM_OF_INPUTS 2
 `define MemoryIdleState(mode) // Macro purely for documentation & code readability - may be later used for debugging
-`define RESET_REG_VAL 'h0000_0000
+`define RESET_REG_VAL `REGISTER_GLOBAL_BITWIDTH'h0
 
 //// Compilation switches - if MEMORY_MODULE_DESIGN is defined, high level OOP implementation will be used
 `define MEMORY_MODULE_DESIGN
 // `define MEMORY_MODULE_IMPLEMENTATION
 
-module Memory_Module(
-                    input `rvtype clk,
-                    input `rvtype memwrite, // HIGH is write, LOW is inactive
-                    input `rvtype memread, // HIGH is read, LOW is inactive
-                    input `rvector memaddr,
-                    input `rvector inbus,
-                    input `rvtype reset,
-                    output `rvector outbus
-                    );
+module Memory_Module(MemoryInterface.DUT memif);
     `ifdef MEMORY_MODULE_DESIGN
         // Creating class for handling memory reads and writes
         `mempkg::Memory main_memory;
         // Array for switching between memory access modes
         `packed_arr(`rvtype, `READ_WRITE_CTRL_NUM_OF_INPUTS, read_write_control);
         
-        always @ (`CLOCK_ACTIVE_EDGE clk) begin
-            if (reset) outbus = `RESET_REG_VAL;
+        always @ (`CLOCK_ACTIVE_EDGE memif.clk) begin
+            if (memif.reset) memif.outbus = `RESET_REG_VAL;
             else begin
                 begin: sequential_block
-                    read_write_control[0] = memwrite;
-                    read_write_control[1] = memread;
+                    read_write_control[0] = memif.memwrite;
+                    read_write_control[1] = memif.memread;
                     unique case(read_write_control)
                         0: `MemoryIdleState("Default mode");
-                        1: main_memory.Write(memaddr, inbus, `MEMORY_CELL_SIZE_IN_BYTES);
-                        2: outbus = main_memory.Read(memaddr, `MEMORY_CELL_SIZE_IN_BYTES);
+                        1: main_memory.Write(memif.memaddr, memif.inbus, `MEMORY_CELL_SIZE_IN_BYTES);
+                        2: memif.outbus = main_memory.Read(memif.memaddr, `MEMORY_CELL_SIZE_IN_BYTES);
                         3: `MemoryIdleState("Forbidden state");
                     endcase
                 end: sequential_block
