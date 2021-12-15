@@ -40,6 +40,7 @@ import Architecture_AClass::*;
 `define BYTE_MASK 'h0000_00FF
 `define WORD_MASK 'h0000_FFFF
 `define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
+`define MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
 
 //// Compilation switch - misaligned memory access support
 `define ALIGNED_MEM_ACCESS // If ALIGNED_MEM_ACCESS is defined, only aligned access to memory is supported
@@ -155,8 +156,8 @@ package Memory_Class;
                 MemoryTransactionItem item;
                 $display("Timestamp=%0t [Memory Driver] waiting for item...", $time);
                 
-                driver_mailbox.get(item);
-                item.log("Memory Driver");
+                driver_mailbox.get(item); // Wait for message from generator
+                item.log("Memory Driver"); // Log transaction item from driver perspective
                 
                 // Driving the pins
                 memif.memwrite <= item.memwrite;
@@ -189,11 +190,12 @@ package Memory_Class;
                     item.memread = memif.memread;
                     item.inbus = memif.inbus;
                     if(memif.memread) begin
-                        @(`CLOCK_ACTIVE_EDGE memif.clk);
-                        item.outbus = memif.outbus;
+                        @(`CLOCK_ACTIVE_EDGE memif.clk); // Wait for second active edge to properly register read operation outcome
                     end //if
-                    item.log("Memory Monitor");
-                    scoreboard_mailbox.put(item);
+                    item.outbus = memif.outbus;
+                    
+                    item.log("Memory Monitor"); // Log transaction item from generator perspective
+                    scoreboard_mailbox.put(item); // Put item in scorebox
                 end //if
             end // forever loop
         endtask
@@ -201,13 +203,13 @@ package Memory_Class;
     
     class MemoryScoreboard;
         `_public mailbox scoreboard_mailbox;
-        `_public `unpacked_arr(MemoryTransactionItem, `MEMORY_TESTBENCH_SCOREBOARD_SIZE, database);
+        `_public `unpacked_arr(MemoryTransactionItem, `MEMORY_TESTBENCH_SCOREBOARD_SIZE, database); // Lookup table
         `_private MemoryTransactionItem previous;
         
         task run();
             forever begin
                 MemoryTransactionItem item;
-                scoreboard_mailbox.get(item);
+                scoreboard_mailbox.get(item); // wait for transaction item from monitor
                 item.log("Memory scoreboard");
                 
                 // Scenario 1: memory write
@@ -271,7 +273,7 @@ package Memory_Class;
             
             fork
                 scoreboard.run();
-                driver.run();
+                driver.run(); // mailbox for driver <-> generator exchange is initialised on test class level
                 monitor.run();
             join_any // If any task finishes, continue execution
         endtask
@@ -279,9 +281,34 @@ package Memory_Class;
     
     class MemoryTest;
         MemoryVerificationEnvironment environment;
+        mailbox driver_mailbox;
+        
+        function new();
+            driver_mailbox = new();
+            environment = new();
+        endfunction
+        
+        virtual task run();
+            environment.driver.driver_mailbox = this.driver_mailbox;
+            
+            fork
+                environment.run(); // Start environment in background
+            join_none
+            
+            this.stimulate(); // Apply stimulus
+        endtask
+        
+        virtual task stimulate();
+            MemoryTransactionItem item;
+            
+            $display("Timestamp=$0t [Memory Test] Starting stimulus ...", $time);
+            for (int i = 0; i < `MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS; i = i + 1) begin
+                item = new;
+                item.randomize(); // Builtin constraints inside transaction item class
+                driver_mailbox.put(item);
+            end // for loop
+        endtask
     endclass
-    
-    
     
 endpackage
 

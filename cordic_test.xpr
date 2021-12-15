@@ -179,14 +179,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/ImmediateGenerator_class.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/new/Memory_Module.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -282,14 +274,7 @@
     </FileSet>
     <FileSet Name="Modules_TB" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/Modules_TB">
       <Filter Type="Srcs"/>
-      <File Path="$PSRCDIR/Modules_TB/new/TB_Clocking_Module_TB.sv">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/Modules_TB/new/Memory_TB.sv">
+      <File Path="$PSRCDIR/Modules_TB/new/RV_core_TB.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -299,8 +284,7 @@
       </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
-        <Option Name="TopModule" Val="TB_Clocking_Module_TB"/>
-        <Option Name="TopLib" Val="xil_defaultlib"/>
+        <Option Name="TopModule" Val="RV_core"/>
         <Option Name="TransportPathDelay" Val="0"/>
         <Option Name="TransportIntDelay" Val="0"/>
         <Option Name="SimMode" Val="post-implementation"/>

@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 26.11.2021 19:05:19
+// Create Date: 15.12.2021 20:15:43
 // Design Name: 
-// Module Name: ImmediateGenerator_class
+// Module Name: RV_core_TB
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ImmediateGenerator_class(
+module RV_core_TB(
 
     );
 endmodule
