@@ -35,8 +35,8 @@ import Architecture_AClass::*;
 `define PROGRAM_MEMORY_SIZE_IN_CELLS 1024 // When MemoryCell is 32 bits wide, this translates to 4kB of memory
 
 `define memorycell `mempkg::MemoryCell
-`define MEMORY_INITIAL_VALUE 'h0000_0000
-`define MEMORY_CELL_SIZE_IN_BYTES (($bits(`memorycell))/`BYTE_SIZE)
+`define MEMORY_INITIAL_VALUE `REGISTER_GLOBAL_BITWIDTH'h0
+`define MEMORY_CELL_SIZE_IN_BYTES (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE)
 `define BYTE_MASK 'h0000_00FF
 `define WORD_MASK 'h0000_FFFF
 `define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
@@ -70,8 +70,9 @@ package Memory_Class;
     class Memory extends Architecture_AClass::Architecture;
         `_protected MemoryType main_memory;
         
-        `_public function new();
-            // Does nothing, as in real processors memory is not cleared on startup
+        function new();
+            foreach(main_memory[icell])
+                main_memory[icell] = `MEMORY_INITIAL_VALUE;
         endfunction
         
         `_public function `memorycell Read(input `uint address, input `uint bytes);
@@ -118,31 +119,29 @@ package Memory_Class;
     endclass
     
     class MemoryTransactionItem;
-        `_public rand `rvector memaddr;
+        `_public randc `rvector memaddr; // cycle through
         `_public rand `rvector inbus;
         `_public rand `rvtype memwrite;
         `_public rand `rvtype memread;
         `_public `rvector outbus;
         
         constraint c_memaddr {
-            memaddr < (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES;
-            memaddr[0][1:0] == 2'b0; // Only testing aligned addresses
+            memaddr < ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES);
+            memaddr % `MEMORY_CELL_SIZE_IN_BYTES == 0;
         };
         constraint c_memreadwrite {
             (memwrite & memread) != 1; 
         };
         
         `_public function void log(input string tag="");
-            $display("Timestamp=%0t [%s] memaddr=0x%0h memwrite=%0d memread=%0d inbus=%0d outbus=0x%0h",
-                      $time,        tag, memaddr,      memwrite,    memread,    inbus,    outbus);
+            $display("Timestamp=%0t [%s] memaddr=0x%0h memwrite=0x%0h memread=0x%0h inbus=0x%0h outbus=0x%0h",
+                      $time,        tag, memaddr,      memwrite,      memread,      inbus,      outbus);
         endfunction
     endclass
     
     class MemoryVerificationDriver;
         `_public virtual MemoryInterface memif;
         `_public mailbox driver_mailbox;
-        event driver_done;
-        
         
         `_public task run();
             $display("Timestamp=%0t [Memory Driver] starting ...", $time);
@@ -164,7 +163,6 @@ package Memory_Class;
                 
                 // Transaction is done on the next active clock edge
                 @(`CLOCK_ACTIVE_EDGE memif.clk);
-                ->driver_done;
                 
             end // forever loop
         endtask
