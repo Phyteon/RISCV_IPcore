@@ -81,9 +81,9 @@ package Memory_Class;
                 1: intermediate_val[0] = this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][memcell_remainder];
                 2: 
                     if(memcell_remainder == 0) 
-                        intermediate_val[0:1] = this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][0:1];
+                        intermediate_val[1:0] = this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][1:0];
                     else if(memcell_remainder == 2)
-                        intermediate_val[0:1] = this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][2:3];
+                        intermediate_val[1:0] = this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][3:2];
                     else
                         $error("Misalingned address!");
                 4:
@@ -103,9 +103,9 @@ package Memory_Class;
                 1: this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][memcell_remainder] = data;
                 2:
                     if(memcell_remainder == 0) 
-                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][0:1] = data[0:1];
+                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][1:0] = data[1:0];
                     else if(memcell_remainder == 2)
-                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][2:3] = data[0:1];
+                        this.main_memory[address/`MEMORY_CELL_SIZE_IN_BYTES][3:2] = data[1:0];
                     else
                         $error("Misalingned address!");
                 4:
@@ -124,10 +124,6 @@ package Memory_Class;
         `_public rand `rvtype memread;
         `_public `rvector outbus;
         
-        function new();
-        
-        endfunction;
-        
         constraint c_memaddr {
             memaddr < (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES;
             memaddr[0][1:0] == 2'b0; // Only testing aligned addresses
@@ -144,8 +140,9 @@ package Memory_Class;
     
     class MemoryVerificationDriver;
         `_public virtual MemoryInterface memif;
-        `_public event driver_done;
         `_public mailbox driver_mailbox;
+        event driver_done;
+        
         
         `_public task run();
             $display("Timestamp=%0t [Memory Driver] starting ...", $time);
@@ -204,11 +201,10 @@ package Memory_Class;
     class MemoryScoreboard;
         `_public mailbox scoreboard_mailbox;
         `_private `unpacked_arr(MemoryTransactionItem, `MEMORY_TESTBENCH_SCOREBOARD_SIZE, database); // Lookup table
-        `_private MemoryTransactionItem previous;
         
-        task run();
+        `_public task run();
             forever begin
-                MemoryTransactionItem item;
+                MemoryTransactionItem item; // Handle for objects from mailbox
                 scoreboard_mailbox.get(item); // wait for transaction item from monitor
                 item.log("Memory scoreboard");
                 
@@ -217,7 +213,6 @@ package Memory_Class;
                     if (database[item.memaddr] == null)
                         database[item.memaddr] = new;
                     database[item.memaddr] = item;
-                    previous = item;
                     $display("Timestamp=%0t [Memory Scoreboard] Store memaddr=0x%0h memwrite=0x%0h inbus=0x%0h",
                               $time,                                  item.memaddr, item.memwrite, item.inbus);
                 end //if
@@ -234,17 +229,12 @@ package Memory_Class;
                         else
                             $display("Timestamp=%0t [Memory Scoreboard] PASS memaddr=0x%0h memread=0x%0h outbus=0x%0h",
                                      $time,                                  item.memaddr, item.memread, item.outbus); 
-                    previous = item;
                 end //if
                 
                 // Scenario 3: memory idle state 1
                 if (~(item.memwrite || item.memread)) begin
-                    if (item.outbus != previous.outbus)
-                        $display("Timestamp=%0t [Memory Scoreboard] ERROR 0x02! memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
-                                 $time,                                         item.memaddr, item.memwrite, item.memread, item.outbus);
-                    else
-                        $display("Timestamp=%0t [Memory Scoreboard] PASS memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
-                                 $time,                                  item.memaddr, item.memwrite, item.memread, item.outbus);
+                    $display("Timestamp=%0t [Memory Scoreboard] Info - idle memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
+                             $time,                                         item.memaddr, item.memwrite, item.memread, item.outbus);
                 end //if
                 
             end // forever loop
@@ -252,24 +242,24 @@ package Memory_Class;
     endclass
     
     class MemoryVerificationEnvironment;
-        MemoryVerificationDriver driver;
-        MemoryMonitor monitor;
-        MemoryScoreboard scoreboard;
-        mailbox scoreboard_mailbox; // Top level mailbox for scoreboard <-> monitor transactions
-        virtual MemoryInterface memif;
+        `_public MemoryVerificationDriver driver; // Public because of the mailbox handling in the class above
+        `_private MemoryMonitor monitor;
+        `_private MemoryScoreboard scoreboard;
+        `_public mailbox scoreboard_mailbox; // Top level mailbox for scoreboard <-> monitor transactions
+        `_public virtual MemoryInterface memif;
         
         function new();
             driver = new;
             monitor = new;
             scoreboard = new;
             scoreboard_mailbox = new;
-            driver.memif = memif;
-            monitor.memif = memif;
-            monitor.scoreboard_mailbox = scoreboard_mailbox;
-            scoreboard.scoreboard_mailbox = scoreboard_mailbox;
         endfunction
         
-        virtual task run();
+        `_public virtual task run();
+            driver.memif = this.memif;
+            monitor.memif = this.memif;
+            monitor.scoreboard_mailbox = this.scoreboard_mailbox;
+            scoreboard.scoreboard_mailbox = this.scoreboard_mailbox;
             fork
                 scoreboard.run();
                 driver.run(); // mailbox for driver <-> generator exchange is initialised on test class level
@@ -281,13 +271,15 @@ package Memory_Class;
     class MemoryTest;
         `_private MemoryVerificationEnvironment environment;
         `_private mailbox driver_mailbox;
+        `_public virtual MemoryInterface memif;
         
         function new();
-            driver_mailbox = new();
-            environment = new();
+            driver_mailbox = new;
+            environment = new;
         endfunction
         
-        virtual task run();
+        `_public virtual task run();
+            environment.memif = this.memif;
             environment.driver.driver_mailbox = this.driver_mailbox;
             
             fork
@@ -297,10 +289,10 @@ package Memory_Class;
             this.stimulate(); // Apply stimulus
         endtask
         
-        virtual task stimulate();
+        `_public virtual task stimulate();
             MemoryTransactionItem item;
             
-            $display("Timestamp=$0t [Memory Test] Starting stimulus ...", $time);
+            $display("Timestamp=%0t [Memory Test] Starting stimulus ...", $time);
             for (int i = 0; i < `MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS; i = i + 1) begin
                 item = new;
                 item.randomize(); // Builtin constraints inside transaction item class
