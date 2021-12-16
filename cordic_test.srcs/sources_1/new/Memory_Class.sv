@@ -41,6 +41,7 @@ import Architecture_AClass::*;
 `define WORD_MASK 'h0000_FFFF
 `define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
 `define MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
+`define MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN 10
 
 //// Compilation switch - misaligned memory access support
 `define ALIGNED_MEM_ACCESS // If ALIGNED_MEM_ACCESS is defined, only aligned access to memory is supported
@@ -119,7 +120,7 @@ package Memory_Class;
     endclass
     
     class MemoryTransactionItem;
-        `_public randc `rvector memaddr; // cycle through
+        `_public rand `rvector memaddr; // cycle through
         `_public rand `rvector inbus;
         `_public rand `rvtype memwrite;
         `_public rand `rvtype memread;
@@ -127,6 +128,7 @@ package Memory_Class;
         
         constraint c_memaddr {
             memaddr < ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES);
+            memaddr > ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES) - `MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN;
             memaddr % `MEMORY_CELL_SIZE_IN_BYTES == 0;
         };
         constraint c_memreadwrite {
@@ -145,8 +147,6 @@ package Memory_Class;
         
         `_public task run();
             $display("Timestamp=%0t [Memory Driver] starting ...", $time);
-            // Synchronise task to clock signal
-            @(`CLOCK_ACTIVE_EDGE memif.clk);
             
             forever begin
                 MemoryTransactionItem item;
@@ -160,9 +160,6 @@ package Memory_Class;
                 memif.memread <= item.memread;
                 memif.memaddr <= item.memaddr;
                 memif.inbus <= item.inbus;
-                
-                // Transaction is done on the next active clock edge
-                @(`CLOCK_ACTIVE_EDGE memif.clk);
                 
             end // forever loop
         endtask
@@ -184,13 +181,10 @@ package Memory_Class;
                     item.memwrite = memif.memwrite;
                     item.memread = memif.memread;
                     item.inbus = memif.inbus;
-                    if(memif.memread) begin
-                        @(`CLOCK_ACTIVE_EDGE memif.clk); // Wait for second active edge to properly register read operation outcome
-                    end //if
                     item.outbus = memif.outbus;
                     
                     item.log("Memory Monitor"); // Log transaction item from generator perspective
-                    scoreboard_mailbox.put(item); // Put item in scorebox
+                    this.scoreboard_mailbox.put(item); // Put item in scoreboard mailbox
                 end //if
             end // forever loop
         endtask
@@ -203,8 +197,8 @@ package Memory_Class;
         `_public task run();
             forever begin
                 MemoryTransactionItem item; // Handle for objects from mailbox
-                scoreboard_mailbox.get(item); // wait for transaction item from monitor
-                item.log("Memory scoreboard");
+                this.scoreboard_mailbox.get(item); // wait for transaction item from monitor
+                item.log("Memory Scoreboard");
                 
                 // Scenario 1: memory write
                 if ((item.memwrite == 1) && (item.memread == 0)) begin
@@ -221,12 +215,12 @@ package Memory_Class;
                         $display("Timestamp=%0t [Memory Scoreboard] Uninitialised addr read memaddr=0x%0h memread=0x%0h outbus=0x%0h",
                                  $time,                                                     item.memaddr, item.memread, item.outbus);
                     else
-                        if (item.outbus != database[item.memaddr].outbus)
-                            $display("Timestamp=%0t [Memory Scoreboard] ERROR 0x01! memaddr=0x%0h memread=0x%0h outbus=0x%0h",
-                                     $time,                                         item.memaddr, item.memread, item.outbus);
+                        if (item.outbus != this.database[item.memaddr].inbus)
+                            $display("Timestamp=%0t [Memory Scoreboard] ERROR 0x01! memaddr=0x%0h memread=0x%0h outbus=0x%0h sim_database=0x%0h",
+                                      $time,                                        item.memaddr, item.memread, item.outbus, database[item.memaddr].inbus);
                         else
                             $display("Timestamp=%0t [Memory Scoreboard] PASS memaddr=0x%0h memread=0x%0h outbus=0x%0h",
-                                     $time,                                  item.memaddr, item.memread, item.outbus); 
+                                      $time,                                  item.memaddr, item.memread, item.outbus);
                 end //if
                 
                 // Scenario 3: memory idle state 1
@@ -234,9 +228,11 @@ package Memory_Class;
                     $display("Timestamp=%0t [Memory Scoreboard] Info - idle memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
                              $time,                                         item.memaddr, item.memwrite, item.memread, item.outbus);
                 end //if
+               
                 
             end // forever loop
         endtask
+
     endclass
     
     class MemoryVerificationEnvironment;
@@ -247,21 +243,21 @@ package Memory_Class;
         `_public virtual MemoryInterface memif;
         
         function new();
-            driver = new;
-            monitor = new;
-            scoreboard = new;
-            scoreboard_mailbox = new;
+            this.driver = new;
+            this.monitor = new;
+            this.scoreboard = new;
+            this.scoreboard_mailbox = new;
         endfunction
         
         `_public virtual task run();
-            driver.memif = this.memif;
-            monitor.memif = this.memif;
-            monitor.scoreboard_mailbox = this.scoreboard_mailbox;
-            scoreboard.scoreboard_mailbox = this.scoreboard_mailbox;
+            this.driver.memif = this.memif;
+            this.monitor.memif = this.memif;
+            this.monitor.scoreboard_mailbox = this.scoreboard_mailbox;
+            this.scoreboard.scoreboard_mailbox = this.scoreboard_mailbox;
             fork
-                scoreboard.run();
-                driver.run(); // mailbox for driver <-> generator exchange is initialised on test class level
-                monitor.run();
+                this.scoreboard.run();
+                this.driver.run(); // mailbox for driver <-> generator exchange is initialised on test class level
+                this.monitor.run();
             join_any // If any task finishes, continue execution
         endtask
     endclass
@@ -272,19 +268,18 @@ package Memory_Class;
         `_public virtual MemoryInterface memif;
         
         function new();
-            driver_mailbox = new;
-            environment = new;
+            this.driver_mailbox = new;
+            this.environment = new;
         endfunction
         
         `_public virtual task run();
-            environment.memif = this.memif;
-            environment.driver.driver_mailbox = this.driver_mailbox;
+            this.environment.memif = this.memif;
+            this.environment.driver.driver_mailbox = this.driver_mailbox;
             
             fork
-                environment.run(); // Start environment in background
+                this.environment.run(); // Start environment in background
+                this.stimulate(); // Apply stimulus
             join_none
-            
-            this.stimulate(); // Apply stimulus
         endtask
         
         `_public virtual task stimulate();
@@ -294,6 +289,7 @@ package Memory_Class;
             for (int i = 0; i < `MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS; i = i + 1) begin
                 item = new;
                 item.randomize(); // Builtin constraints inside transaction item class
+                @(`CLOCK_ACTIVE_EDGE this.memif.clk);
                 driver_mailbox.put(item);
             end // for loop
         endtask
