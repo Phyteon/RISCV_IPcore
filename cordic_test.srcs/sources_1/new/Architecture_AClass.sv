@@ -62,9 +62,9 @@
 `define dynamic_cast_to_sint(target, val) $cast(target, val)
 `define static_cast_to_regvector(val) `rvector'(val)
 `define static_cast_to_insvector(val) `ivector'(val)
-`define unpacked_arr(_type, _size, _identifier) _type _identifier [_size - 1 : 0]
+`define unpacked_arr(_type, _size, _identifier) _type _identifier [(_size) - 1 : 0]
 `define unpacked_dynamic_arr(_type, _identifier) _type _identifier []
-`define packed_arr(_type, _size, _identifier) _type [_size - 1 : 0] _identifier
+`define packed_arr(_type, _size, _identifier) _type [(_size) - 1 : 0] _identifier
 `define packed_dynamic_arr(_type, _identifier) _type [] _identifier
 
 // Compilation-time macros
