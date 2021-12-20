@@ -27,8 +27,11 @@ import Architecture_AClass::*;
 `define OPERATION_ENUM_VEC_BITWIDTH 4
 `define ALU_INTERNALS_INITIAL_STATE `NULL_REG_VAL
 `define ALUVECTOR_BITWIDTH (`REGISTER_GLOBAL_BITWIDTH + 1)
+
+// Typedefs aliases
 `define aluvector `alupkg::riscv_aluvector
 `define alu_operation_vector `alupkg::riscv_alu_operation_vector
+`define alu_operation_type `alupkg::OperationType
 
 package ALU_Class;
     /////////////////////////////////
@@ -81,7 +84,22 @@ package ALU_Class;
             endcase
         
         endfunction
-    
+    endclass
+
+    class AluTransactionItem;
+        `_public `rvector left_operand;
+        `_public `rvector right_operand;
+        `_public `aluvector outcome;
+        `_public `alu_operation_type operation;
+    endclass
+
+    class AluDriver;
+        `_public virtual ALUInterface aluinf;
+        `_public mailbox alu_driver_mailbox;
+
+        `_public task run();
+            
+        endtask
     endclass
 endpackage
 
@@ -90,7 +108,7 @@ interface ALUInterface(input `rvtype clk);
     `rvector rightOperand;
     `aluvector outcome;
     `rvtype reset;
-    `alu_operation_vector operation;
+    `alu_operation_type operation;
     modport DUT(input clk, input reset, input leftOperand, input rightOperand, input operation, output outcome);
     modport Testbench(input clk, output reset, output leftOperand, output rightOperand, output operation, input outcome);
 endinterface //ALUInterface

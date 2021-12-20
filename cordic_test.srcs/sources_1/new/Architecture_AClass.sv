@@ -27,35 +27,47 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////1
 
-// Package alias macro
+/**
+* Package alias macro.
+* Used instead of the whole package name (wherever it is possible).
+*/
 `define archpkg Architecture_AClass
 
-// Constant-value representing macros meant for global usage
+/**
+* Global constants.
+* They define constant values used throughout the whole project.
+* They allow easier architecture adjustment if needed.
+*/
 `define INSTRUCTION_GLOBAL_BITWIDTH 32
-`define REGISTER_GLOBAL_BITWIDTH 32
+`define REGISTER_GLOBAL_BITWIDTH 32 /**< Must be a multiple of BYTE_SIZE! */
 `define BYTE_SIZE 8
-`define NULL_REG_VAL 'h0000_0000
+`define NULL_REG_VAL `REGISTER_GLOBAL_BITWIDTH'h0
 
-// Clocking methodology
+/**
+* Clocking methodology macros.
+* They define the active and trailing edge of clock signal.
+*/
 `define CLOCK_ACTIVE_EDGE posedge
 `define CLOCK_TRAILING_EDGE negedge
 
-// Global aliases macros
+/**
+* Global type aliases macros.
+* Used throughout the project, aliases to all types in this file.
+*/
 `define ivector `archpkg::insvector
 `define rvector `archpkg::regvector
 `define rvbyte `archpkg::riscvbyte
 `define uint int unsigned
 `define sint int signed
-`define rvtype `archpkg::riscvtype // Common type for processor internals
+`define rvtype `archpkg::riscvtype /**< Common type for processor internals. */
 `define class_handle_dynamic_array `archpkg::ClassHandleDA
 `define rvector_dynamic_array `archpkg::RegVectorDA
 `define ivector_dynamic_array `archpkg::InsVectorDA
-`define _private local // Can be altered so that all private fields will become public
-`define _protected protected // Can be altered so that all protected fields will become public
-`define _public // Mainly to express intention
 
-
-// Global utility macros or function-like macros
+/**
+* Utility and readability macros.
+* They allow self-documenting, more readable code.
+*/
 `define static_cast_to_uint(val) unsigned'(val)
 `define dynamic_cast_to_uint(target, val) $cast(target, val)
 `define static_cast_to_sint(val) signed'(val)
@@ -66,79 +78,116 @@
 `define unpacked_dynamic_arr(_type, _identifier) _type _identifier []
 `define packed_arr(_type, _size, _identifier) _type [(_size) - 1 : 0] _identifier
 `define packed_dynamic_arr(_type, _identifier) _type [] _identifier
+`define _private local /**< Can be altered so that all private fields will become public - for debug and readability purposes. */
+`define _protected protected /**< Can be altered so that all protected fields will become public - for debug and readability purposes. */
+`define _public /**< Mainly to express intent - for readability purposes. */
 
-// Compilation-time macros
-`define throw_compilation_error(msg) SomeObviouslyWrongSyntax
+/**
+* Compilation-time macros.
+* They only affect the compilation phase.
+*/
+`define throw_compilation_error(msg) SomeObviouslyWrongSyntax /**< Since there is no compilation-time assertions in SV, this is a makeshift way to imitate them. */
+
+/**
+* Diagnostic Log Trace macros.
+* They either manage the setup of the task that performs logging,
+* or they are some sort of alias to the task.
+*/
+`define DIAGNOSTIC_LOG_TRACE_EXTENDED 0 /**< When set to 1, DLT will also log line number and file name from where it is called. */
+`define LOG_INFO(logging_entity, )
+`define LOG_WARN
+`define LOG_ERROR
+
+/**
+* Init task macros
+* They contain parameters for the task and manage the execution
+* flow.
+*/
+`define TIME_LOGGING_UNITS_NS -9 // -9 for nanoseconds
+`define TIME_LOGGING_PRECISION_DIGITS 2
+`define TIME_LOGGING_SUFFIX_STRING " ns"
+`define TIME_LOGGING_MIN_FIELD_WIDTH 6
 
 package Architecture_AClass;
     //// Global type definitions ////
-    
-    /////////////////////////////////
-    // Typedef:
-    //      riscvtype
-    // Info:
-    //      This type represents base logic type used in all modules/packages etc.
-    /////////////////////////////////
+
+    /**
+    * Type used as a basic type for everything in project.
+    */
     typedef logic riscvtype;
     
-    /////////////////////////////////
-    // Typedef:
-    //      riscvtype
-    // Info:
-    //      This type represents base logic type used in all modules/packages etc.
-    /////////////////////////////////
+    /**
+    * Type defining a byte using riscvtype as base.
+    */
     typedef `packed_arr(`rvtype, `BYTE_SIZE, riscvbyte);
     
-    /////////////////////////////////
-    // Typedef:
-    //      regvector
-    // Info:
-    //      This type represents register value on the lowest level. It is a packed
-    //      array of type riscvbyte and of fixed length defined by REGISTER_GLOBAL_BITWIDTH
-    //      and BYTE_SIZE macros. Designed with ease of byte-addresation in mind.
-    /////////////////////////////////
+    /**
+    * Type defining a packed array of bytes - mainly for register representation.
+    */
     typedef `packed_arr(`rvbyte, (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE), regvector);
     
-    /////////////////////////////////
-    // Typedef:
-    //      insvector
-    // Info:
-    //      This type represents instruction value on the lowest level. It is a packed
-    //      array of type riscvtype and of fixed length defined by INSTRUCTION_GLOBAL_BITWIDTH
-    //      macro.
-    /////////////////////////////////
+    /**
+    * Type defining a packed array of riscvtype - mainly for representing instructions.
+    */
     typedef `packed_arr(`rvtype, `INSTRUCTION_GLOBAL_BITWIDTH, insvector);
     
-    /////////////////////////////////
-    // Typedef:
-    //      RegVectorDA
-    // Info:
-    //      This type represents dynamic unpacked array of regvector type. It may be used
-    //      as a type to be returned from a function or for convenient data manipulation.
-    /////////////////////////////////
+    /**
+    * Type defining a dynamic array of regvector type variables. Created so that it
+    * functions can use it as a return value.
+    */
     typedef regvector RegVectorDA[];
     
-    /////////////////////////////////
-    // Typedef:
-    //      InsVectorDA
-    // Info:
-    //      This type represents dynamic unpacked array of insvector type. It may be used
-    //      as a type to be returned from a function or for convenient data manipulation.
-    /////////////////////////////////
+    /**
+    * Type defining a dynamic array of insvector type variables. Created so that it
+    * functions can use it as a return value.
+    */
     typedef insvector InsVectorDA[];
 
+    /**
+    * Abstract empty class, used only as a parent for other classes.
+    */
     virtual class Architecture;
     endclass
     
-    /////////////////////////////////
-    // Typedef:
-    //      ClassHandleDA
-    // Info:
-    //      This type represents dynamic unpacked array of Architecture class handles. It may be used
-    //      as a type to be returned from a function or for convenient data manipulation. As every class
-    //      is derived from the Architecture class, this data type may be used to hold any class defined
-    //      in the project.
-    /////////////////////////////////
+    /**
+    * Type defining a dynamic array of Architecture class handles. It allows
+    * for storing handles for objects of all classes that inherit after Architecture class.
+    */
     typedef Architecture ClassHandleDA[];
+    
+    /**
+    * Task used for logging debug information. Always displays timestamp of the message.
+    * If DIAGNOSTIC_LOG_TRACE_EXTENDED is set to 1, will also log the line number and file name
+    * from where the message is logged.
+    * @param logging_entity will indicate what entity called the logging function, i.e. "Memory Driver"
+    * @param info any additional information to be displayed after logging entity
+    * @param format string containing description and formatting of data to be logged.
+    *        If no values are to be logged must be an empty string. If the string is equal
+    *        to "default", then the task will display provided values in the hexadecimal
+    *        format separated by semicolons.
+    * @param params that must be representable in integer format, to be parsed by provided
+    *        format. If no values are to be displayed, must be an empty queue.
+    */
+    task DiagnosticLogTrace(input string logging_entity, input string info, input string format, input int params [$]);
+        string temporary = "T=%t "; /**< Timestamp. */
+        if(`DIAGNOSTIC_LOG_TRACE_EXTENDED)
+            temporary = {temporary, "file: %s, line: %d"};
+        temporary = {temporary, " [%s] %s "}; /**< Logging entity and info string. */
+        if((format == "default") && (params.size() != 0)) begin
+            repeat(params.size())
+                temporary = {temporary, "0x%h;"};
+        end else if(params.size() != 0) begin
+            temporary = {temporary, format};
+        end
+        
+    endtask
+
+    /**
+    * Init task. All the setup should be done here. That mostly consists of one-time call tasks/functions.
+    */
+    task Init()
+        $timeformat(`TIME_LOGGING_UNITS_NS, `TIME_LOGGING_PRECISION_DIGITS, `TIME_LOGGING_SUFFIX_STRING, `TIME_LOGGING_MIN_FIELD_WIDTH);
+        $monitoroff();
+    endtask
     
 endpackage
