@@ -94,9 +94,7 @@
 * or they are some sort of alias to the task.
 */
 `define DIAGNOSTIC_LOG_TRACE_EXTENDED 0 /**< When set to 1, DLT will also log line number and file name from where it is called. */
-`define LOG_INFO(logging_entity, )
-`define LOG_WARN
-`define LOG_ERROR
+`define DLT_LOG(logging_entity, info, format, params) `archpkg::DiagnosticLogTrace(`__FILE__, `__LINE__, logging_entity, info, format, params)
 
 /**
 * Init task macros
@@ -107,6 +105,7 @@
 `define TIME_LOGGING_PRECISION_DIGITS 2
 `define TIME_LOGGING_SUFFIX_STRING " ns"
 `define TIME_LOGGING_MIN_FIELD_WIDTH 6
+`define INIT_TASK `archpkg::Init()
 
 package Architecture_AClass;
     //// Global type definitions ////
@@ -158,7 +157,9 @@ package Architecture_AClass;
     /**
     * Task used for logging debug information. Always displays timestamp of the message.
     * If DIAGNOSTIC_LOG_TRACE_EXTENDED is set to 1, will also log the line number and file name
-    * from where the message is logged.
+    * from where the message is logged BUT the task must be invoked via DLT_LOG macro or its alias.
+    * @param file from which the logging task is invoked
+    * @param line in which the logging task is invoked
     * @param logging_entity will indicate what entity called the logging function, i.e. "Memory Driver"
     * @param info any additional information to be displayed after logging entity
     * @param format string containing description and formatting of data to be logged.
@@ -168,26 +169,44 @@ package Architecture_AClass;
     * @param params that must be representable in integer format, to be parsed by provided
     *        format. If no values are to be displayed, must be an empty queue.
     */
-    task DiagnosticLogTrace(input string logging_entity, input string info, input string format, input int params [$]);
-        string temporary = "T=%t "; /**< Timestamp. */
+    task DiagnosticLogTrace(input string file, input int line, input string logging_entity, input string info, input string format [], input int params []);
+        string parsed = "T=%t "; /**< Timestamp. */
+        string temporary = ""; /**< For parsing arguments. */
         if(`DIAGNOSTIC_LOG_TRACE_EXTENDED)
-            temporary = {temporary, "file: %s, line: %d"};
-        temporary = {temporary, " [%s] %s "}; /**< Logging entity and info string. */
-        if((format == "default") && (params.size() != 0)) begin
-            repeat(params.size())
-                temporary = {temporary, "0x%h;"};
-        end else if(params.size() != 0) begin
-            temporary = {temporary, format};
+            parsed = {parsed, "file: %s, line: %0d"};
+        parsed = {parsed, " [%s] %s "}; /**< Logging entity and info string. */
+        if(format.size() != 0) begin
+            if(format[0] == "default") begin
+                foreach(params[iter]) begin
+                    $sformat(temporary, "d%0d=0x%0h; ", iter, params[iter]);
+                    parsed = {parsed, temporary};
+                    temporary = "";
+                end // foreach
+            end
+            else begin
+                foreach(format[iter]) begin
+                    $sformat(temporary, format[iter], params[iter]);
+                    parsed = {parsed, temporary};
+                    temporary = "";
+                end // foreach
+            end
         end
+        
+        if(`DIAGNOSTIC_LOG_TRACE_EXTENDED)
+            $sformat(parsed, parsed, $time, file, line, logging_entity, info);
+        else
+            $sformat(parsed, parsed, $time, logging_entity, info); /**< The rest of data, if it exists, is already parsed */
+        $display(parsed);
+
         
     endtask
 
     /**
     * Init task. All the setup should be done here. That mostly consists of one-time call tasks/functions.
     */
-    task Init()
+    task Init();
         $timeformat(`TIME_LOGGING_UNITS_NS, `TIME_LOGGING_PRECISION_DIGITS, `TIME_LOGGING_SUFFIX_STRING, `TIME_LOGGING_MIN_FIELD_WIDTH);
-        $monitoroff();
+        $monitoroff;
     endtask
     
 endpackage

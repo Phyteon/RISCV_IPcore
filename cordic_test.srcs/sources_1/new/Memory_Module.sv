@@ -29,7 +29,7 @@ import Memory_Class::*;
 `define MEMORY_MODULE_DESIGN
 // `define MEMORY_MODULE_IMPLEMENTATION
 
-module Memory_Module(`mempkg::MemoryInterface.DUT memif);
+module Memory_Module(MemoryInterface.DUT memif);
     `ifdef MEMORY_MODULE_DESIGN
         // Creating class for handling memory reads and writes
         `mempkg::Memory main_memory;
