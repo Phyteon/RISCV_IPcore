@@ -31,6 +31,11 @@ import Architecture_AClass::*;
 `define ALUVECTOR_BITWIDTH (`REGISTER_GLOBAL_BITWIDTH + 1)
 
 /**
+* Testbench macros.
+*/
+`define ALU_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
+
+/**
 * Global type aliases macros.
 * Used throughout the project, aliases to all types in this file.
 */
@@ -225,6 +230,69 @@ package ALU_Class;
                         `DLT_ALU_SCOREBOARD(" |INVALID OPERATION| ");
                 endcase
             end // forever loop
+        endtask
+    endclass
+
+    class AluEnvironment;
+        `_public virtual ALUInterface aluinf;
+        `_private AluDriver driver;
+        `_private AluMonitor monitor;
+        `_private AluScoreborad scoreboard;
+        `_private mailbox driver_mailbox; /**< Mailbox for communication generator->driver */
+        `_private mailbox scoreboard_drv_mailbox; /**< Mailbox for communication driver->scoreboard */
+        `_private mailbox scoreboard_mnt_mailbox; /**< Mailbox for communication monitor->scoreboard */
+
+        function new();
+            this.driver = new;
+            this.monitor = new;
+            this.scoreboard = new;
+            this.driver_mailbox = new;
+            this.scoreboard_drv_mailbox = new;
+            this.scoreboard_mnt_mailbox = new;
+            /**
+            * Setting up the mailboxes.
+            */
+            this.driver.alu_driver_mailbox = this.driver_mailbox;
+            this.driver.alu_driver_scoreboard = this.scoreboard_drv_mailbox;
+            this.monitor.alu_scoreboard_mailbox = this.scoreboard_mnt_mailbox;
+        endfunction
+
+        `_private task stimulate();
+            AluTransactionItem item = new;
+            `DLT_ALU_INFO("ALU Verification Environment", " Starting stimulus... ");
+            repeat(`ALU_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS) begin
+                item.randomize();
+                @(`CLOCK_ACTIVE_EDGE this.aluinf.clk); /**< Transactions only on active edge of clock signal. */
+                this.driver_mailbox.put(item);
+            end
+        endtask
+
+        `_public task run();
+            this.driver.aluinf = this.aluinf;
+            this.monitor.aluinf = this.aluinf;
+            fork
+                this.driver.run();
+                this.monitor.run();
+                this.scoreboard.run();
+            join_none /**< Do not wait for any task to finish */
+
+            this.stimulate(); /**< Apply stimulus */
+        endtask
+    endclass
+
+    class AluTest;
+        `_public virtual ALUInterface aluinf;
+        `_private AluEnvironment environment;
+
+        function new();
+            this.environment = new;
+        endfunction
+
+        `_public task run();
+            this.environment.aluinf = this.aluinf;
+            fork
+                this.environment.run();
+            join_none
         endtask
     endclass
 endpackage
