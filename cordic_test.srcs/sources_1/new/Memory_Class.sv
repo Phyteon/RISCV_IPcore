@@ -30,21 +30,61 @@ import Architecture_AClass::*;
 // Global package alias
 `define mempkg Memory_Class
 
-// Memory sizes defines
-`define DATA_MEMORY_SIZE_IN_CELLS 1024 // When MemoryCell is 32 bits wide, this translates to 4kB of memory
-`define PROGRAM_MEMORY_SIZE_IN_CELLS 1024 // When MemoryCell is 32 bits wide, this translates to 4kB of memory
+/**
+* Memory size macros.
+*/
+`define DATA_MEMORY_SIZE_IN_CELLS 1024 /**< When MemoryCell is 32 bits wide, this translates to 4kB of memory. */
+`define PROGRAM_MEMORY_SIZE_IN_CELLS 1024 /**< When MemoryCell is 32 bits wide, this translates to 4kB of memory. */
 
 `define memorycell `mempkg::MemoryCell
 `define MEMORY_INITIAL_VALUE `REGISTER_GLOBAL_BITWIDTH'h0
 `define MEMORY_CELL_SIZE_IN_BYTES (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE)
-`define BYTE_MASK 'h0000_00FF
-`define WORD_MASK 'h0000_FFFF
+`define BYTE_MASK `REGISTER_GLOBAL_BITWIDTH'h0000_00FF
+`define WORD_MASK `REGISTER_GLOBAL_BITWIDTH'h0000_FFFF
 `define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
 `define MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
 `define MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN 10
 
-//// Compilation switch - misaligned memory access support
-`define ALIGNED_MEM_ACCESS // If ALIGNED_MEM_ACCESS is defined, only aligned access to memory is supported
+/**
+* Diagnostic log trace adapter macros and ERROR macros.
+* They are aliases to the main DLT_LOG macro. ERROR macros
+* provide self-documented error record.
+*/
+`define DLT_MEMORY_TITEM_VARDUMP(logging_entity) `DLT_LOG(logging_entity, \
+                                                         " Transaction Item vars dump: ", \
+                                                         {"memaddr=0x%0h ", \
+                                                         "memwrite=0x%0h ", \
+                                                         "memread=0x%0h ", \
+                                                         "inbus=0x%0h ", \
+                                                         "outbus=0x%0h"}, \
+                                                         {this.memaddr, \
+                                                         this.memwrite, \
+                                                         this.memread, \
+                                                         this.inbus, \
+                                                         this.outbus}) /**< This macro is to be used ONLY from within the transaction item class. */
+
+`define DLT_MEMORY_INFO(logging_entity, info) `DLT_LOG(logging_entity, info, {}, {}) /**< This macro can be used anywhere within this file. */
+
+`define DLT_MEMORY_SCOREBOARD(message) `DLT_LOG("Memory Scoreboard", message, \
+                                                         {"memaddr=0x%0h ", \
+                                                         "memwrite=0x%0h ", \
+                                                         "memread=0x%0h ", \
+                                                         "inbus=0x%0h ", \
+                                                         "outbus=0x%0h"}, \
+                                                         {item.memaddr, \
+                                                         item.memwrite, \
+                                                         item.memread, \
+                                                         item.inbus, \
+                                                         item.outbus}) /**< This macro to be used ONLY from within the scoreboard class. */
+
+`define ERROR_00_MEMORY_READ_VALUE_DIFFERENT_FROM_STORED " |ERROR 0x00| "
+
+/**
+* Compilation switch - misaligned memory access support.
+* If ALIGNED_MEM_ACCESS is defined, only aligned access to memory is supported.
+*/
+`define ALIGNED_MEM_ACCESS
+// `define MISALIGNED_MEM_ACCESS
 
 package Memory_Class;
 
@@ -120,7 +160,7 @@ package Memory_Class;
     endclass
     
     class MemoryTransactionItem;
-        `_public rand `rvector memaddr; // cycle through
+        `_public rand `rvector memaddr;
         `_public rand `rvector inbus;
         `_public rand `rvtype memwrite;
         `_public rand `rvtype memread;
@@ -135,10 +175,9 @@ package Memory_Class;
             (memwrite & memread) != 1; 
         };
         
-        `_public function void log(input string tag="");
-            $display("Timestamp=%0t [%s] memaddr=0x%0h memwrite=0x%0h memread=0x%0h inbus=0x%0h outbus=0x%0h",
-                      $time,        tag, memaddr,      memwrite,      memread,      inbus,      outbus);
-        endfunction
+        `_public task log(input string tag="");
+            `DLT_MEMORY_TITEM_VARDUMP(tag);
+        endtask
     endclass
     
     class MemoryVerificationDriver;
@@ -146,11 +185,11 @@ package Memory_Class;
         `_public mailbox driver_mailbox;
         
         `_public task run();
-            $display("Timestamp=%0t [Memory Driver] starting ...", $time);
+            `DLT_MEMORY_INFO("Memory Driver", " Starting...");
             
             forever begin
                 MemoryTransactionItem item;
-                $display("Timestamp=%0t [Memory Driver] waiting for item...", $time);
+                `DLT_MEMORY_INFO("Memory Driver", "Waiting for item...");
                 
                 driver_mailbox.get(item); // Wait for message from generator
                 item.log("Memory Driver"); // Log transaction item from driver perspective
@@ -170,7 +209,7 @@ package Memory_Class;
         `_public mailbox scoreboard_mailbox;
         
         `_public task run();
-            $display("Timestamp=%0t [Memory Monitor] starting ...", $time);
+            `DLT_MEMORY_INFO("Memory Monitor", " Starting...");
             
             forever begin
                 @(`CLOCK_ACTIVE_EDGE memif.clk);
@@ -205,28 +244,23 @@ package Memory_Class;
                     if (database[item.memaddr] == null)
                         database[item.memaddr] = new;
                     database[item.memaddr] = item;
-                    $display("Timestamp=%0t [Memory Scoreboard] Store memaddr=0x%0h memwrite=0x%0h inbus=0x%0h",
-                              $time,                                  item.memaddr, item.memwrite, item.inbus);
+                    `DLT_MEMORY_SCOREBOARD(" |Store| ");
                 end //if
                 
                 // Scenario 2: memory read
                 if ((item.memwrite == 0) && (item.memread == 1)) begin
                     if (database[item.memaddr] == null)
-                        $display("Timestamp=%0t [Memory Scoreboard] Uninitialised addr read memaddr=0x%0h memread=0x%0h outbus=0x%0h",
-                                 $time,                                                     item.memaddr, item.memread, item.outbus);
+                        `DLT_MEMORY_SCOREBOARD(" |Uninitialised addr read| ");
                     else
                         if (item.outbus != this.database[item.memaddr].inbus)
-                            $display("Timestamp=%0t [Memory Scoreboard] ERROR 0x01! memaddr=0x%0h memread=0x%0h outbus=0x%0h sim_database=0x%0h",
-                                      $time,                                        item.memaddr, item.memread, item.outbus, database[item.memaddr].inbus);
+                            `DLT_MEMORY_SCOREBOARD(`ERROR_00_MEMORY_READ_VALUE_DIFFERENT_FROM_STORED);
                         else
-                            $display("Timestamp=%0t [Memory Scoreboard] PASS memaddr=0x%0h memread=0x%0h outbus=0x%0h",
-                                      $time,                                  item.memaddr, item.memread, item.outbus);
+                            `DLT_MEMORY_SCOREBOARD(" |Read PASS| ");
                 end //if
                 
                 // Scenario 3: memory idle state 1
                 if (~(item.memwrite || item.memread)) begin
-                    $display("Timestamp=%0t [Memory Scoreboard] Info - idle memaddr=0x%0h memwrite=0x%0h memread=0x%0h outbus=0x%0h",
-                             $time,                                         item.memaddr, item.memwrite, item.memread, item.outbus);
+                    `DLT_MEMORY_SCOREBOARD(" |Memory idle| ");
                 end //if
                
                 
@@ -285,7 +319,7 @@ package Memory_Class;
         `_public virtual task stimulate();
             MemoryTransactionItem item;
             
-            $display("Timestamp=%0t [Memory Test] Starting stimulus ...", $time);
+            `DLT_MEMORY_INFO("Memory Test", " Starting stimulus... ");
             for (int i = 0; i < `MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS; i = i + 1) begin
                 item = new;
                 item.randomize(); // Builtin constraints inside transaction item class
