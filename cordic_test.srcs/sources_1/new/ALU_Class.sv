@@ -197,13 +197,32 @@ package ALU_Class;
                         if(this.monitor_item.outcome != (this.monitor_item.left_operand - this.monitor_item.right_operand))
                             `DLT_ALU_SCOREBOARD(" |SUB FAIL| ");
                         else `DLT_ALU_SCOREBOARD(" |SUB PASS| ");
-                    ALU_XOR: return left_operand ^ right_operand;
-                    ALU_AND: return left_operand & right_operand;
-                    ALU_NOR: return ~(left_operand | right_operand); // TODO: Check if it doesn't cause overflow here!!!
-                    ALU_OR: return left_operand | right_operand;
-                    ALU_SLT: return left_operand < right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
-                    ALU_NAND: return ~(left_operand & right_operand);
-                    default: ;
+                    ALU_XOR:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand ^ this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |XOR FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |XOR PASS| ");
+                    ALU_AND:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand & this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |AND FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |AND PASS| ");
+                    ALU_NOR:
+                        if(this.monitor_item.outcome != ~(this.monitor_item.left_operand | this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |NOR FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |NOR PASS| ");
+                    ALU_OR:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand | this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |OR FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |OR PASS| ");
+                    ALU_SLT:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand < this.monitor_item.right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0)))
+                            `DLT_ALU_SCOREBOARD(" |SLT FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |SLT PASS| ");
+                    ALU_NAND:
+                        if(this.monitor_item.outcome != ~(this.monitor_item.left_operand & this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |NAND FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |NAND PASS| ");
+                    default:
+                        `DLT_ALU_SCOREBOARD(" |INVALID OPERATION| ");
                 endcase
             end // forever loop
         endtask
