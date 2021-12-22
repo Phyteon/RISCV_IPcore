@@ -22,13 +22,19 @@
 import Architecture_AClass::*;
 import Instruction_Classes::*;
 
+`define CONTROL_UNIT_OUTPUT_TYPE int // only for development purposes, will be changed later
+
 
 package ControlUnit_Class;
     class ControlUnit extends Architecture_AClass::Architecture;
-    `_public `ivector_dynamic_array Steering;
     
-    function new(input `uint steering_out_num);
-        this.Steering = new [steering_out_num];
+    `_public function `CONTROL_UNIT_OUTPUT_TYPE DecodeInstruction(input `inspkg::Instruction);
+
+        
+    endfunction
+
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeRtype(input `inspkg::RTypeInstruction);
+        
     endfunction
     
     endclass
