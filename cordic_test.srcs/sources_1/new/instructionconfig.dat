@@ -1,0 +1,175 @@
+/**
+* Memory configuration file used for storing data about instructions.
+* NOT used for actual memory config. All fields have been zero-padded
+* in the most significant bits so each is stored on 8 bits.
+*
+* Every instruction section begins at address that is the sum of
+* previous address plus the immediately previous section number of
+* instructions times bytes per instruction times ten. So, if there are
+* i_n instructions in n-th section and b_n bytes per instruction in given
+* section, then the formula for n-th section start address is as follows:
+*
+*       addr_n = addr_0 + addr_1 + ... + addr_(n-1) + i_(n-1)*b_(n-1)*10 
+*/
+
+/**** R-type instructions ****/
+@00000000
+
+/* ADD */
+00110011 /**< ADD opcode */
+00000000 /**< ADD funct3 */
+00000000 /**< ADD funct7 */
+
+/* SUB */
+00110011 /**< SUB opcode */
+00000000 /**< SUB funct3 */
+00100000 /**< SUB funct7 */
+
+/* SLL */
+00110011 /**< SLL opcode */
+00000001 /**< SLL funct3 */
+00000000 /**< SLL funct7 */
+
+/* SLT */
+00110011 /**< SLT opcode */
+00000010 /**< SLT funct3 */
+00000000 /**< SLT funct7 */
+
+/* SLTU */
+00110011 /**< SLTU opcode */
+00000011 /**< SLTU funct3 */
+00000000 /**< SLTU funct7 */
+
+/* XOR */
+00110011 /**< XOR opcode */
+00000100 /**< XOR funct3 */
+00000000 /**< XOR funct7 */
+
+/* SRL */
+00110011 /**< SRL opcode */
+00000101 /**< SRL funct3 */
+00000000 /**< SRL funct7 */
+
+/* SRA */
+00110011 /**< SRA opcode */
+00000101 /**< SRA funct3 */
+00100000 /**< SRA funct7 */
+
+/* OR */
+00110011 /**< OR opcode */
+00000110 /**< OR funct3 */
+00000000 /**< OR funct7 */
+
+/* AND */
+00110011 /**< AND opcode */
+00000111 /**< AND funct3 */
+00000000 /**< AND funct7 */
+
+/**** I-type instructions ****/
+@0000012C
+
+/* JALR */
+01100111 /**< JALR opcode */
+00000000 /**< JALR funct3 */
+
+/* LB */
+00000011 /**< LB opcode */
+00000000 /**< LB funct3 */
+
+/* LH */
+00000011 /**< LH opcode */
+00000001 /**< LH funct3 */
+
+/* LW */
+00000011 /**< LW opcode */
+00000010 /**< LW funct3 */
+
+/* LBU */
+00000011 /**< LBU opcode */
+00000100 /**< LBU funct3 */
+
+/* LHU */
+00000011 /**< LHU opcode */
+00000101 /**< LHU funct3 */
+
+/* ADDI */
+00010011 /**< ADDI opcode */
+00000000 /**< ADDI funct3 */
+
+/* SLTI */
+00010011 /**< SLTI opcode */
+00000010 /**< SLTI funct3 */
+
+/* SLTIU */
+00010011 /**< SLTIU opcode */
+00000011 /**< SLTIU funct3 */
+
+/* XORI */
+00010011 /**< XORI opcode */
+00000100 /**< XORI funct3 */
+
+/* ORI */
+00010011 /**< ORI opcode */
+00000110 /**< ORI funct3 */
+
+/* ANDI */
+00010011 /**< ANDI opcode */
+00000111 /**< ANDI funct3 */
+
+/**** S-type instructions ****/
+@0000021C
+
+/* SB */
+00100011 /**< SB opcode */
+00000000 /**< SB funct3 */
+
+/* SH */
+00100011 /**< SH opcode */
+00000001 /**< SH funct3 */
+
+/* SW */
+00100011 /**< SW opcode */
+00000010 /**< SW funct3 */
+
+/**** B-type instructions ****/
+@00000258
+
+/* BEQ */
+01100011 /**< BEQ opcode */
+00000000 /**< BEQ funct3 */
+
+/* BNE */
+01100011 /**< BNE opcode */
+00000001 /**< BNE funct3 */
+
+/* BLT */
+01100011 /**< BLT opcode */
+00000100 /**< BLT funct3 */
+
+/* BGE */
+01100011 /**< BGE opcode */
+00000101 /**< BGE funct3 */
+
+/* BLTU */
+01100011 /**< BLTU opcode */
+00000110 /**< BLTU funct3 */
+
+/* BGEU */
+01100011 /**< BGEU opcode */
+00000111 /**< BGEU funct3 */
+
+/**** U-type instructions ****/
+@000002D0
+
+/* LUI */
+00110111 /**< LUI opcode */
+
+/* AUIPC */
+00010111 /**< AUIPC opcode */
+
+/**** J-type instructions ****/
+@000002E4
+
+/* JAL */
+11101111 /**< JAL opcode */
+
