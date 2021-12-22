@@ -27,7 +27,7 @@ import ALU_Class::*;
 `define ALU_MODULE_DESIGN
 //`define ALU_MODULE_IMPLEMENTATION
 
-module ALU_Module(`alupkg::ALUInterface.DUT aluinf);
+module ALU_Module(ALUInterface.DUT aluinf);
 
     `ifdef ALU_MODULE_DESIGN
         `alupkg::ALU alu;
