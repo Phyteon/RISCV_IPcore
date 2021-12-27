@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 import Memory_Class::*;
-import ALU_Class::*
+import ALU_Class::*;
 
 `define TESBENCH_CLOCK_FREQUENCY_KHZ 50000
 `define CLK_PERIOD_NS (1000000.0/(`TESBENCH_CLOCK_FREQUENCY_KHZ))
