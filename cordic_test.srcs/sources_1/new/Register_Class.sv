@@ -30,7 +30,7 @@ import Architecture_AClass::*;
 `define regpkg Register_Class
 
 package Register_Class;
-    class Register extends `archpkg::Architecture;
+    class Register extends Architecture_AClass::Architecture;
         `_protected `rvector contents;
         
         `_public function new(input `rvector _contents);

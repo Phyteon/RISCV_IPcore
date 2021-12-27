@@ -52,62 +52,53 @@ import Architecture_AClass::*;
 
 package Field_Classes;
 
-    virtual class InstructionField #(BitWidth = `DEFAULT_PARAM) extends `archpkg::Architecture;
-        `_public const `uint BeginIdx;
+    virtual class InstructionField #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends `archpkg::Architecture;
         `_public const string Info;
         
         `_public function `uint ExtractFromInstr(input `ivector _inst);
-            `uint temp;
-            `dynamic_cast_to_uint(temp, _inst[BeginIdx +: (BitWidth - 1)]); // TODO: Ask supervisor about the error
-            return temp; // TODO: Check the conversion here
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
         endfunction
     endclass
     
     class RD_field extends InstructionField;
         `_public function new();
-            this.BeginIdx = `RD_field_BeginIdx;
             this.Info = "RD_field";
         endfunction
     endclass
     
     class OPCODE_field extends InstructionField;
         `_public function new();
-            this.BeginIdx = `OPCODE_field_BeginIdx;
             this.Info = "OPCODE_field";
         endfunction
     endclass
     
     class FUNCT3_field extends InstructionField;
         `_public function new();
-            this.BeginIdx = `FUNCT3_field_BeginIdx;
             this.Info = "FUNCT3_field";
         endfunction
     endclass
     
     class FUNCT7_field extends InstructionField;
         `_public function new();
-            this.BeginIdx = `FUNCT7_field_BeginIdx;
             this.Info = "FUNCT7_field";
         endfunction
     endclass
     
     class RS1_field extends InstructionField;
         `_public function new();
-            this.BeginIdx = `RS1_field_BeginIdx;
             this.Info = "RS1_field";
         endfunction
     endclass
     
     class RS2_field extends InstructionField;
         `_public function new();
-            this.BeginIdx = `RS2_field_BeginIdx;
             this.Info = "RS2_field";
         endfunction
     endclass
     
     class IMM_field extends InstructionField;
-        `_public function new(input int _BeginIdx, input string _Info);
-            this.BeginIdx = _BeginIdx;
+        `_public function new(input string _Info);
             this.Info = _Info;
         endfunction
     endclass

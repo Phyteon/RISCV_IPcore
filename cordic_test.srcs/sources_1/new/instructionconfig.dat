@@ -10,6 +10,8 @@
 * section, then the formula for n-th section start address is as follows:
 *
 *       addr_n = addr_0 + addr_1 + ... + addr_(n-1) + i_(n-1)*b_(n-1)*10 
+* UPDATE 27.12.2021 - added immediate shift operations, didn't change addresses
+* according to above formula.
 */
 
 /**** R-type instructions ****/
@@ -115,6 +117,21 @@
 /* ANDI */
 00010011 /**< ANDI opcode */
 00000111 /**< ANDI funct3 */
+
+/* SLLI */
+00010011 /**< SLLI opcode */
+00000001 /**< SLLI funct3 */
+00000000 /**< SLLI funct7 */
+
+/* SRLI */
+00010011 /**< SRLI opcode */
+00000101 /**< SRLI funct3 */
+00000000 /**< SRLI funct7 */
+
+/* SRAI */
+00010011 /**< SRAI opcode */
+00000101 /**< SRAI funct3 */
+00100000 /**< SRAI funct7 */
 
 /**** S-type instructions ****/
 @0000021C

@@ -74,6 +74,18 @@ import Field_Classes::*;
 `define JTypeInstruction_IMM4_field_BeginIdx 31
 `define JTypeInstruction_IMM4_field_BitWidth 1
 
+/**
+* Utility macros.
+*/
+`define Concatentate_Field_Bitwidth_Token(field) ```field``_field_BitWidth
+`define Concatentate_Field_BeginIdx_Token(field) ```field``_field_BeginIdx
+`define Init_Params(field) .BitWidth = `Concatentate_Field_Bitwidth_Token(field), .BeginIdx = `Concatentate_Field_BeginIdx_Token(field)
+`define Concatentate_IMM_field_BeginIdx(instruction_type, field_number) ```instruction_type``TypeInstruction_IMM``field_number``_field_BeginIdx
+`define Concatentate_IMM_field_BitWidth(instruction_type, field_number) ```instruction_type``TypeInstruction_IMM``field_number``_field_BitWidth
+`define Init_IMM(instruction_type, field_number) .BitWidth = `Concatentate_IMM_field_BitWidth(instruction_type, field_number),\
+                                                 .BeginIdx = `Concatentate_IMM_field_BeginIdx(instruction_type, field_number)
+
+
 package Instruction_Classes;
     typedef enum {
                    Rtype,
@@ -109,12 +121,12 @@ package Instruction_Classes;
             this.Format = Rtype;
             this.Set = RV32I;
             this.Fields = new [`RTypeInstruction_NumOfFields];
-            this.Fields[0] = `fieldpkg::OPCODE_field#(`OPCODE_field_BitWidth)::new;
-            this.Fields[1] = `fieldpkg::RD_field#(`RD_field_BitWidth)::new;
-            this.Fields[2] = `fieldpkg::FUNCT3_field#(`FUNCT3_field_BitWidth)::new;
-            this.Fields[3] = `fieldpkg::RS1_field#(`RS1_field_BitWidth)::new;
-            this.Fields[4] = `fieldpkg::RS2_field#(`RS2_field_BitWidth)::new;
-            this.Fields[5] = `fieldpkg::FUNCT7_field#(`FUNCT7_field_BitWidth)::new;
+            this.Fields[0] = `fieldpkg::OPCODE_field#(`Init_Params(OPCODE))::new;
+            this.Fields[1] = `fieldpkg::RD_field#(`Init_Params(RD))::new;
+            this.Fields[2] = `fieldpkg::FUNCT3_field#(`Init_Params(FUNCT3))::new;
+            this.Fields[3] = `fieldpkg::RS1_field#(`Init_Params(RS1))::new;
+            this.Fields[4] = `fieldpkg::RS2_field#(`Init_Params(RS2))::new;
+            this.Fields[5] = `fieldpkg::FUNCT7_field#(`Init_Params(FUNCT7))::new;
         endfunction
     endclass
     
