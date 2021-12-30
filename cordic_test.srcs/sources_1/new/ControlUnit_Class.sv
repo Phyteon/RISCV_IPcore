@@ -21,8 +21,9 @@
 
 import Architecture_AClass::*;
 import Instruction_Classes::*;
+import ALU_Class::*;
 
-`define CONTROL_UNIT_OUTPUT_TYPE int // only for development purposes, will be changed later
+`define CONTROL_UNIT_OUTPUT_TYPE void
 `define CONTROL_UNIT_INSTRUCTION_INFO_MEM_SIZE_BYTES 1000 /**< Size of memory in bytes used to store info about instructions - 
                                                             USED ONLY FOR HIGH ABSTRACTION LEVEL DEVELOPMENT IMPLEMENTATION! */
 `define CONTROL_UNIT_INSTRUCTION_INFO_FILE "instructionconfig.dat"
@@ -32,6 +33,7 @@ package ControlUnit_Class;
     class ControlUnit extends Architecture_AClass::Architecture;
     `_private `unpacked_arr(`rvbyte, `CONTROL_UNIT_INSTRUCTION_INFO_MEM_SIZE_BYTES, instruction_info);
     `_private `uint type_to_address[string];
+    `_public virtual ControlUnitInterface cuinf;
 
     `_public function new();
         this.type_to_address["R_TYPE"] = 0;
@@ -76,7 +78,140 @@ package ControlUnit_Class;
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeRtype(input `inspkg::RTypeInstruction rtypeins);
-        
+        `uint steering_sum = rtypeins.Fields[2].ExtractFromInstr(rtypeins.Contents) + rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents); /**< Add FUNCT3 and FUNCT7 field */
+        unique case (steering_sum)
+            0: begin /**< ADD */
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_ADD;
+            end
+            32: begin /**< SUB */
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_SUB;
+            end
+            1: begin /**< SLL */
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_SLL;
+            end
+            2: begin /**< SLT */
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_SLT;
+            end
+            3: begin /**< SLTU */
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_SLTU;
+            end
+            4: begin /**< */
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_XOR;
+            end
+            5: begin
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_SRL;
+            end
+            37: begin
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_SRA;
+            end
+            6: begin
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_OR;
+            end
+            7: begin
+                cuinf.CUJMPCTRL <= 0;
+                cuinf.CUBCTRL <= 0;
+                cuinf.MUX2 <= 1;
+                cuinf.MUX3 <= 0;
+                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
+                cuinf.REGW <= 1;
+                cuinf.MEMW <= 0;
+                cuinf.MEMR <= 0;
+                cuinf.ALU0 <= ALU_AND;
+            end
+            default: 
+        endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeItype(input `inspkg::ITypeInstruction itypeins);
@@ -101,3 +236,59 @@ package ControlUnit_Class;
     
     endclass
 endpackage
+
+interface ControlUnitInterface(input `rvtype clk);
+    /**
+    * Input signals
+    */
+    `ivector INSTR; /**< Instruction to decode */
+    /**
+    * 1 - bit controls
+    */
+    `rvtype CUJMPCTRL; /**< Control Unit Jump Control signal */
+    `rvtype CUBCTRL; /**< Control Unit Branch Control signal */
+    `rvtype MUX1; /**< Multiplexer 1 control (relative branch/ jump) */
+    `rvtype MUX2; /**< Multiplexer 2 control (second operand from registry file/ immediate value) */
+    `rvtype REGW; /**< Registry File Write control signal */
+    `rvtype MEMW; /**< Memory Write control signal */
+    `rvtype MEMR; /**< Memory Read control signal */
+    `rvtype MSE; /**< Memory Sign Extention control signal */
+    /**
+    * 2 - bit controls
+    */
+    `packed_arr(`rvtpe, 2, MUX3); /**< Multiplexer 3 control (Program Counter next instruction value/ Memory data out/ ALU out) */
+    /**
+    * 4 - bit controls
+    */
+    `alupkg::OperationType ALU0; /**< Main ALU operation control */
+    /**
+    * 5 - bit controls
+    */
+    `packed_arr(`rvtype, 5, RS1); /**< Resource Register 1 control signal */
+    `packed_arr(`rvtype, 5, RS2); /**< Resource Register 2 control signal */
+    `packed_arr(`rvtype, 5, RD); /**< Destination Register control signal */
+    /**
+    * 32 - bit controls
+    */
+    `rvector IMM0; /**< Immediate Value 0 */
+    `rvector IMM1; /**< Immediate Value 1 */
+
+    modport DUT (
+        input INSTR,
+        output CUJMPCTRL,
+        output CUBCTRL,
+        output MUX1,
+        output MUX2,
+        output REGW,
+        output MEMW,
+        output MEMR,
+        output MSE,
+        output MUX3,
+        output ALU0,
+        output RS1,
+        output RS2,
+        output RD,
+        output IMM0,
+        output IMM1
+    );
+endinterface

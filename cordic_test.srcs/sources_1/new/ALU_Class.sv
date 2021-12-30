@@ -84,28 +84,62 @@ package ALU_Class;
     * This enum contains operations that ALU can perform.
     */
     typedef enum `rvtype [`OPERATION_ENUM_VEC_BITWIDTH - 1 : 0]
-                        {  ALU_ADD = 1,
-                           ALU_SUB = 2,
-                           ALU_XOR = 3,
-                           ALU_AND = 4,
-                           ALU_NOR = 5,
-                           ALU_OR = 6,
-                           ALU_SLT = 7,
-                           ALU_NAND = 8 } OperationType;
+                        {  ALU_ADD = 0,
+                           ALU_SUB = 1,
+                           ALU_XOR = 2,
+                           ALU_AND = 3,
+                           ALU_OR = 4,
+                           ALU_SLT = 5,
+                           ALU_SLTU = 6,
+                           ALU_SLL = 7,
+                           ALU_SRL = 8,
+                           ALU_SRA = 9,
+                           ALU_BEQ = 10,
+                           ALU_BNE = 11,
+                           ALU_BLT = 12,
+                           ALU_BGE = 13,
+                           ALU_BLTU = 14,
+                           ALU_BGEU = 15} OperationType;
 
 
     class ALU extends `archpkg::Architecture;
-        
+        `_public `rvtype branchctrl;
         `_public function `aluvector PerformOperation(input OperationType operation, input `rvector left_operand, input `rvector right_operand);
             unique case(operation)
                 ALU_ADD: return left_operand + right_operand; // Will this correctly overflow if needed?
                 ALU_SUB: return left_operand - right_operand;
                 ALU_XOR: return left_operand ^ right_operand;
                 ALU_AND: return left_operand & right_operand;
-                ALU_NOR: return ~(left_operand | right_operand); // TODO: Check if it doesn't cause overflow here!!!
                 ALU_OR: return left_operand | right_operand;
-                ALU_SLT: return left_operand < right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
-                ALU_NAND: return ~(left_operand & right_operand);
+                ALU_SLT: return `static_cast_to_sint(left_operand) < `static_cast_to_sint(right_operand) ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
+                ALU_SLTU: return left_operand < right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
+                ALU_SLL: return (left_operand << right_operand);
+                ALU_SRL: return (left_operand >> right_operand);
+                ALU_SRA: return (left_operand >>> right_operand);
+                ALU_BEQ: begin
+                    if (left_operand == right_operand) this.branchctrl = 1;
+                    else this.branchctrl = 0;
+                end
+                ALU_BNE: begin
+                    if (left_operand != right_operand) this.branchctrl = 1;
+                    else this.branchcntrl = 0;
+                end
+                ALU_BLT: begin
+                    if (`static_cast_to_sint(left_operand) < `static_cast_to_sint(right_operand)) this.branchctrl = 1;
+                    else this.branchcntrl = 0;
+                end
+                ALU_BGE: begin
+                    if (`static_cast_to_sint(left_operand) > `static_cast_to_sint(right_operand)) this.branchctrl = 1;
+                    else this.branchcntrl = 0;
+                end
+                ALU_BLTU: begin
+                    if (left_operand < right_operand) this.branchctrl = 1;
+                    else this.branchcntrl = 0;
+                end
+                ALU_BGEU: begin
+                    if (left_operand > right_operand) this.branchctrl = 1;
+                    else this.branchcntrl = 0;
+                end
                 default: ; // Do nothing
             endcase
         
@@ -193,7 +227,7 @@ package ALU_Class;
                 if(this.driver_item.operation != this.monitor_item.operation)
                     `DLT_ALU_SCOREBOARD(`ERROR_OO_ALU_INTERNAL_TRANSACTION_FAILURE);
 
-                unique case (this.monitor_item.operation)
+                unique case (this.monitor_item.operation) /**< TODO: Add other cases */
                     ALU_ADD:
                         if(this.monitor_item.outcome != (this.monitor_item.left_operand + this.monitor_item.right_operand))
                             `DLT_ALU_SCOREBOARD(" |ADD FAIL| ");
@@ -210,22 +244,15 @@ package ALU_Class;
                         if(this.monitor_item.outcome != (this.monitor_item.left_operand & this.monitor_item.right_operand))
                             `DLT_ALU_SCOREBOARD(" |AND FAIL| ");
                         else `DLT_ALU_SCOREBOARD(" |AND PASS| ");
-                    ALU_NOR:
-                        if(this.monitor_item.outcome != ~(this.monitor_item.left_operand | this.monitor_item.right_operand))
-                            `DLT_ALU_SCOREBOARD(" |NOR FAIL| ");
-                        else `DLT_ALU_SCOREBOARD(" |NOR PASS| ");
                     ALU_OR:
                         if(this.monitor_item.outcome != (this.monitor_item.left_operand | this.monitor_item.right_operand))
                             `DLT_ALU_SCOREBOARD(" |OR FAIL| ");
                         else `DLT_ALU_SCOREBOARD(" |OR PASS| ");
                     ALU_SLT:
-                        if(this.monitor_item.outcome != (this.monitor_item.left_operand < this.monitor_item.right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0)))
+                        if(this.monitor_item.outcome != (`static_cast_to_sint(this.monitor_item.left_operand) < `static_cast_to_sint(this.monitor_item.right_operand) ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0)))
                             `DLT_ALU_SCOREBOARD(" |SLT FAIL| ");
                         else `DLT_ALU_SCOREBOARD(" |SLT PASS| ");
-                    ALU_NAND:
-                        if(this.monitor_item.outcome != ~(this.monitor_item.left_operand & this.monitor_item.right_operand))
-                            `DLT_ALU_SCOREBOARD(" |NAND FAIL| ");
-                        else `DLT_ALU_SCOREBOARD(" |NAND PASS| ");
+                    ALU_SLTU:
                     default:
                         `DLT_ALU_SCOREBOARD(" |INVALID OPERATION| ");
                 endcase
