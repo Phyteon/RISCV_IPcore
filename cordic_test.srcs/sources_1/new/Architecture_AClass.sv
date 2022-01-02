@@ -121,9 +121,9 @@ package Architecture_AClass;
     typedef `packed_arr(`rvtype, `BYTE_SIZE, riscvbyte);
     
     /**
-    * Type defining a packed array of bytes - mainly for register representation.
+    * Type defining a packed array of bits - for representing registers.
     */
-    typedef `packed_arr(`rvbyte, (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE), regvector);
+    typedef `packed_arr(`rvtype, `REGISTER_GLOBAL_BITWIDTH, regvector);
     
     /**
     * Type defining a packed array of riscvtype - mainly for representing instructions.

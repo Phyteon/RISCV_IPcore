@@ -67,6 +67,21 @@
 00000111 /**< AND funct3 */
 00000000 /**< AND funct7 */
 
+/* SLLI */
+00010011 /**< SLLI opcode */
+00000001 /**< SLLI funct3 */
+00000000 /**< SLLI funct7 */
+
+/* SRLI */
+00010011 /**< SRLI opcode */
+00000101 /**< SRLI funct3 */
+00000000 /**< SRLI funct7 */
+
+/* SRAI */
+00010011 /**< SRAI opcode */
+00000101 /**< SRAI funct3 */
+00100000 /**< SRAI funct7 */
+
 /**** I-type instructions ****/
 @0000012C
 
@@ -117,21 +132,6 @@
 /* ANDI */
 00010011 /**< ANDI opcode */
 00000111 /**< ANDI funct3 */
-
-/* SLLI */
-00010011 /**< SLLI opcode */
-00000001 /**< SLLI funct3 */
-00000000 /**< SLLI funct7 */
-
-/* SRLI */
-00010011 /**< SRLI opcode */
-00000101 /**< SRLI funct3 */
-00000000 /**< SRLI funct7 */
-
-/* SRAI */
-00010011 /**< SRAI opcode */
-00000101 /**< SRAI funct3 */
-00100000 /**< SRAI funct7 */
 
 /**** S-type instructions ****/
 @0000021C

@@ -97,7 +97,7 @@ package Memory_Class;
     //      require changing this define. IMPORTANT INFORMATION!: If this define would
     //      be ever changed author assumes that the type would still support byte-addressing.
     /////////////////////////////////
-    typedef `rvector MemoryCell;
+    typedef `packed_arr(`rvbyte, (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE), MemoryCell);
     
     /////////////////////////////////
     // Typedef:

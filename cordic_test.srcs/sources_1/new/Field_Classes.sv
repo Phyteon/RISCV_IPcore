@@ -98,8 +98,10 @@ package Field_Classes;
     endclass
     
     class IMM_field extends InstructionField;
+        `_public `uint ImmBitWidth;
         `_public function new(input string _Info);
             this.Info = _Info;
+            this.ImmBitWidth = BitWidth;
         endfunction
     endclass
 endpackage

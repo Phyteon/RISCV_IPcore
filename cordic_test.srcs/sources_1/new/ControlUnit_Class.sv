@@ -22,6 +22,7 @@
 import Architecture_AClass::*;
 import Instruction_Classes::*;
 import ALU_Class::*;
+import SignExtender_Class::*;
 
 `define CONTROL_UNIT_OUTPUT_TYPE void
 `define CONTROL_UNIT_INSTRUCTION_INFO_MEM_SIZE_BYTES 1000 /**< Size of memory in bytes used to store info about instructions - 
@@ -81,141 +82,173 @@ package ControlUnit_Class;
         `uint steering_sum = rtypeins.Fields[2].ExtractFromInstr(rtypeins.Contents) + rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents); /**< Add FUNCT3 and FUNCT7 field */
         unique case (steering_sum)
             0: begin /**< ADD */
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
             end
             32: begin /**< SUB */
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_SUB;
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SUB;
             end
             1: begin /**< SLL */
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_SLL;
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SLL;
             end
             2: begin /**< SLT */
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_SLT;
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SLT;
             end
             3: begin /**< SLTU */
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_SLTU;
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SLTU;
             end
-            4: begin /**< */
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_XOR;
+            4: begin /**< XOR */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_XOR;
             end
-            5: begin
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_SRL;
+            5: begin /**< SLR */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SRL;
             end
-            37: begin
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_SRA;
+            37: begin /** SRA */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SRA;
             end
-            6: begin
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_OR;
+            6: begin /**< OR */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_OR;
             end
-            7: begin
-                cuinf.CUJMPCTRL <= 0;
-                cuinf.CUBCTRL <= 0;
-                cuinf.MUX2 <= 1;
-                cuinf.MUX3 <= 0;
-                cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                cuinf.RD <= rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents);
-                cuinf.REGW <= 1;
-                cuinf.MEMW <= 0;
-                cuinf.MEMR <= 0;
-                cuinf.ALU0 <= ALU_AND;
+            7: begin /**< AND */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 1;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_AND;
             end
-            default: 
+            default: ; /**< Do nothing */
         endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeItype(input `inspkg::ITypeInstruction itypeins);
-        
+        `uint steering_sum = itypeins.Fields[2].ExtractFromInstr(itypeins.Contents) + itypeins.Fields[0].ExtractFromInstr(itypeins.Contents); /**< Add FUNCT3 and OPCODE field */
+        unique case (steering_sum)
+            103: begin /**< JALR */
+                this.cuinf.CUJMPCTRL <= 1;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX1 <= 1;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 1;
+                this.cuinf.IMM0 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
+            end
+            3: begin /**< LB */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 2;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 1;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MSE <= 1; /**< Extend the sign of the loaded value in the memory controller */
+            end
+            default: ; /**< Do nothing */
+        endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeStype(input `inspkg::STypeInstruction stypeins);
