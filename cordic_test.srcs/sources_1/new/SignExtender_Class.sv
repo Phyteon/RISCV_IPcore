@@ -21,7 +21,12 @@
 
 `define sepkg SignExtender_Class
 
+`define UPPER_STYPE_IMMEDIATE_STARTBIT 5
+`define STYPE_IMMEDIATE_OVERALL_BITWIDTH 12
+`define BTYPE_IMMEDIATE_OVERALL_BITWIDTH 12
+
 import Architecture_AClass::*;
+import Instruction_Classes::*;
 
 package SignExtender_Class;
     virtual class SignExtender extends Architecture_AClass::Architecture;
@@ -34,6 +39,39 @@ package SignExtender_Class;
                 end
             end
             return extended;
+        endfunction
+
+        static function `rvector ZeroStuff(input `rvector imm, input `uint position);
+            `rvector stuffed = imm;
+            stuffed << position;
+            return stuffed;
+        endfunction
+
+        static function `rvector ConcatentateSTypeImmediate(input `inspkg::STypeInstruction stypeins);
+            `rvector concatentated = stypeins.Fields[1].ExtractFromInstr(stypeins.Contents);
+            concatentated += (stypeins.Fields[5].ExtractFromInstr(stypeins.Contents) << `UPPER_STYPE_IMMEDIATE_STARTBIT);
+            concatentated = SignExtender::ExtendSign(concatentated, `STYPE_IMMEDIATE_OVERALL_BITWIDTH, 0);
+            return concatentated;
+        endfunction
+
+        static function `rvector ConcatentateBTypeImmediate(input `inspkg::BTypeInstruction btypeins);
+            /**
+            * Second immediate field of instruction contains the lowest bits of the immediate - 
+            * those bits need to be shifted by one to the left (because conditional branch
+            * instructions immediates are always a multiple of 2).
+            */
+            `rvector concatentated = (btypeins.Fields[2].ExtractFromInstr(btypeins.Contents) << 1);
+            /**
+            * The next bits are stored in the seventh field of the instruction.
+            */
+            concatentated += (btypeins.Fields[6].ExtractFromInstr(btypeins.Contents) << 5);
+            /**
+            * The oldest two bits are stored in the second and eight fields of instruction.
+            */
+            concatentated[11] = btypeins.Fields[1].ExtractFromInstr(btypeins.Contents);
+            concatentated[12] = btypeins.Fields[7].ExtractFromInstr(btypeins.Contents);
+            concatentated = SignExtender::ExtendSign(concatentated, `BTYPE_IMMEDIATE_OVERALL_BITWIDTH, 0);
+            return concatentated;
         endfunction
     endclass //SignExtender
 endpackage

@@ -86,6 +86,7 @@ package ControlUnit_Class;
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -99,6 +100,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -112,6 +114,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -125,6 +128,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -138,6 +142,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -151,6 +156,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -164,6 +170,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -177,6 +184,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -190,6 +198,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -203,6 +212,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
                 this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
                 this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
@@ -224,6 +234,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX1 <= 1;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 1;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.IMM0 <= 0;
                 this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
@@ -238,6 +249,7 @@ package ControlUnit_Class;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 2;
+                this.cuinf.MUX4 <= 0;
                 this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
@@ -246,21 +258,309 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 1;
                 this.cuinf.ALU0 <= ALU_ADD;
                 this.cuinf.MSE <= 1; /**< Extend the sign of the loaded value in the memory controller */
+                this.cuinf.MBC <= 1; /**< Only one byte from the given addres shall be read and sign-extended */
+            end
+            4: begin /**< LH */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 2;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 1;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MSE <= 1; /**< Extend the sign of the loaded value in the memory controller */
+                this.cuinf.MBC <= 2; /**< Only two bytes from the given addres shall be read and sign-extended */
+            end
+            5: begin /**< LW */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 2;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 1;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MSE <= 0; /**< Do not extend the sign of the loaded value in the memory controller */
+                this.cuinf.MBC <= 3; /**< Read the whole word */
+            end
+            7: begin /**< LBU */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 2;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 1;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MSE <= 0; /**< Do not extend the sign of the loaded value in the memory controller */
+                this.cuinf.MBC <= 1; /**< Only one bytee from the given addres shall be read */
+            end
+            8: begin /**< LHU */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 2;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 1;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MSE <= 0; /**< Do not extend the sign of the loaded value in the memory controller */
+                this.cuinf.MBC <= 2; /**< Only two bytes from the given addres shall be read */
+            end
+            19: begin /**< ADDI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
+            end
+            21: begin /**< SLTI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SLT;
+            end
+            22: begin /**< SLTIU */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ZeroStuff(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
+            end
+            23: begin /**< XORI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_XOR;
+            end
+            25: begin /**< ORI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_OR;
+            end
+            26: begin /**< ANDI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_AND;
             end
             default: ; /**< Do nothing */
         endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeStype(input `inspkg::STypeInstruction stypeins);
-        
+        `uint switch = stypeins.Fields[2].ExtractFromInstr(stypeins.Contents);
+        unique case (switch)
+            0: begin /**< SB */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ConcatentateSTypeImmediate(stypeins);
+                this.cuinf.RS1 <= stypeins.Fields[3].ExtractFromInstr(stypeins.Contents);
+                this.cuinf.RS2 <= stypeins.Fields[4].ExtractFromInstr(stypeins.Contents);
+                this.cuinf.REGW <= 0;
+                this.cuinf.MEMW <= 1;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MBC <= 1;
+            end 
+            1: begin /**< SH */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ConcatentateSTypeImmediate(stypeins);
+                this.cuinf.RS1 <= stypeins.Fields[3].ExtractFromInstr(stypeins.Contents);
+                this.cuinf.RS2 <= stypeins.Fields[4].ExtractFromInstr(stypeins.Contents);
+                this.cuinf.REGW <= 0;
+                this.cuinf.MEMW <= 1;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MBC <= 2;
+            end
+            2: begin /**< SW */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ConcatentateSTypeImmediate(stypeins);
+                this.cuinf.RS1 <= stypeins.Fields[3].ExtractFromInstr(stypeins.Contents);
+                this.cuinf.RS2 <= stypeins.Fields[4].ExtractFromInstr(stypeins.Contents);
+                this.cuinf.REGW <= 0;
+                this.cuinf.MEMW <= 1;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_ADD;
+                this.cuinf.MBC <= 3;
+            end
+            default: ; /**< Do nothing */
+        endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeBtype(input `inspkg::BTypeInstruction btypeins);
+        `uint steering = btypeins.Fields[3].ExtractFromInstr(btypeins.Contents);
+        unique case (steering)
+            0: begin /**< BEQ */
+                this.cuinf.CUJMPCTRL <= 0; /**< Disable unconditional jump flag */
+                this.cuinf.CUBCTRL <= 1; /**< Indicate that branch can be taken */
+                this.cuinf.MUX1 <= 0; /**< Choose current program counter value */
+                this.cuinf.MUX2 <= 1; /**< Choose register as second operand for ALU */
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM0 <= `sepkg::SignExtender::ConcatentateBTypeImmediate(btypeins); /**< Retrieve immediate from instruction */
+                this.cuinf.RS1 <= btypeins.Fields[4].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.RS2 <= btypeins.Fields[5].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.REGW <= 0; /**< Disable register write signal */
+                this.cuinf.MEMW <= 0; /**< Disable memory write signal */
+                this.cuinf.MEMR <= 0; /**< Disable memory read signal */
+                this.cuinf.ALU0 <= ALU_BEQ; /**< Choose operation of ALU */
+            end
+            1: begin /**< BNE */
+                this.cuinf.CUJMPCTRL <= 0; /**< Disable unconditional jump flag */
+                this.cuinf.CUBCTRL <= 1; /**< Indicate that branch can be taken */
+                this.cuinf.MUX1 <= 0; /**< Choose current program counter value */
+                this.cuinf.MUX2 <= 1; /**< Choose register as second operand for ALU */
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM0 <= `sepkg::SignExtender::ConcatentateBTypeImmediate(btypeins); /**< Retrieve immediate from instruction */
+                this.cuinf.RS1 <= btypeins.Fields[4].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.RS2 <= btypeins.Fields[5].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.REGW <= 0; /**< Disable register write signal */
+                this.cuinf.MEMW <= 0; /**< Disable memory write signal */
+                this.cuinf.MEMR <= 0; /**< Disable memory read signal */
+                this.cuinf.ALU0 <= ALU_BNE; /**< Choose operation of ALU */
+            end
+            4: begin /**< BLT */
+                this.cuinf.CUJMPCTRL <= 0; /**< Disable unconditional jump flag */
+                this.cuinf.CUBCTRL <= 1; /**< Indicate that branch can be taken */
+                this.cuinf.MUX1 <= 0; /**< Choose current program counter value */
+                this.cuinf.MUX2 <= 1; /**< Choose register as second operand for ALU */
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM0 <= `sepkg::SignExtender::ConcatentateBTypeImmediate(btypeins); /**< Retrieve immediate from instruction */
+                this.cuinf.RS1 <= btypeins.Fields[4].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.RS2 <= btypeins.Fields[5].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.REGW <= 0; /**< Disable register write signal */
+                this.cuinf.MEMW <= 0; /**< Disable memory write signal */
+                this.cuinf.MEMR <= 0; /**< Disable memory read signal */
+                this.cuinf.ALU0 <= ALU_BLT; /**< Choose operation of ALU */
+            end
+            5: begin /**< BGE */
+                this.cuinf.CUJMPCTRL <= 0; /**< Disable unconditional jump flag */
+                this.cuinf.CUBCTRL <= 1; /**< Indicate that branch can be taken */
+                this.cuinf.MUX1 <= 0; /**< Choose current program counter value */
+                this.cuinf.MUX2 <= 1; /**< Choose register as second operand for ALU */
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM0 <= `sepkg::SignExtender::ConcatentateBTypeImmediate(btypeins); /**< Retrieve immediate from instruction */
+                this.cuinf.RS1 <= btypeins.Fields[4].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.RS2 <= btypeins.Fields[5].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.REGW <= 0; /**< Disable register write signal */
+                this.cuinf.MEMW <= 0; /**< Disable memory write signal */
+                this.cuinf.MEMR <= 0; /**< Disable memory read signal */
+                this.cuinf.ALU0 <= ALU_BGE; /**< Choose operation of ALU */
+            end
+            6: begin /**< BLTU */
+                this.cuinf.CUJMPCTRL <= 0; /**< Disable unconditional jump flag */
+                this.cuinf.CUBCTRL <= 1; /**< Indicate that branch can be taken */
+                this.cuinf.MUX1 <= 0; /**< Choose current program counter value */
+                this.cuinf.MUX2 <= 1; /**< Choose register as second operand for ALU */
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM0 <= `sepkg::SignExtender::ConcatentateBTypeImmediate(btypeins); /**< Retrieve immediate from instruction */
+                this.cuinf.RS1 <= btypeins.Fields[4].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.RS2 <= btypeins.Fields[5].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.REGW <= 0; /**< Disable register write signal */
+                this.cuinf.MEMW <= 0; /**< Disable memory write signal */
+                this.cuinf.MEMR <= 0; /**< Disable memory read signal */
+                this.cuinf.ALU0 <= ALU_BLTU; /**< Choose operation of ALU */
+            end
+            7: begin /**< BGEU */
+                this.cuinf.CUJMPCTRL <= 0; /**< Disable unconditional jump flag */
+                this.cuinf.CUBCTRL <= 1; /**< Indicate that branch can be taken */
+                this.cuinf.MUX1 <= 0; /**< Choose current program counter value */
+                this.cuinf.MUX2 <= 1; /**< Choose register as second operand for ALU */
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM0 <= `sepkg::SignExtender::ConcatentateBTypeImmediate(btypeins); /**< Retrieve immediate from instruction */
+                this.cuinf.RS1 <= btypeins.Fields[4].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.RS2 <= btypeins.Fields[5].ExtractFromInstr(btypeins.Contents);
+                this.cuinf.REGW <= 0; /**< Disable register write signal */
+                this.cuinf.MEMW <= 0; /**< Disable memory write signal */
+                this.cuinf.MEMR <= 0; /**< Disable memory read signal */
+                this.cuinf.ALU0 <= ALU_BGEU; /**< Choose operation of ALU */
+            end
 
+            default: ; /**< Do nothing */
+        endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeUtype(input `inspkg::UTypeInstruction utypeins);
-        
+        `uint steering = utypeins.Fields[0].ExtractFromInstr(utypeins.Contents);
+        unique case (steering)
+            55: begin /**< LUI */
+                
+            end 
+            default: 
+        endcase
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeJtype(input `inspkg::JTypeInstruction jtypeins);
@@ -282,6 +582,7 @@ interface ControlUnitInterface(input `rvtype clk);
     `rvtype CUBCTRL; /**< Control Unit Branch Control signal */
     `rvtype MUX1; /**< Multiplexer 1 control (relative branch/ jump) */
     `rvtype MUX2; /**< Multiplexer 2 control (second operand from registry file/ immediate value) */
+    `rvtype MUX4; /**< Multiplexer 4 control (for supplying current PC value to ALU) */
     `rvtype REGW; /**< Registry File Write control signal */
     `rvtype MEMW; /**< Memory Write control signal */
     `rvtype MEMR; /**< Memory Read control signal */
@@ -289,7 +590,8 @@ interface ControlUnitInterface(input `rvtype clk);
     /**
     * 2 - bit controls
     */
-    `packed_arr(`rvtpe, 2, MUX3); /**< Multiplexer 3 control (Program Counter next instruction value/ Memory data out/ ALU out) */
+    `packed_arr(`rvtype, 2, MUX3); /**< Multiplexer 3 control (Program Counter next instruction value/ Memory data out/ ALU out) */
+    `packed_arr(`rvtype, 2, MBC); /**< Memory byte count control */
     /**
     * 4 - bit controls
     */
@@ -312,11 +614,13 @@ interface ControlUnitInterface(input `rvtype clk);
         output CUBCTRL,
         output MUX1,
         output MUX2,
+        output MUX4,
         output REGW,
         output MEMW,
         output MEMR,
         output MSE,
         output MUX3,
+        output MBC,
         output ALU0,
         output RS1,
         output RS2,
