@@ -29,28 +29,12 @@
 // BitWidth must be passed as class parameter to allow vector slicing.
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
+`include "CommonHeader.sv"
 
-// Global package alias
-`define fieldpkg Field_Classes
-
-// Defines section to avoid magic numbers (all numbers should be defined in some way)
-
-`define RD_field_BeginIdx 7
-`define RD_field_BitWidth 5
-`define OPCODE_field_BeginIdx 0
-`define OPCODE_field_BitWidth 7
-`define FUNCT3_field_BeginIdx 12
-`define FUNCT3_field_BitWidth 3
-`define FUNCT7_field_BeginIdx 25
-`define FUNCT7_field_BitWidth 7
-`define RS1_field_BeginIdx 15
-`define RS1_field_BitWidth 5
-`define RS2_field_BeginIdx 20
-`define RS2_field_BitWidth 5
 `define DEFAULT_PARAM 1
 
 package Field_Classes;
+    import Architecture_AClass::*;
 
     virtual class InstructionField #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends `archpkg::Architecture;
         `_public const string Info;

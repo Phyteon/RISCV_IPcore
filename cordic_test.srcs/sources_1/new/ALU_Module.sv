@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import ALU_Class::*;
+`include "CommonHeader.sv"
 
 `define ALU_OUTCOME_INITIAL_VALUE `ALUVECTOR_BITWIDTH'h0
 
@@ -28,6 +28,7 @@ import ALU_Class::*;
 //`define ALU_MODULE_IMPLEMENTATION
 
 module ALU_Module(ALUInterface.DUT aluinf);
+    import ALU_Class::*;
 
     `ifdef ALU_MODULE_DESIGN
         `alupkg::ALU alu;

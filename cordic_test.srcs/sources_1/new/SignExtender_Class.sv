@@ -19,17 +19,16 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-`define sepkg SignExtender_Class
+`include "CommonHeader.sv"
 
 `define UPPER_STYPE_IMMEDIATE_STARTBIT 5
 `define STYPE_IMMEDIATE_OVERALL_BITWIDTH 12
 `define BTYPE_IMMEDIATE_OVERALL_BITWIDTH 12
 `define JTYPE_IMMEDIATE_OVERALL_BITWIDTH 20
 
-import Architecture_AClass::*;
-import Instruction_Classes::*;
-
 package SignExtender_Class;
+    import Architecture_AClass::*;
+    import Instruction_Classes::*;
     virtual class SignExtender extends Architecture_AClass::Architecture;
         static function `rvector ExtendSign(input `rvector imm, input `uint bitwidth, input `uint position);
             `rvector extended = imm;

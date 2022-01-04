@@ -23,43 +23,42 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-
-`define muxpkg Multiplexer_Class // Create alias for the package
+`include "CommonHeader.sv"
 
 `define MUX_INITIAL_INPUT_STATE `NULL_REG_VAL
 `define MUX_INITIAL_CHOSEN_STATE 0
 
 package Multiplexer_Class;
+    import Architecture_AClass::*;
 
-class Multiplexer extends `archpkg::Architecture;
-    `_private `unpacked_dynamic_arr(`rvector, inputs);
-    `_private `uint chosen_input;
-    
-    `_public function new (input `uint _num_of_inputs);
-        this.inputs = new [_num_of_inputs];
-        this.chosen_input = `MUX_INITIAL_CHOSEN_STATE;
-        foreach (this.inputs[n])
-            inputs[n] = `MUX_INITIAL_INPUT_STATE;
-    endfunction
-    
-    `_public function UpdateInputsState(input `unpacked_dynamic_arr(`rvector, _inputs));
-        foreach (_inputs[n])
-            this.inputs[n] = _inputs[n]; // TODO: dispute about assigning method
-    endfunction
-    
-    `_public function UpdateOneInputState(input `rvector _input, input `uint _num_of_in);
-        this.inputs[_num_of_in] = _input;
-    endfunction
-    
-    `_public function ChooseInput(input `uint num_of_in);
-        this.chosen_input = num_of_in;
-    endfunction
-    
-    `_public function `rvector GetOutput();
-        return this.inputs[chosen_input];
-    endfunction
-    
-endclass
+    class Multiplexer extends `archpkg::Architecture;
+        `_private `unpacked_dynamic_arr(`rvector, inputs);
+        `_private `uint chosen_input;
+        
+        `_public function new (input `uint _num_of_inputs);
+            this.inputs = new [_num_of_inputs];
+            this.chosen_input = `MUX_INITIAL_CHOSEN_STATE;
+            foreach (this.inputs[n])
+                inputs[n] = `MUX_INITIAL_INPUT_STATE;
+        endfunction
+        
+        `_public function UpdateInputsState(input `unpacked_dynamic_arr(`rvector, _inputs));
+            foreach (_inputs[n])
+                this.inputs[n] = _inputs[n]; // TODO: dispute about assigning method
+        endfunction
+        
+        `_public function UpdateOneInputState(input `rvector _input, input `uint _num_of_in);
+            this.inputs[_num_of_in] = _input;
+        endfunction
+        
+        `_public function ChooseInput(input `uint num_of_in);
+            this.chosen_input = num_of_in;
+        endfunction
+        
+        `_public function `rvector GetOutput();
+            return this.inputs[chosen_input];
+        endfunction
+        
+    endclass
 
 endpackage

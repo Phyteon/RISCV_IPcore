@@ -26,53 +26,7 @@
 // Document Version 2.2" from May 7, 2017
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-import Field_Classes::*;
-
-// Global package alias
-`define instrpkg Instruction_Classes
-
-//// Macro definitions - number of fields ////
-`define RTypeInstruction_NumOfFields 6
-`define ITypeInstruction_NumOfFields 5
-`define STypeInstruction_NumOfFields 6
-`define BTypeInstruction_NumOfFields 8
-`define UTypeInstruction_NumOfFields 3
-`define JTypeInstruction_NumOfFields 6
-
-// ITypeInstruction macros //
-`define ITypeInstruction_IMM1_field_BeginIdx 20
-`define ITypeInstruction_IMM1_field_BitWidth 12
-
-// STypeInstruction macros //
-`define STypeInstruction_IMM1_field_BeginIdx 7
-`define STypeInstruction_IMM1_field_BitWidth 5
-`define STypeInstruction_IMM2_field_BeginIdx 25
-`define STypeInstruction_IMM2_field_BitWidth 7
-
-// BTypeInstruction macros //
-`define BTypeInstruction_IMM1_field_BeginIdx 7
-`define BTypeInstruction_IMM1_field_BitWidth 1
-`define BTypeInstruction_IMM2_field_BeginIdx 8
-`define BTypeInstruction_IMM2_field_BitWidth 4
-`define BTypeInstruction_IMM3_field_BeginIdx 25
-`define BTypeInstruction_IMM3_field_BitWidth 6
-`define BTypeInstruction_IMM4_field_BeginIdx 31
-`define BTypeInstruction_IMM4_field_BitWidth 1
-
-// UTypeInstruction macros //
-`define UTypeInstruction_IMM1_field_BeginIdx 12
-`define UTypeInstruction_IMM1_field_BitWidth 20
-
-// JTypeInstruction macros //
-`define JTypeInstruction_IMM1_field_BeginIdx 12
-`define JTypeInstruction_IMM1_field_BitWidth 8
-`define JTypeInstruction_IMM2_field_BeginIdx 20
-`define JTypeInstruction_IMM2_field_BitWidth 1
-`define JTypeInstruction_IMM3_field_BeginIdx 21
-`define JTypeInstruction_IMM3_field_BitWidth 10
-`define JTypeInstruction_IMM4_field_BeginIdx 31
-`define JTypeInstruction_IMM4_field_BitWidth 1
+`include "CommonHeader.sv"
 
 /**
 * Utility macros.
@@ -87,6 +41,9 @@ import Field_Classes::*;
 
 
 package Instruction_Classes;
+    import Architecture_AClass::*;
+    import Field_Classes::*;
+    
     typedef enum {
                    Rtype,
                    Itype,

@@ -19,29 +19,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-
-/**
-* Global package alias
-*/
-`define alupkg ALU_Class
+`include "CommonHeader.sv"
 
 `define OPERATION_ENUM_VEC_BITWIDTH 4
 `define ALU_INTERNALS_INITIAL_STATE `NULL_REG_VAL
-`define ALUVECTOR_BITWIDTH (`REGISTER_GLOBAL_BITWIDTH + 1)
 
 /**
 * Testbench macros.
 */
 `define ALU_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
-
-/**
-* Global type aliases macros.
-* Used throughout the project, aliases to all types in this file.
-*/
-`define aluvector `alupkg::riscv_aluvector
-`define alu_operation_vector `alupkg::riscv_alu_operation_vector
-`define alu_operation_type `alupkg::OperationType
 
 /**
 * Diagnostic log trace adapter macros and ERROR macros.
@@ -65,7 +51,7 @@ import Architecture_AClass::*;
                                                          {"left_operand=0x%0h ", \
                                                          "right_operand=0x%0h ", \
                                                          "operation=0x%0h ", \
-                                                         "outcome=0x%0h ", \
+                                                         "outcome=0x%0h "}, \
                                                          {this.monitor_item.left_operand, \
                                                          this.monitor_item.right_operand, \
                                                          this.monitor_item.operation, \
@@ -74,6 +60,7 @@ import Architecture_AClass::*;
 `define ERROR_OO_ALU_INTERNAL_TRANSACTION_FAILURE " |ERROR 0x00| "
 
 package ALU_Class;
+    import Architecture_AClass::*;
     /**
     * This type represents output of ALU unit.
     * It has one extra bit for indicating overflow.
@@ -106,12 +93,12 @@ package ALU_Class;
         `_public `rvtype branchctrl;
         `_public function `aluvector PerformOperation(input OperationType operation, input `rvector left_operand, input `rvector right_operand);
             unique case(operation)
-                ALU_ADD: return left_operand + right_operand; // Will this correctly overflow if needed?
+                ALU_ADD: return left_operand + right_operand;
                 ALU_SUB: return left_operand - right_operand;
                 ALU_XOR: return left_operand ^ right_operand;
                 ALU_AND: return left_operand & right_operand;
                 ALU_OR: return left_operand | right_operand;
-                ALU_SLT: return `static_cast_to_sint(left_operand) < `static_cast_to_sint(right_operand) ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
+                ALU_SLT: return `dynamic_cast_to_sint(left_operand) < `dynamic_cast_to_sint(right_operand) ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
                 ALU_SLTU: return left_operand < right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0);
                 ALU_SLL: return (left_operand << right_operand);
                 ALU_SRL: return (left_operand >> right_operand);
@@ -119,26 +106,32 @@ package ALU_Class;
                 ALU_BEQ: begin
                     if (left_operand == right_operand) this.branchctrl = 1;
                     else this.branchctrl = 0;
+                    return 0;
                 end
                 ALU_BNE: begin
                     if (left_operand != right_operand) this.branchctrl = 1;
-                    else this.branchcntrl = 0;
+                    else this.branchctrl = 0;
+                    return 0;
                 end
                 ALU_BLT: begin
-                    if (`static_cast_to_sint(left_operand) < `static_cast_to_sint(right_operand)) this.branchctrl = 1;
-                    else this.branchcntrl = 0;
+                    if (`dynamic_cast_to_sint(left_operand) < `dynamic_cast_to_sint(right_operand)) this.branchctrl = 1;
+                    else this.branchctrl = 0;
+                    return 0;
                 end
                 ALU_BGE: begin
-                    if (`static_cast_to_sint(left_operand) > `static_cast_to_sint(right_operand)) this.branchctrl = 1;
-                    else this.branchcntrl = 0;
+                    if (`dynamic_cast_to_sint(left_operand) > `dynamic_cast_to_sint(right_operand)) this.branchctrl = 1;
+                    else this.branchctrl = 0;
+                    return 0;
                 end
                 ALU_BLTU: begin
                     if (left_operand < right_operand) this.branchctrl = 1;
-                    else this.branchcntrl = 0;
+                    else this.branchctrl = 0;
+                    return 0;
                 end
                 ALU_BGEU: begin
                     if (left_operand > right_operand) this.branchctrl = 1;
-                    else this.branchcntrl = 0;
+                    else this.branchctrl = 0;
+                    return 0;
                 end
                 default: ; // Do nothing
             endcase
@@ -150,6 +143,7 @@ package ALU_Class;
         `_public rand `rvector left_operand;
         `_public rand `rvector right_operand;
         `_public `aluvector outcome;
+        `_public `rvtype alubctrl;
         `_public rand `alu_operation_type operation;
         /** No constraints needed here. */
         `_public task log(input string tag="");
@@ -199,6 +193,7 @@ package ALU_Class;
                 this.item.right_operand = this.aluinf.right_operand;
                 this.item.operation = this.aluinf.operation;
                 this.item.outcome = this.aluinf.outcome;
+                this.item.alubctrl = this.aluinf.alubctrl;
                 this.alu_scoreboard_mailbox.put(this.item);
                 this.item.log("ALU Monitor");
             end
@@ -253,6 +248,45 @@ package ALU_Class;
                             `DLT_ALU_SCOREBOARD(" |SLT FAIL| ");
                         else `DLT_ALU_SCOREBOARD(" |SLT PASS| ");
                     ALU_SLTU:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand < this.monitor_item.right_operand ? `static_cast_to_regvector(1) : `static_cast_to_regvector(0)))
+                            `DLT_ALU_SCOREBOARD(" |SLTU FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |SLTU PASS| ");
+                    ALU_SLL:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand << this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |SLL FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |SLL PASS| ");
+                    ALU_SRL:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand >> this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |SRL FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |SRL PASS| ");
+                    ALU_SRA:
+                        if(this.monitor_item.outcome != (this.monitor_item.left_operand >>> this.monitor_item.right_operand))
+                            `DLT_ALU_SCOREBOARD(" |SRA FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |SRA PASS| ");
+                    ALU_BEQ:
+                        if(this.monitor_item.alubctrl != (this.monitor_item.left_operand == this.monitor_item.right_operand ? 1 : 0))
+                            `DLT_ALU_SCOREBOARD(" |BEQ FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |BEQ PASS| ");
+                    ALU_BNE:
+                        if(this.monitor_item.alubctrl != (this.monitor_item.left_operand != this.monitor_item.right_operand ? 1 : 0))
+                            `DLT_ALU_SCOREBOARD(" |BNE FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |BNE PASS| ");
+                    ALU_BLT:
+                        if(this.monitor_item.alubctrl != (`dynamic_cast_to_sint(this.monitor_item.left_operand) < `dynamic_cast_to_sint(this.monitor_item.right_operand) ? 1 : 0))
+                            `DLT_ALU_SCOREBOARD(" |BLT FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |BLT PASS| ");
+                    ALU_BGE:
+                        if(this.monitor_item.alubctrl != (`dynamic_cast_to_sint(this.monitor_item.left_operand) > `dynamic_cast_to_sint(this.monitor_item.right_operand) ? 1 : 0))
+                            `DLT_ALU_SCOREBOARD(" |BGE FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |BGE PASS| ");
+                    ALU_BLTU:
+                        if(this.monitor_item.alubctrl != (this.monitor_item.left_operand < this.monitor_item.right_operand ? 1 : 0))
+                            `DLT_ALU_SCOREBOARD(" |BLTU FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |BLTU PASS| ");
+                    ALU_BGEU:
+                        if(this.monitor_item.alubctrl != (this.monitor_item.left_operand > this.monitor_item.right_operand ? 1 : 0))
+                            `DLT_ALU_SCOREBOARD(" |BGEU FAIL| ");
+                        else `DLT_ALU_SCOREBOARD(" |BGEU PASS| ");
                     default:
                         `DLT_ALU_SCOREBOARD(" |INVALID OPERATION| ");
                 endcase
@@ -280,7 +314,7 @@ package ALU_Class;
             * Setting up the mailboxes.
             */
             this.driver.alu_driver_mailbox = this.driver_mailbox;
-            this.driver.alu_driver_scoreboard = this.scoreboard_drv_mailbox;
+            this.driver.alu_scoreboard_mailbox = this.scoreboard_drv_mailbox;
             this.monitor.alu_scoreboard_mailbox = this.scoreboard_mnt_mailbox;
         endfunction
 
@@ -324,12 +358,3 @@ package ALU_Class;
     endclass
 endpackage
 
-interface ALUInterface(input `rvtype clk);
-    `rvector left_operand;
-    `rvector right_operand;
-    `aluvector outcome;
-    `rvtype reset;
-    `alu_operation_type operation;
-    modport DUT(input clk, input reset, input leftOperand, input rightOperand, input operation, output outcome);
-    modport Testbench(input clk, output reset, output leftOperand, output rightOperand, output operation, input outcome);
-endinterface //ALUInterface

@@ -25,15 +25,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-import Register_Class::*;
-
-// Global package alias
-`define progcntpkg ProgramCounter_class
+`include "CommonHeader.sv"
 
 `define InstructionAddressByteSize (`REGISTER_GLOBAL_BITWIDTH/8)
 
 package ProgramCounter_Class;
+    import Architecture_AClass::*;
+    import Register_Class::*;
     class ProgramCounter extends `regpkg::Register;
         
         function new(input `rvector _address);

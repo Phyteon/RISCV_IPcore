@@ -19,16 +19,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-import Register_Class::*;
-
-`define regfilepkg RegistryFile_Class
+`include "CommonHeader.sv"
 
 `define SIZE_OF_REGISTRY_FILE 32
 `define REGISTER_INITIAL_VALUE 'h0000_0000
 
 package RegistryFile_Class;
-    
+    import Architecture_AClass::*;
+    import Register_Class::*;
+
     class RegistryFile extends Architecture_AClass::Architecture;
         `_private `unpacked_arr(`regpkg::Register, `SIZE_OF_REGISTRY_FILE, registers); // Only unpacked array of class is allowed
         

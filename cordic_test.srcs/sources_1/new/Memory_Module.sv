@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Memory_Class::*;
+`include "CommonHeader.sv"
 
 `define READ_WRITE_CTRL_NUM_OF_INPUTS 2
 `define MemoryIdleState(mode) // Macro purely for documentation & code readability - may be later used for debugging
@@ -30,6 +30,7 @@ import Memory_Class::*;
 // `define MEMORY_MODULE_IMPLEMENTATION
 
 module Memory_Module(MemoryInterface.DUT memif);
+    import Memory_Class::*;
     `ifdef MEMORY_MODULE_DESIGN
         // Creating class for handling memory reads and writes
         `mempkg::Memory main_memory;

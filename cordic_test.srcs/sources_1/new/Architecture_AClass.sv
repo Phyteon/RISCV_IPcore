@@ -25,76 +25,9 @@
 // Revision 0.5 (26.10.2021) - Major overhaul (check VCS)
 // Additional Comments:
 // 
-//////////////////////////////////////////////////////////////////////////////////1
+//////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Package alias macro.
-* Used instead of the whole package name (wherever it is possible).
-*/
-`define archpkg Architecture_AClass
-
-/**
-* Global constants.
-* They define constant values used throughout the whole project.
-* They allow easier architecture adjustment if needed.
-*/
-`define INSTRUCTION_GLOBAL_BITWIDTH 32
-`define REGISTER_GLOBAL_BITWIDTH 32 /**< Must be a multiple of BYTE_SIZE! */
-`define BYTE_SIZE 8
-`define NULL_REG_VAL `REGISTER_GLOBAL_BITWIDTH'h0
-
-/**
-* Clocking methodology macros.
-* They define the active and trailing edge of clock signal.
-*/
-`define CLOCK_ACTIVE_EDGE posedge
-`define CLOCK_TRAILING_EDGE negedge
-
-/**
-* Global type aliases macros.
-* Used throughout the project, aliases to all types in this file.
-*/
-`define ivector `archpkg::insvector
-`define rvector `archpkg::regvector
-`define rvbyte `archpkg::riscvbyte
-`define uint int unsigned
-`define sint int signed
-`define rvtype `archpkg::riscvtype /**< Common type for processor internals. */
-`define class_handle_dynamic_array `archpkg::ClassHandleDA
-`define rvector_dynamic_array `archpkg::RegVectorDA
-`define ivector_dynamic_array `archpkg::InsVectorDA
-
-/**
-* Utility and readability macros.
-* They allow self-documenting, more readable code.
-*/
-`define static_cast_to_uint(val) unsigned'(val)
-`define dynamic_cast_to_uint(target, val) $cast(target, val)
-`define static_cast_to_sint(val) signed'(val)
-`define dynamic_cast_to_sint(target, val) $cast(target, val)
-`define static_cast_to_regvector(val) `rvector'(val)
-`define static_cast_to_insvector(val) `ivector'(val)
-`define unpacked_arr(_type, _size, _identifier) _type _identifier [(_size) - 1 : 0]
-`define unpacked_dynamic_arr(_type, _identifier) _type _identifier []
-`define packed_arr(_type, _size, _identifier) _type [(_size) - 1 : 0] _identifier
-`define packed_dynamic_arr(_type, _identifier) _type [] _identifier
-`define _private local /**< Can be altered so that all private fields will become public - for debug and readability purposes. */
-`define _protected protected /**< Can be altered so that all protected fields will become public - for debug and readability purposes. */
-`define _public /**< Mainly to express intent - for readability purposes. */
-
-/**
-* Compilation-time macros.
-* They only affect the compilation phase.
-*/
-`define throw_compilation_error(msg) SomeObviouslyWrongSyntax /**< Since there is no compilation-time assertions in SV, this is a makeshift way to imitate them. */
-
-/**
-* Diagnostic Log Trace macros.
-* They either manage the setup of the task that performs logging,
-* or they are some sort of alias to the task.
-*/
-`define DIAGNOSTIC_LOG_TRACE_EXTENDED 0 /**< When set to 1, DLT will also log line number and file name from where it is called. */
-`define DLT_LOG(logging_entity, info, format, params) `archpkg::DiagnosticLogTrace(`__FILE__, `__LINE__, logging_entity, info, format, params)
+`include "CommonHeader.sv"
 
 /**
 * Init task macros
@@ -105,7 +38,12 @@
 `define TIME_LOGGING_PRECISION_DIGITS 2
 `define TIME_LOGGING_SUFFIX_STRING " ns"
 `define TIME_LOGGING_MIN_FIELD_WIDTH 6
-`define INIT_TASK `archpkg::Init()
+
+/**
+* Diagnostic Log Trace macros.
+* They manage the setup of the task that performs logging.
+*/
+`define DIAGNOSTIC_LOG_TRACE_EXTENDED 0 /**< When set to 1, DLT will also log line number and file name from where it is called. */
 
 package Architecture_AClass;
     //// Global type definitions ////
@@ -170,8 +108,8 @@ package Architecture_AClass;
     *        format. If no values are to be displayed, must be an empty queue.
     */
     task DiagnosticLogTrace(input string file, input int line, input string logging_entity, input string info, input string format [], input int params []);
-        string parsed = "T=%t "; /**< Timestamp. */
-        string temporary = ""; /**< For parsing arguments. */
+        automatic string parsed = "T=%t "; /**< Timestamp. */
+        automatic string temporary = ""; /**< For parsing arguments. */
         if(`DIAGNOSTIC_LOG_TRACE_EXTENDED)
             parsed = {parsed, "file: %s, line: %0d"};
         parsed = {parsed, " [%s] %s "}; /**< Logging entity and info string. */

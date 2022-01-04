@@ -19,10 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-import Instruction_Classes::*;
-import ALU_Class::*;
-import SignExtender_Class::*;
+`include "CommonHeader.sv"
 
 `define CONTROL_UNIT_OUTPUT_TYPE void
 `define CONTROL_UNIT_INSTRUCTION_INFO_MEM_SIZE_BYTES 1000 /**< Size of memory in bytes used to store info about instructions - 
@@ -31,6 +28,11 @@ import SignExtender_Class::*;
 
 
 package ControlUnit_Class;
+    import Architecture_AClass::*;
+    import Instruction_Classes::*;
+    import ALU_Class::*;
+    import SignExtender_Class::*;
+
     class ControlUnit extends Architecture_AClass::Architecture;
     `_private `unpacked_arr(`rvbyte, `CONTROL_UNIT_INSTRUCTION_INFO_MEM_SIZE_BYTES, instruction_info);
     `_private `uint type_to_address[string];
@@ -626,62 +628,3 @@ package ControlUnit_Class;
     endclass
 endpackage
 
-interface ControlUnitInterface(input `rvtype clk);
-    /**
-    * Input signals
-    */
-    `ivector INSTR; /**< Instruction to decode */
-    /**
-    * 1 - bit controls
-    */
-    `rvtype CUJMPCTRL; /**< Control Unit Jump Control signal */
-    `rvtype CUBCTRL; /**< Control Unit Branch Control signal */
-    `rvtype MUX1; /**< Multiplexer 1 control (relative branch/ jump) */
-    `rvtype MUX2; /**< Multiplexer 2 control (second operand from registry file/ immediate value) */
-    `rvtype MUX4; /**< Multiplexer 4 control (for supplying current PC value to ALU) */
-    `rvtype REGW; /**< Registry File Write control signal */
-    `rvtype MEMW; /**< Memory Write control signal */
-    `rvtype MEMR; /**< Memory Read control signal */
-    `rvtype MSE; /**< Memory Sign Extention control signal */
-    /**
-    * 2 - bit controls
-    */
-    `packed_arr(`rvtype, 2, MUX3); /**< Multiplexer 3 control (Program Counter next instruction value/ Memory data out/ ALU out) */
-    `packed_arr(`rvtype, 2, MBC); /**< Memory byte count control */
-    /**
-    * 4 - bit controls
-    */
-    `alupkg::OperationType ALU0; /**< Main ALU operation control */
-    /**
-    * 5 - bit controls
-    */
-    `packed_arr(`rvtype, 5, RS1); /**< Resource Register 1 control signal */
-    `packed_arr(`rvtype, 5, RS2); /**< Resource Register 2 control signal */
-    `packed_arr(`rvtype, 5, RD); /**< Destination Register control signal */
-    /**
-    * 32 - bit controls
-    */
-    `rvector IMM0; /**< Immediate Value 0 */
-    `rvector IMM1; /**< Immediate Value 1 */
-
-    modport DUT (
-        input INSTR,
-        output CUJMPCTRL,
-        output CUBCTRL,
-        output MUX1,
-        output MUX2,
-        output MUX4,
-        output REGW,
-        output MEMW,
-        output MEMR,
-        output MSE,
-        output MUX3,
-        output MBC,
-        output ALU0,
-        output RS1,
-        output RS2,
-        output RD,
-        output IMM0,
-        output IMM1
-    );
-endinterface

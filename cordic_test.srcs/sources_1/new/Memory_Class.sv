@@ -25,10 +25,7 @@
 // Misaligned address access supported, but highly discouraged
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-
-// Global package alias
-`define mempkg Memory_Class
+`include "CommonHeader.sv"
 
 /**
 * Memory size macros.
@@ -87,6 +84,7 @@ import Architecture_AClass::*;
 // `define MISALIGNED_MEM_ACCESS
 
 package Memory_Class;
+    import Architecture_AClass::*;
 
     /////////////////////////////////
     // Typedef:
@@ -331,15 +329,3 @@ package Memory_Class;
     
 endpackage
 
-
-interface MemoryInterface(input `rvtype clk);
-    `rvtype memwrite;
-    `rvtype memread;
-    `rvector memaddr;
-    `rvector inbus;
-    `rvtype reset;
-    `rvector outbus;
-    // TODO: Add clocking blocks
-    modport Testbench (input clk, output memwrite, output memread, output memaddr, output inbus, output reset, input outbus);
-    modport DUT (input clk, input memwrite, input memread, input memaddr, input inbus, input reset, output outbus);
-endinterface

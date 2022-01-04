@@ -24,12 +24,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import Architecture_AClass::*;
-
-// Global package alias
-`define regpkg Register_Class
+`include "CommonHeader.sv"
 
 package Register_Class;
+    import Architecture_AClass::*;
+
     class Register extends Architecture_AClass::Architecture;
         `_protected `rvector contents;
         
