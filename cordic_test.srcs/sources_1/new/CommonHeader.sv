@@ -32,7 +32,7 @@
 `define cupkg ControlUnit_Class
 `define mempkg Memory_Class
 `define fieldpkg Field_Classes
-`define instrpkg Instruction_Classes
+`define inspkg Instruction_Classes
 `define progcntpkg ProgramCounter_class
 `define regfilepkg RegistryFile_Class
 `define regpkg Register_Class
@@ -85,6 +85,8 @@
 * They only affect the compilation phase.
 */
 `define throw_compilation_error(msg) SomeObviouslyWrongSyntax /**< Since there is no compilation-time assertions in SV, this is a makeshift way to imitate them. */
+
+
 
 /**
 * ********************************************************* PACKAGE MACROS SECTION *********************************************************
@@ -185,3 +187,29 @@
 `define JTypeInstruction_IMM4_field_BitWidth 1
 
 /**< **** END **** >**/
+
+/**
+* Memory_Class macros.
+* BEGIN
+*/
+
+`define MEMORY_SIZE_IN_CELLS 2048 /**< When MemoryCell is 32 bits wide, this translates to 8kB of memory. */
+`define memorycell `mempkg::MemoryCell
+`define MEMORY_INITIAL_VALUE `REGISTER_GLOBAL_BITWIDTH'h0
+`define MEMORY_CELL_SIZE_IN_BYTES (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE)
+
+/**< **** END **** >**/
+
+/**
+* ********************************************************* PACKAGE MACROS SECTION END *****************************************************
+* Below macros might be dependent on package macros.
+*/
+
+
+/**
+* Testbenches macros.
+* They define number of transactions and other test-related variables.
+*/
+`define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
+`define MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
+`define MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN 10

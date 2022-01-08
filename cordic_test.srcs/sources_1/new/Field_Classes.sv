@@ -45,43 +45,43 @@ package Field_Classes;
         endfunction
     endclass
     
-    class RD_field extends InstructionField;
+    class RD_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "RD_field";
         endfunction
     endclass
     
-    class OPCODE_field extends InstructionField;
+    class OPCODE_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "OPCODE_field";
         endfunction
     endclass
     
-    class FUNCT3_field extends InstructionField;
+    class FUNCT3_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "FUNCT3_field";
         endfunction
     endclass
     
-    class FUNCT7_field extends InstructionField;
+    class FUNCT7_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "FUNCT7_field";
         endfunction
     endclass
     
-    class RS1_field extends InstructionField;
+    class RS1_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "RS1_field";
         endfunction
     endclass
     
-    class RS2_field extends InstructionField;
+    class RS2_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "RS2_field";
         endfunction
     endclass
     
-    class IMM_field extends InstructionField;
+    class IMM_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public `uint ImmBitWidth;
         `_public function new(input string _Info);
             this.Info = _Info;

@@ -20,6 +20,7 @@ interface ControlUnitInterface(input `rvtype clk);
     * Input signals
     */
     `ivector INSTR; /**< Instruction to decode */
+    `rvtype RESET;
     /**
     * 1 - bit controls
     */
@@ -54,6 +55,7 @@ interface ControlUnitInterface(input `rvtype clk);
     `rvector IMM1; /**< Immediate Value 1 */
 
     modport DUT (
+        input RESET,
         input INSTR,
         output CUJMPCTRL,
         output CUBCTRL,
@@ -76,13 +78,42 @@ interface ControlUnitInterface(input `rvtype clk);
 endinterface //ControlUnitInterface
 
 interface MemoryInterface(input `rvtype clk);
-    `rvtype memwrite;
-    `rvtype memread;
-    `rvector memaddr;
-    `rvector inbus;
-    `rvtype reset;
-    `rvector outbus;
-    // TODO: Add clocking blocks
-    modport Testbench (input clk, output memwrite, output memread, output memaddr, output inbus, output reset, input outbus);
-    modport DUT (input clk, input memwrite, input memread, input memaddr, input inbus, input reset, output outbus);
+    /**
+    * 1 - bit controls
+    */
+    `rvtype MEMW; /**< Memory write enable */
+    `rvtype MEMR; /**< Memory read enable */
+    `rvtype MSE; /**< Memory sign extension unit enable */
+    `rvtype RESET;
+    /**
+    * 2 - bit controls
+    */
+    `packed_arr(`rvtype, 2, MBC); /**< Memory byte count */
+    /**
+    * 32 - bit controls
+    */
+    `rvector ADDRIN; /**< Input address */
+    `rvector DATAIN; /**< Input data */
+    `rvector MEMOUT; /**< Data out */
+    
+    modport Testbench (
+        output MEMW,
+        output MEMR,
+        output MSE,
+        output RESET,
+        output MBC,
+        output ADDRIN,
+        output DATAIN,
+        input MEMOUT
+    );
+    modport DUT (
+        input MEMW,
+        input MEMR,
+        input MSE,
+        input RESET,
+        input MBC,
+        input ADDRIN,
+        input DATAIN,
+        output MEMOUT
+    );
 endinterface //MemoryInterface

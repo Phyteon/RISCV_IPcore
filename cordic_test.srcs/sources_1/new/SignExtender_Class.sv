@@ -43,7 +43,7 @@ package SignExtender_Class;
 
         static function `rvector ZeroStuff(input `rvector imm, input `uint position);
             `rvector stuffed = imm;
-            stuffed << position;
+            stuffed = stuffed << position;
             return stuffed;
         endfunction
 

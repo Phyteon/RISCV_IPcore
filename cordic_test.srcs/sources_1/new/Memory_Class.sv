@@ -27,20 +27,6 @@
 
 `include "CommonHeader.sv"
 
-/**
-* Memory size macros.
-*/
-`define DATA_MEMORY_SIZE_IN_CELLS 1024 /**< When MemoryCell is 32 bits wide, this translates to 4kB of memory. */
-`define PROGRAM_MEMORY_SIZE_IN_CELLS 1024 /**< When MemoryCell is 32 bits wide, this translates to 4kB of memory. */
-
-`define memorycell `mempkg::MemoryCell
-`define MEMORY_INITIAL_VALUE `REGISTER_GLOBAL_BITWIDTH'h0
-`define MEMORY_CELL_SIZE_IN_BYTES (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE)
-`define BYTE_MASK `REGISTER_GLOBAL_BITWIDTH'h0000_00FF
-`define WORD_MASK `REGISTER_GLOBAL_BITWIDTH'h0000_FFFF
-`define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
-`define MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
-`define MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN 10
 
 /**
 * Diagnostic log trace adapter macros and ERROR macros.
@@ -49,30 +35,38 @@
 */
 `define DLT_MEMORY_TITEM_VARDUMP(logging_entity) `DLT_LOG(logging_entity, \
                                                          " Transaction Item vars dump: ", \
-                                                         {"memaddr=0x%0h ", \
-                                                         "memwrite=0x%0h ", \
-                                                         "memread=0x%0h ", \
-                                                         "inbus=0x%0h ", \
-                                                         "outbus=0x%0h"}, \
-                                                         {this.memaddr, \
-                                                         this.memwrite, \
-                                                         this.memread, \
-                                                         this.inbus, \
-                                                         this.outbus}) /**< This macro is to be used ONLY from within the transaction item class. */
+                                                         {"MEMW=0x%0h ", \
+                                                         "MEMR=0x%0h ", \
+                                                         "MSE=0x%0h ", \
+                                                         "MBC=0x%0h ", \
+                                                         "ADDRIN=0x%0h", \
+                                                         "DATAIN=0x%0h", \
+                                                         "MEMOUT=0x%0h"}, \
+                                                         {this.MEMW, \
+                                                         this.MEMR, \
+                                                         this.MSE, \
+                                                         this.MBC, \
+                                                         this.ADDRIN,\
+                                                         this.DATAIN, \
+                                                         this.MEMOUT}) /**< This macro is to be used ONLY from within the transaction item class. */
 
 `define DLT_MEMORY_INFO(logging_entity, info) `DLT_LOG(logging_entity, info, {}, {}) /**< This macro can be used anywhere within this file. */
 
 `define DLT_MEMORY_SCOREBOARD(message) `DLT_LOG("Memory Scoreboard", message, \
-                                                         {"memaddr=0x%0h ", \
-                                                         "memwrite=0x%0h ", \
-                                                         "memread=0x%0h ", \
-                                                         "inbus=0x%0h ", \
-                                                         "outbus=0x%0h"}, \
-                                                         {item.memaddr, \
-                                                         item.memwrite, \
-                                                         item.memread, \
-                                                         item.inbus, \
-                                                         item.outbus}) /**< This macro to be used ONLY from within the scoreboard class. */
+                                                         {"MEMW=0x%0h ", \
+                                                         "MEMR=0x%0h ", \
+                                                         "MSE=0x%0h ", \
+                                                         "MBC=0x%0h ", \
+                                                         "ADDRIN=0x%0h", \
+                                                         "DATAIN=0x%0h", \
+                                                         "MEMOUT=0x%0h"}, \
+                                                         {this.MEMW, \
+                                                         this.MEMR, \
+                                                         this.MSE, \
+                                                         this.MBC, \
+                                                         this.ADDRIN,\
+                                                         this.DATAIN, \
+                                                         this.MEMOUT}) /**< This macro to be used ONLY from within the scoreboard class. */
 
 `define ERROR_00_MEMORY_READ_VALUE_DIFFERENT_FROM_STORED " |ERROR 0x00| "
 
@@ -85,26 +79,19 @@
 
 package Memory_Class;
     import Architecture_AClass::*;
+    import SignExtender_Class::*;
 
-    /////////////////////////////////
-    // Typedef:
-    //      MemoryCell
-    // Info:
-    //      This type represents memory cell size used in the project. It is created
-    //      so that if ever there was a need to change memory cell size, it would only
-    //      require changing this define. IMPORTANT INFORMATION!: If this define would
-    //      be ever changed author assumes that the type would still support byte-addressing.
-    /////////////////////////////////
+    /**
+    * MemoryCell typedef.
+    * Defines a single cell of memory, which is a packed array of bytes.
+    */
     typedef `packed_arr(`rvbyte, (`REGISTER_GLOBAL_BITWIDTH/`BYTE_SIZE), MemoryCell);
     
-    /////////////////////////////////
-    // Typedef:
-    //      MemoryType
-    // Info:
-    //      This type represents memory. Fixed in size, dependent on MemoryCell type.
-    //      To be used when constructing "soft" Harvard architecture.
-    /////////////////////////////////
-    typedef `packed_arr(`memorycell, (`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS), MemoryType);
+    /**
+    * MemoryType typedef.
+    * Defines a memory array.
+    */
+    typedef `unpacked_arr(`memorycell, (`MEMORY_SIZE_IN_CELLS), MemoryType);
     
     class Memory extends Architecture_AClass::Architecture;
         `_protected MemoryType main_memory;
@@ -114,7 +101,7 @@ package Memory_Class;
                 main_memory[icell] = `MEMORY_INITIAL_VALUE;
         endfunction
         
-        `_public function `memorycell Read(input `uint address, input `uint bytes);
+        `_public function `memorycell Read(input `uint address, input `uint bytes, input `rvtype extend_sign);
             `uint memcell_remainder = address % `MEMORY_CELL_SIZE_IN_BYTES;
             `memorycell intermediate_val = `MEMORY_INITIAL_VALUE;
             unique case(bytes)
@@ -133,7 +120,12 @@ package Memory_Class;
                 default:
                     $error("Unimplemented address range used!");
             endcase
-            // Sign extention / zero-padding will be performed by other function
+            /**
+            * Sign - extension performed by abstract class static method
+            */
+            if(extend_sign == 1)
+                intermediate_val = `sepkg::SignExtender::ExtendSign(intermediate_val, bytes * `BYTE_SIZE, 0);
+            
             return intermediate_val;
         endfunction
         
@@ -158,19 +150,21 @@ package Memory_Class;
     endclass
     
     class MemoryTransactionItem;
-        `_public rand `rvector memaddr;
-        `_public rand `rvector inbus;
-        `_public rand `rvtype memwrite;
-        `_public rand `rvtype memread;
-        `_public `rvector outbus;
+        `_public rand `rvtype MEMW;
+        `_public rand `rvtype MEMR;
+        `_public rand `rvtype MSE;
+        `_public rand `packed_arr(`rvtype, 2, MBC);
+        `_public rand `rvector ADDRIN;
+        `_public rand `rvector DATAIN;
+        `_public `rvector MEMOUT;
         
         constraint c_memaddr {
-            memaddr < ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES);
-            memaddr > ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES) - `MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN;
-            memaddr % `MEMORY_CELL_SIZE_IN_BYTES == 0;
+            ADDRIN < ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES);
+            ADDRIN > ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES) - `MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN;
+            ADDRIN % `MEMORY_CELL_SIZE_IN_BYTES == 0;
         };
         constraint c_memreadwrite {
-            (memwrite & memread) != 1; 
+            (MEMW & MEMR) != 1;
         };
         
         `_public task log(input string tag="");

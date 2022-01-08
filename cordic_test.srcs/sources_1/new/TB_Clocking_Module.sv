@@ -19,6 +19,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+`include "CommonHeader.sv"
+
 import Architecture_AClass::*;
 
 `define DEFAULT_TB_CLOCK_FREQ 10 // In kHz
