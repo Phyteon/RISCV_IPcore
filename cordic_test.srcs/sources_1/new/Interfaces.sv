@@ -140,11 +140,13 @@ interface RegistryFileInterface(input `rvtype clk);
     * 1 - bit signals
     */
     `rvtype REGW;
+    `rvtype RESET;
     /**
     * 5 - bit signals
     */
     `packed_arr(`rvtype, 5, RS1);
     `packed_arr(`rvtype, 5, RS2);
+    `packed_arr(`rvtype, 5, RD);
     /**
     * 32 - bit signals
     */
@@ -153,11 +155,20 @@ interface RegistryFileInterface(input `rvtype clk);
     `rvector OP2;
     modport DUT(
         input REGW,
+        input RESET,
         input RS1,
         input RS2,
+        input RD,
         input REGDATIN,
         output OP1,
         output OP2
     );
 
 endinterface //RegistryFileInterface
+
+interface ProgramCounterInterface(input `rvtype clk);
+    `rvector ADDRIN;
+    `rvector ADDROUT;
+    `rvtype RESET;
+    modport DUT(input RESET, input ADDRIN, output ADDROUT);
+endinterface //ProgramCounterInterface

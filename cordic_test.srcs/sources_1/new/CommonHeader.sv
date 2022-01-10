@@ -33,7 +33,7 @@
 `define mempkg Memory_Class
 `define fieldpkg Field_Classes
 `define inspkg Instruction_Classes
-`define progcntpkg ProgramCounter_class
+`define pcpkg ProgramCounter_Class
 `define regfilepkg RegistryFile_Class
 `define regpkg Register_Class
 `define muxpkg Multiplexer_Class

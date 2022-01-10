@@ -60,13 +60,13 @@
                                                          "ADDRIN=0x%0h", \
                                                          "DATAIN=0x%0h", \
                                                          "MEMOUT=0x%0h"}, \
-                                                         {this.MEMW, \
-                                                         this.MEMR, \
-                                                         this.MSE, \
-                                                         this.MBC, \
-                                                         this.ADDRIN,\
-                                                         this.DATAIN, \
-                                                         this.MEMOUT}) /**< This macro to be used ONLY from within the scoreboard class. */
+                                                         {this.monitor_item.MEMW, \
+                                                         this.monitor_item.MEMR, \
+                                                         this.monitor_item.MSE, \
+                                                         this.monitor_item.MBC, \
+                                                         this.monitor_item.ADDRIN,\
+                                                         this.monitor_item.DATAIN, \
+                                                         this.monitor_item.MEMOUT}) /**< This macro to be used ONLY from within the scoreboard class. */
 
 `define ERROR_00_MEMORY_READ_VALUE_DIFFERENT_FROM_STORED " |ERROR 0x00| "
 
@@ -278,15 +278,16 @@ package Memory_Class;
         `_private MemoryTransactionItem driver_item;
         `_private MemoryTransactionItem monitor_item;
         `_private MemoryTransactionItem database[`rvector]; /**< Associative array for checking the results */
+        `_private `rvector aligned_address; /**< Address aligned to 4 for correct database handling */
+        `_private `uint remainder;
         
         `_public task run();
             `DLT_MEMORY_INFO("Memory Scoreboard", " Starting memory scoreboard... ");
             forever begin
                 this.memory_driver_mailbox.get(this.driver_item); /**< Wait for driver to initialise transaction */
                 this.memory_monitor_mailbox.get(this.monitor_item); /**< Wait for monitor to register transaction */
-                `rvector aligned_address = this.monitor_item.ADDRIN >> 2; /**< Address aligned to 4 for correct database handling */
-                `uint remainder = this.monitor_item.ADDRIN % `MEMORY_CELL_SIZE_IN_BYTES;
-
+                this.aligned_address = this.monitor_item.ADDRIN >> 2;
+                this.remainder = this.monitor_item.ADDRIN % `MEMORY_CELL_SIZE_IN_BYTES;
                 /**
                 * Check if transaction was correct.
                 */
@@ -297,29 +298,29 @@ package Memory_Class;
                 * Scenario 1: memory write
                 */
                 if ((this.monitor_item.MEMW == 1) && (this.monitor_item.MEMR == 0))
-                    if (this.database.exists(aligned_address) == 0)
-                        this.database[aligned_address] = this.monitor_item; /**< If a memory cell record doesn't exist in the simulation database, create it */
+                    if (this.database.exists(this.aligned_address) == 0)
+                        this.database[this.aligned_address] = this.monitor_item; /**< If a memory cell record doesn't exist in the simulation database, create it */
                     else
-                        this.database[aligned_address].CopyItemFields_SubstituteData(this.monitor_item);
+                        this.database[this.aligned_address].CopyItemFields_SubstituteData(this.monitor_item);
                 
                 /**
                 * Scenario 2: memory read
                 */
                 if ((this.monitor_item.MEMW == 0) && (this.monitor_item.MEMR == 1)) begin
-                    if (this.database.exists(aligned_address) != 1)
+                    if (this.database.exists(this.aligned_address) != 1)
                         `DLT_MEMORY_SCOREBOARD(" |Uninitialised addr read| ");
                     else begin
-                        `memorycell temp_val_for_byte_addressing = this.database[aligned_address].DATAIN;
+                        `memorycell temp_val_for_byte_addressing = this.database[this.aligned_address].DATAIN;
                         if (this.monitor_item.MSE == 1) begin /**< Load instruction */
                             case (this.monitor_item.MBC)
-                                1: if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[remainder], `BYTE_SIZE, 0))
+                                1: if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[this.remainder], `BYTE_SIZE, 0))
                                     `DLT_MEMORY_SCOREBOARD(" |Invalid output value - byte read(S)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull signed byte read| ");
-                                2: if(remainder == 0)
+                                2: if(this.remainder == 0)
                                     if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[1 : 0], 2 * `BYTE_SIZE, 0))
                                         `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(S)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull signed halfword read| ");
-                                else if(remainder == 2)
+                                else if(this.remainder == 2)
                                     if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[3 : 2], 2 * `BYTE_SIZE, 0))
                                         `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(S)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull signed halfword read| ");
@@ -331,14 +332,14 @@ package Memory_Class;
                             endcase
                         end else begin /**< Load unsigned instruction */
                             case (this.monitor_item.MBC)
-                                1: if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[remainder])
+                                1: if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[this.remainder])
                                     `DLT_MEMORY_SCOREBOARD(" |Invalid output value - byte read(U)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull unsigned byte read| ");
-                                2: if(remainder == 0)
+                                2: if(this.remainder == 0)
                                     if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[1 : 0])
                                         `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(U)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull unsigned halfword read| ");
-                                else if(remainder == 2)
+                                else if(this.remainder == 2)
                                     if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[3 : 2])
                                         `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(U)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull unsigned halfword read| ");
@@ -356,7 +357,7 @@ package Memory_Class;
                 if (~(this.monitor_item.MEMW || this.monitor_item.MEMR)) begin
                     `DLT_MEMORY_SCOREBOARD(" |Memory idle| ");
                 end
-               
+                
                 
             end // forever loop
         endtask

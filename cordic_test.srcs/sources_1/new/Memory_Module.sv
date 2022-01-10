@@ -41,15 +41,15 @@ module Memory_Module(MemoryInterface.DUT memif);
         end
         
         always @ (`CLOCK_ACTIVE_EDGE memif.clk) begin
-            if (memif.reset)
-                memif.outbus = `RESET_REG_VAL;
+            if (memif.RESET)
+                memif.MEMOUT = `RESET_REG_VAL;
             else begin
-                read_write_control[0] = memif.memwrite;
-                read_write_control[1] = memif.memread;
+                read_write_control[0] = memif.MEMW;
+                read_write_control[1] = memif.MEMR;
                 unique case(read_write_control)
                     0: `MemoryIdleState("Default mode");
-                    1: main_memory.Write(memif.memaddr, memif.inbus, `MEMORY_CELL_SIZE_IN_BYTES);
-                    2: memif.outbus = main_memory.Read(memif.memaddr, `MEMORY_CELL_SIZE_IN_BYTES);
+                    1: main_memory.Write(memif.ADDRIN, memif.DATAIN, memif.MBC);
+                    2: memif.outbus = main_memory.Read(memif.ADDRIN, memif.MBC, memif.MSE);
                     3: `MemoryIdleState("Forbidden state");
                 endcase
             end // else
