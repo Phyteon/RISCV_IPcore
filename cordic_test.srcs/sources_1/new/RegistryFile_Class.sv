@@ -44,8 +44,9 @@ package RegistryFile_Class;
             return temporary;
         endfunction 
         
-        function Write(input `rvector val, input `uint rd);
+        function void Write(input `rvector val, input `uint rd);
             if (rd != 0) this.registers[rd].Write(val);
         endfunction
     endclass
+    
 endpackage
