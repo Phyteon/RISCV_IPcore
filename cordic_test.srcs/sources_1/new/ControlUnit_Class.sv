@@ -45,16 +45,16 @@ package ControlUnit_Class;
         * Format numbers (as keys of associative array within) are taken from
         * InstructionFormat enumerated type.
         */
-        this.opcode_mapping[51] = '{0 : {0, 1, 2, 3, 4, 5, 6, 7}};
+        this.opcode_mapping[51] = '{0 : {0, 1, 2, 3, 4, 5, 6, 7}}; /**< Only R-type format */
         this.opcode_mapping[19] = '{0 : {1, 5}, 
-                                    1 : {0, 2, 3, 4, 6, 7}};
-        this.opcode_mapping[35] = '{2 : {0, 1, 2}};
-        this.opcode_mapping[103] = '{1 : {0}};
-        this.opcode_mapping[3] = '{1 : {0, 1, 2, 4, 5}};
-        this.opcode_mapping[99] = '{3 : {0, 1, 4, 5, 6, 7}};
-        this.opcode_mapping[55] = '{4: {}};
-        this.opcode_mapping[23] = '{4: {}};
-        this.opcode_mapping[111] = '{5: {}};
+                                    1 : {0, 2, 3, 4, 6, 7}}; /**< R-type and I-type format */
+        this.opcode_mapping[35] = '{2 : {0, 1, 2}}; /**< Only S-type format */
+        this.opcode_mapping[103] = '{1 : {0}}; /**< Only I-type format */
+        this.opcode_mapping[3] = '{1 : {0, 1, 2, 4, 5}}; /**< Only I-type format */
+        this.opcode_mapping[99] = '{3 : {0, 1, 4, 5, 6, 7}}; /**< Only B-type format */
+        this.opcode_mapping[55] = '{4: {}}; /**< Only U-type format */
+        this.opcode_mapping[23] = '{4: {}}; /**< Only U-type format */
+        this.opcode_mapping[111] = '{5: {}}; /**< Only J-type format */
     endfunction
 
     `_public function `CONTROL_UNIT_OUTPUT_TYPE ControlUnitMainFunction(input `ivector instruction_raw);
@@ -73,9 +73,47 @@ package ControlUnit_Class;
     endfunction
 
     `_private function `inspkg::Instruction DecodeType(input `ivector instruction_raw);
-        `insformat format;
+        `insformat format = format.first();
         `inspkg::Instruction ret_obj;
-        
+        `uint opcode = instruction_raw[`OPCODE_field_BitWidth - 1 + `OPCODE_field_BeginIdx : `OPCODE_field_BeginIdx];
+        if(this.opcode_mapping.exists(opcode) != 1)
+            $error("No such opcode is implemented!");
+        else begin
+            if(this.opcode_mapping[opcode].size() == 1) begin /**< If this opcode is present in only one format, immediately return associated object */
+                while (this.opcode_mapping[opcode].exists(unsigned'(format)) != 1) begin
+                    format = format.next(); /**< Find the format */
+                end
+                unique case (format)
+                    Rtype: ret_obj = `inspkg::RTypeInstruction::new(instruction_raw);
+                    Stype: ret_obj = `inspkg::STypeInstruction::new(instruction_raw);
+                    Btype: ret_obj = `inspkg::BTypeInstruction::new(instruction_raw);
+                    Itype: ret_obj = `inspkg::ITypeInstruction::new(instruction_raw);
+                    Utype: ret_obj = `inspkg::UTypeInstruction::new(instruction_raw);
+                    Jtype: ret_obj = `inspkg::JTypeInstruction::new(instruction_raw); 
+                    default: ; /**< Do nothing */
+                endcase
+            end else begin /**< If opcode present in more than one format, check FUNCT3 field */
+                `uint funct3 = instruction_raw[`FUNCT3_field_BitWidth - 1 + `FUNCT3_field_BeginIdx : `FUNCT3_field_BeginIdx];
+                `uint query_hits[$]; /**< Create a queue for holding found FUNCT3 fields */
+                repeat(format.num()) begin /**< Check all formats */
+                    if (this.opcode_mapping[opcode].exists(unsigned'(format))) begin /**< If entry for a given format exists, begin further checks */
+                        query_hits = this.opcode_mapping[opcode][unsigned'(format)].find(x) with (x == funct3); /**< Find FUNCT3 field in associated values */
+                        if(query_hits.size() != 0) begin /**< If any value has been found, that means this is the encoding type */
+                            unique case (format)
+                                Rtype: ret_obj = `inspkg::RTypeInstruction::new(instruction_raw);
+                                Itype: ret_obj = `inspkg::ITypeInstruction::new(instruction_raw);
+                                Stype: ret_obj = `inspkg::STypeInstruction::new(instruction_raw);
+                                Btype: ret_obj = `inspkg::BTypeInstruction::new(instruction_raw);
+                                Utype: ret_obj = `inspkg::UTypeInstruction::new(instruction_raw);
+                                Jtype: ret_obj = `inspkg::JTypeInstruction::new(instruction_raw); 
+                                default: ; /**< Do nothing */
+                            endcase
+                        end
+                    end
+                    format = format.next(); /**< Increment the enumerated type */
+                end 
+            end
+        end
         return ret_obj;
     endfunction
 

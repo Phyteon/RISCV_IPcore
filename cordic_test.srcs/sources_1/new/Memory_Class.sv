@@ -129,7 +129,7 @@ package Memory_Class;
             return intermediate_val;
         endfunction
         
-        `_public function Write(input `uint address, input `memorycell data, input `uint bytes);
+        `_public function void Write(input `uint address, input `memorycell data, input `uint bytes);
             `uint memcell_remainder = address % `MEMORY_CELL_SIZE_IN_BYTES;
             unique case(bytes)
                 1: this.main_memory[address - memcell_remainder][memcell_remainder] = data;

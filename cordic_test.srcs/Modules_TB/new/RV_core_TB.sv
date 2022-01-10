@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "CommonHeader.sv"
+`include "cordic_test.srcs\\sources_1\\new\\CommonHeader.sv"
 
 import Memory_Class::*;
 import ALU_Class::*;

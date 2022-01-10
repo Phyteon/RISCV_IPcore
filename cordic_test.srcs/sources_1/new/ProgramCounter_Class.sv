@@ -38,15 +38,15 @@ package ProgramCounter_Class;
             super.new(_address);
         endfunction
         
-        function IncrementByNInstructions(input `uint num_of_instr);
+        function void IncrementByNInstructions(input `uint num_of_instr);
             this.contents = this.contents + (`InstructionAddressByteSize * num_of_instr);
         endfunction
         
-        function DecrementByNInstructions(input `uint num_of_instr);
+        function void DecrementByNInstructions(input `uint num_of_instr);
             this.contents = this.contents - (`InstructionAddressByteSize * num_of_instr);
         endfunction
         
-        function ChangeByOffset(input `sint offset);
+        function void ChangeByOffset(input `sint offset);
             this.contents = this.contents + offset;
         endfunction
         

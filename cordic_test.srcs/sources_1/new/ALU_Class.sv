@@ -25,11 +25,6 @@
 `define ALU_INTERNALS_INITIAL_STATE `NULL_REG_VAL
 
 /**
-* Testbench macros.
-*/
-`define ALU_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
-
-/**
 * Diagnostic log trace adapter macros and ERROR macros.
 * They are aliases to the main DLT_LOG macro. ERROR macros
 * provide self-documented error record.

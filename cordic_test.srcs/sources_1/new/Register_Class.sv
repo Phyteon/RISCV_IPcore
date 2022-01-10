@@ -40,7 +40,7 @@ package Register_Class;
             return this.contents;
         endfunction
         
-        `_public function Write(input `rvector writeval);
+        `_public function void Write(input `rvector writeval);
             this.contents = writeval;
         endfunction
         

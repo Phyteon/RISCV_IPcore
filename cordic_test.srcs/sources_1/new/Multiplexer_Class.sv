@@ -31,8 +31,8 @@
 package Multiplexer_Class;
     import Architecture_AClass::*;
 
-    class Multiplexer extends `archpkg::Architecture;
-        `_private `unpacked_dynamic_arr(`rvector, inputs);
+    class Multiplexer#(type inout_type = `rvtype, `uint num_of_ins = 2) extends `archpkg::Architecture;
+        `_public inout_type inputs[num_of_ins];
         `_private `uint chosen_input;
         
         `_public function new (input `uint _num_of_inputs);
@@ -42,16 +42,16 @@ package Multiplexer_Class;
                 inputs[n] = `MUX_INITIAL_INPUT_STATE;
         endfunction
         
-        `_public function UpdateInputsState(input `unpacked_dynamic_arr(`rvector, _inputs));
+        `_public function void UpdateInputsState(input `unpacked_dynamic_arr(`rvector, _inputs));
             foreach (_inputs[n])
                 this.inputs[n] = _inputs[n]; // TODO: dispute about assigning method
         endfunction
         
-        `_public function UpdateOneInputState(input `rvector _input, input `uint _num_of_in);
+        `_public function void UpdateOneInputState(input `rvector _input, input `uint _num_of_in);
             this.inputs[_num_of_in] = _input;
         endfunction
         
-        `_public function ChooseInput(input `uint num_of_in);
+        `_public function void ChooseInput(input `uint num_of_in);
             this.chosen_input = num_of_in;
         endfunction
         

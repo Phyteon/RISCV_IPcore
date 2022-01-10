@@ -11,8 +11,8 @@ interface ALUInterface(input `rvtype clk);
     `rvtype reset;
     `alu_operation_type operation;
     `rvtype alubctrl;
-    modport DUT(input clk, input reset, input leftOperand, input rightOperand, input operation, output alubctrl, output outcome);
-    modport Testbench(input clk, output reset, output leftOperand, output rightOperand, output operation, input alubctrl, input outcome);
+    modport DUT(input reset, input left_operand, input right_operand, input operation, output alubctrl, output outcome);
+    modport Testbench(output reset, output left_operand, output right_operand, output operation, input alubctrl, input outcome);
 endinterface //ALUInterface
 
 interface ControlUnitInterface(input `rvtype clk);
@@ -117,3 +117,47 @@ interface MemoryInterface(input `rvtype clk);
         output MEMOUT
     );
 endinterface //MemoryInterface
+
+interface MUXInterface #(type inout_type = `rvtype, `uint num_of_ins = 2);
+    inout_type inputs[num_of_ins];
+    `uint steering;
+    inout_type mux_output;
+    modport DUT (
+        input inputs,
+        input steering,
+        output mux_output
+    );
+    modport Testbench (
+        output inputs,
+        output steering,
+        input mux_output
+    );
+    
+endinterface
+
+interface RegistryFileInterface(input `rvtype clk);
+    /**
+    * 1 - bit signals
+    */
+    `rvtype REGW;
+    /**
+    * 5 - bit signals
+    */
+    `packed_arr(`rvtype, 5, RS1);
+    `packed_arr(`rvtype, 5, RS2);
+    /**
+    * 32 - bit signals
+    */
+    `rvector REGDATIN;
+    `rvector OP1;
+    `rvector OP2;
+    modport DUT(
+        input REGW,
+        input RS1,
+        input RS2,
+        input REGDATIN,
+        output OP1,
+        output OP2
+    );
+
+endinterface //RegistryFileInterface
