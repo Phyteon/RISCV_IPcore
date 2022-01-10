@@ -45,12 +45,12 @@ package Instruction_Classes;
     import Field_Classes::*;
     
     typedef enum {
-                   Rtype,
-                   Itype,
-                   Stype,
-                   Btype,
-                   Utype,
-                   Jtype
+                   Rtype = 0,
+                   Itype = 1,
+                   Stype = 2,
+                   Btype = 3,
+                   Utype = 4,
+                   Jtype = 5
                          } InstructionFormat;
     typedef enum {
                    RV32I,

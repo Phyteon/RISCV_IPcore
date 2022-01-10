@@ -159,8 +159,8 @@ package Memory_Class;
         `_public `rvector MEMOUT;
         
         constraint c_memaddr {
-            this.ADDRIN < ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES);
-            this.ADDRIN > ((`PROGRAM_MEMORY_SIZE_IN_CELLS + `DATA_MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES) - `MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN;
+            this.ADDRIN < (`MEMORY_SIZE_IN_CELLS * `MEMORY_CELL_SIZE_IN_BYTES);
+            this.ADDRIN > (`MEMORY_SIZE_IN_CELLS * `MEMORY_CELL_SIZE_IN_BYTES) - `MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN;
         };
         constraint c_memreadwrite {
             (MEMW & MEMR) != 1;
@@ -184,6 +184,32 @@ package Memory_Class;
                 return 1;
             else
                 return 0;
+        endfunction
+
+        `_public function void CopyItemFields_SubstituteData(input MemoryTransactionItem item);
+            `uint remainder = item.ADDRIN % `MEMORY_CELL_SIZE_IN_BYTES;
+            `memorycell intermediate = this.DATAIN; /**< Create temporary copy of stored value for easy manipulation - implicit cast */
+            this.MEMW = item.MEMW;
+            this.MEMR = item.MEMR;
+            this.MSE = item.MSE;
+            this.MBC = item.MBC;
+            this.ADDRIN = item.ADDRIN;
+            case (item.MBC)
+                1: intermediate[remainder] = item.DATAIN[`BYTE_SIZE - 1 : 0];
+                2: if (remainder == 0)
+                    intermediate[1 : 0] = item.DATAIN[2 * `BYTE_SIZE - 1 : 0];
+                else if (remainder == 2)
+                    intermediate[3 : 2] = item.DATAIN[2 * `BYTE_SIZE - 1 : 0];
+                else
+                    this.log(" |Misaligned address| ");
+                3: if (remainder != 0)
+                    this.log(" |Misaligned address| ");
+                else
+                    intermediate = item.DATAIN;
+                default: ; /**< Do nothing */
+            endcase
+
+            this.DATAIN = intermediate;
         endfunction
     endclass
     
@@ -254,10 +280,12 @@ package Memory_Class;
         `_private MemoryTransactionItem database[`rvector]; /**< Associative array for checking the results */
         
         `_public task run();
+            `DLT_MEMORY_INFO("Memory Scoreboard", " Starting memory scoreboard... ");
             forever begin
                 this.memory_driver_mailbox.get(this.driver_item); /**< Wait for driver to initialise transaction */
                 this.memory_monitor_mailbox.get(this.monitor_item); /**< Wait for monitor to register transaction */
                 `rvector aligned_address = this.monitor_item.ADDRIN >> 2; /**< Address aligned to 4 for correct database handling */
+                `uint remainder = this.monitor_item.ADDRIN % `MEMORY_CELL_SIZE_IN_BYTES;
 
                 /**
                 * Check if transaction was correct.
@@ -270,10 +298,9 @@ package Memory_Class;
                 */
                 if ((this.monitor_item.MEMW == 1) && (this.monitor_item.MEMR == 0))
                     if (this.database.exists(aligned_address) == 0)
-                        this.database[aligned_address] = this.monitor_item;
-                    else begin
-                        /////////////// TODO
-                    end
+                        this.database[aligned_address] = this.monitor_item; /**< If a memory cell record doesn't exist in the simulation database, create it */
+                    else
+                        this.database[aligned_address].CopyItemFields_SubstituteData(this.monitor_item);
                 
                 /**
                 * Scenario 2: memory read
@@ -282,30 +309,51 @@ package Memory_Class;
                     if (this.database.exists(aligned_address) != 1)
                         `DLT_MEMORY_SCOREBOARD(" |Uninitialised addr read| ");
                     else begin
+                        `memorycell temp_val_for_byte_addressing = this.database[aligned_address].DATAIN;
                         if (this.monitor_item.MSE == 1) begin /**< Load instruction */
                             case (this.monitor_item.MBC)
-                                1: if(this.monitor_item.MEMOUT != `sepkg::ExtendSign(this.database[this.monitor_item.ADDRIN].DATAIN, `BYTE_SIZE, 0))
-                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - byte read| ");
+                                1: if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[remainder], `BYTE_SIZE, 0))
+                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - byte read(S)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull signed byte read| ");
-                                2: if(this.monitor_item.MEMOUT != `sepkg::ExtendSign(this.database[this.monitor_item.ADDRIN].DATAIN, 2 * `BYTE_SIZE, 0))
-                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read| ");
+                                2: if(remainder == 0)
+                                    if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[1 : 0], 2 * `BYTE_SIZE, 0))
+                                        `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(S)| ");
                                     else `DLT_MEMORY_SCOREBOARD(" |Successfull signed halfword read| ");
-                                3: if(this.monitor_item.MEMOUT != this.database[this.monitor_item.ADDRIN].DATAIN)
-                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - word read| ");
-                                    else `DLT_MEMORY_SCOREBOARD(" |Successfull word read| ");
+                                else if(remainder == 2)
+                                    if(this.monitor_item.MEMOUT != `sepkg::SignExtender::ExtendSign(temp_val_for_byte_addressing[3 : 2], 2 * `BYTE_SIZE, 0))
+                                        `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(S)| ");
+                                    else `DLT_MEMORY_SCOREBOARD(" |Successfull signed halfword read| ");
+                                else `DLT_MEMORY_SCOREBOARD(" |Misaligned address signed load attempt - halfword| ");
+                                3: if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing)
+                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - word read(S)| ");
+                                    else `DLT_MEMORY_SCOREBOARD(" |Successfull word read(S)| ");
                                 default: `DLT_MEMORY_SCOREBOARD(" |Unknown byte count| "); 
                             endcase
                         end else begin /**< Load unsigned instruction */
                             case (this.monitor_item.MBC)
-                                1: if(this.monitor_item.MEMOUT != this.database[this.monitor_item.ADDRIN].DATAIN) 
-                                default: /////////// TODO
+                                1: if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[remainder])
+                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - byte read(U)| ");
+                                    else `DLT_MEMORY_SCOREBOARD(" |Successfull unsigned byte read| ");
+                                2: if(remainder == 0)
+                                    if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[1 : 0])
+                                        `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(U)| ");
+                                    else `DLT_MEMORY_SCOREBOARD(" |Successfull unsigned halfword read| ");
+                                else if(remainder == 2)
+                                    if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing[3 : 2])
+                                        `DLT_MEMORY_SCOREBOARD(" |Invalid output value - halfword read(U)| ");
+                                    else `DLT_MEMORY_SCOREBOARD(" |Successfull unsigned halfword read| ");
+                                else `DLT_MEMORY_SCOREBOARD(" |Misaligned address unsigned load attempt - halfword| ");
+                                3: if(this.monitor_item.MEMOUT != temp_val_for_byte_addressing)
+                                    `DLT_MEMORY_SCOREBOARD(" |Invalid output value - word read(U)| ");
+                                else `DLT_MEMORY_SCOREBOARD(" |Successfull word read(U)| ");
+                                default: `DLT_MEMORY_SCOREBOARD(" |Unknown byte count| ");
                             endcase
                         end
                     end
                 end
                 
                 // Scenario 3: memory idle state 1
-                if (~(item.memwrite || item.memread)) begin
+                if (~(this.monitor_item.MEMW || this.monitor_item.MEMR)) begin
                     `DLT_MEMORY_SCOREBOARD(" |Memory idle| ");
                 end
                
@@ -315,62 +363,66 @@ package Memory_Class;
     endclass
     
     class MemoryVerificationEnvironment;
-        `_public MemoryVerificationDriver driver; // Public because of the mailbox handling in the class above
+        `_public virtual MemoryInterface memif;
+        `_private MemoryVerificationDriver driver; /**< Public because of the mailbox handling in the class above */
         `_private MemoryMonitor monitor;
         `_private MemoryScoreboard scoreboard;
-        `_public mailbox scoreboard_mailbox; // Top level mailbox for scoreboard <-> monitor transactions
-        `_public virtual MemoryInterface memif;
+        `_private mailbox scoreboard_drv_mailbox; /**< Mailbox for communication driver->scoreboard */
+        `_private mailbox scoreboard_mnt_mailbox; /**< Mailbox for communication monitor->scoreboard */
+        `_private mailbox driver_mailbox; /**< Mailbox for communication generator->driver */
+        
         
         function new();
             this.driver = new;
             this.monitor = new;
             this.scoreboard = new;
-            this.scoreboard_mailbox = new;
+            this.scoreboard_drv_mailbox = new;
+            this.scoreboard_mnt_mailbox = new;
+            this.driver_mailbox = new;
+            /**
+            * Setting up the mailboxes.
+            */
+            this.driver.memory_driver_mailbox = this.driver_mailbox;
+            this.driver.memory_scoreboard_mailbox = this.scoreboard_drv_mailbox;
+            this.monitor.memory_scoreboard_mailbox = this.scoreboard_mnt_mailbox;
+            this.scoreboard.memory_driver_mailbox = this.scoreboard_drv_mailbox;
+            this.scoreboard.memory_monitor_mailbox = this.scoreboard_mnt_mailbox;
         endfunction
+
+        `_private task stimulate();
+            MemoryTransactionItem item = new;
+            `DLT_MEMORY_INFO("Memory verification environment", " Starting stimulus... ");
+            repeat(`MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS) begin
+                void'(item.randomize());
+                @(`CLOCK_ACTIVE_EDGE this.memif.clk); /**< Transactions only occur at the active clock edge */
+                this.driver_mailbox.put(item);
+            end
+        endtask
         
         `_public virtual task run();
             this.driver.memif = this.memif;
             this.monitor.memif = this.memif;
-            this.monitor.scoreboard_mailbox = this.scoreboard_mailbox;
-            this.scoreboard.scoreboard_mailbox = this.scoreboard_mailbox;
             fork
                 this.scoreboard.run();
-                this.driver.run(); // mailbox for driver <-> generator exchange is initialised on test class level
+                this.driver.run();
                 this.monitor.run();
-            join_any // If any task finishes, continue execution
+            join_none // Do not wait for any task to finish
         endtask
     endclass
     
     class MemoryTest;
-        `_private MemoryVerificationEnvironment environment;
-        `_private mailbox driver_mailbox;
         `_public virtual MemoryInterface memif;
+        `_private MemoryVerificationEnvironment environment;
         
         function new();
-            this.driver_mailbox = new;
             this.environment = new;
         endfunction
         
-        `_public virtual task run();
+        `_public task run();
             this.environment.memif = this.memif;
-            this.environment.driver.driver_mailbox = this.driver_mailbox;
-            
             fork
-                this.environment.run(); // Start environment in background
-                this.stimulate(); // Apply stimulus
+                this.environment.run();
             join_none
-        endtask
-        
-        `_public virtual task stimulate();
-            MemoryTransactionItem item;
-            
-            `DLT_MEMORY_INFO("Memory Test", " Starting stimulus... ");
-            for (int i = 0; i < `MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS; i = i + 1) begin
-                item = new;
-                item.randomize(); // Builtin constraints inside transaction item class
-                @(`CLOCK_ACTIVE_EDGE this.memif.clk);
-                driver_mailbox.put(item);
-            end // for loop
         endtask
     endclass
     

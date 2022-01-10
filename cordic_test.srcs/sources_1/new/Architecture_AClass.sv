@@ -81,6 +81,16 @@ package Architecture_AClass;
     typedef insvector InsVectorDA[];
 
     /**
+    * Type defining a dynamic list of unsigned integers.
+    */
+    typedef `unpacked_dynamic_arr(`uint, uint_list);
+
+    /**
+    * Type describing an associatove array with uint as keys and lists of uints as values.
+    */
+    typedef `uintlist dictionary_uintKey_uintlistVal[`uint];
+
+    /**
     * Abstract empty class, used only as a parent for other classes.
     */
     virtual class Architecture;

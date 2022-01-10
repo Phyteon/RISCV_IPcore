@@ -104,6 +104,8 @@
 `define ivector `archpkg::insvector
 `define rvector `archpkg::regvector
 `define rvbyte `archpkg::riscvbyte
+`define uintlist `archpkg::uint_list
+`define dict_uintKey_uintlistVal `archpkg::dictionary_uintKey_uintlistVal
 `define DLT_LOG(logging_entity, info, format, params) `archpkg::DiagnosticLogTrace(`__FILE__, `__LINE__, logging_entity, info, format, params)
 `define INIT_TASK `archpkg::Init()
 
@@ -143,6 +145,8 @@
 * Instruction_Classes macros.
 * BEGIN
 */
+
+`define insformat `inspkg::InstructionFormat
 
 //// Macro definitions - number of fields ////
 `define RTypeInstruction_NumOfFields 6
@@ -210,6 +214,5 @@
 * Testbenches macros.
 * They define number of transactions and other test-related variables.
 */
-`define MEMORY_TESTBENCH_SCOREBOARD_SIZE (`MEMORY_SIZE_IN_CELLS) * `MEMORY_CELL_SIZE_IN_BYTES
 `define MEMORY_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS 50
 `define MEMORY_TESTBENCH_CONSTRAINT_ADDRESS_SPAN 10

@@ -47,14 +47,14 @@ package SignExtender_Class;
             return stuffed;
         endfunction
 
-        static function `rvector ConcatentateSTypeImmediate(input `inspkg::STypeInstruction stypeins);
+        static function `rvector ConcatentateSTypeImmediate(input `inspkg::Instruction stypeins);
             `rvector concatentated = stypeins.Fields[1].ExtractFromInstr(stypeins.Contents);
             concatentated += (stypeins.Fields[5].ExtractFromInstr(stypeins.Contents) << `UPPER_STYPE_IMMEDIATE_STARTBIT);
             concatentated = SignExtender::ExtendSign(concatentated, `STYPE_IMMEDIATE_OVERALL_BITWIDTH, 0);
             return concatentated;
         endfunction
 
-        static function `rvector ConcatentateBTypeImmediate(input `inspkg::BTypeInstruction btypeins);
+        static function `rvector ConcatentateBTypeImmediate(input `inspkg::Instruction btypeins);
             /**
             * Second immediate field of instruction contains the lowest bits of the immediate - 
             * those bits need to be shifted by one to the left (because conditional branch
@@ -74,7 +74,7 @@ package SignExtender_Class;
             return concatentated;
         endfunction
 
-        static function `rvector ConcatentateJTypeImmediate(input `inspkg::JTypeInstruction jtypeins);
+        static function `rvector ConcatentateJTypeImmediate(input `inspkg::Instruction jtypeins);
             /**
             * Third immediate field of instruction contains the lowest bits of the immediate - 
             * those bits need to be shifted by one to the left (because unconditional jump

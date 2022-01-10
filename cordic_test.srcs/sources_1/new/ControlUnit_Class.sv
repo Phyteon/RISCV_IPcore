@@ -34,29 +34,30 @@ package ControlUnit_Class;
     import SignExtender_Class::*;
 
     class ControlUnit extends Architecture_AClass::Architecture;
-    `_private `unpacked_arr(`rvbyte, `CONTROL_UNIT_INSTRUCTION_INFO_MEM_SIZE_BYTES, instruction_info);
-    `_private `uint type_to_address[string];
+    `_private `dict_uintKey_uintlistVal opcode_mapping[`uint];
     `_public virtual ControlUnitInterface cuinf;
+    `_private `insformat indexer;
 
     `_public function new();
-        this.type_to_address["R_TYPE"] = 0;
-        this.type_to_address["I_TYPE"] = 'h12C;
-        this.type_to_address["S_TYPE"] = 'h21C;
-        this.type_to_address["B_TYPE"] = 'h258;
-        this.type_to_address["U_TYPE"] = 'h2D0;
-        this.type_to_address["J_TYPE"] = 'h2E4;
+        /**
+        * Mapping instruction formats to opcode and list of FUNCT3 field
+        * values associated with a given format.
+        * Format numbers (as keys of associative array within) are taken from
+        * InstructionFormat enumerated type.
+        */
+        this.opcode_mapping[51] = '{0 : {0, 1, 2, 3, 4, 5, 6, 7}};
+        this.opcode_mapping[19] = '{0 : {1, 5}, 
+                                    1 : {0, 2, 3, 4, 6, 7}};
+        this.opcode_mapping[35] = '{2 : {0, 1, 2}};
+        this.opcode_mapping[103] = '{1 : {0}};
+        this.opcode_mapping[3] = '{1 : {0, 1, 2, 4, 5}};
+        this.opcode_mapping[99] = '{3 : {0, 1, 4, 5, 6, 7}};
+        this.opcode_mapping[55] = '{4: {}};
+        this.opcode_mapping[23] = '{4: {}};
+        this.opcode_mapping[111] = '{5: {}};
     endfunction
 
-    /**
-    * Task for reading instruction configuration from memory file.
-    * Since functions cannot invoke tasks, this task must be called manually after initialising the object of
-    * Control Unit class.
-    */
-    `_public task init();
-        $readmemb(`CONTROL_UNIT_INSTRUCTION_INFO_FILE, this.instruction_info);
-    endtask
-
-    `_public function `CONTROL_UNIT_OUTPUT_TYPE ControlUnitMainFunction(input `insvector instruction_raw);
+    `_public function `CONTROL_UNIT_OUTPUT_TYPE ControlUnitMainFunction(input `ivector instruction_raw);
         `inspkg::Instruction known_type_instruction = this.DecodeType(instruction_raw);
         if (known_type_instruction != null) begin
             unique case (known_type_instruction.Format)
@@ -71,30 +72,14 @@ package ControlUnit_Class;
         end else $error("Unknown instruction format!");
     endfunction
 
-    `_private function `inspkg::Instruction DecodeType(input `insvector instruction_raw);
-        /**
-        * Find first memory address at which this opcode occurs
-        */
-        `uint idx = this.instruction_info.find_first_index(x) with (x == instruction_raw[`OPCODE_field_BitWidth - 1 + `OPCODE_field_BeginIdx : `OPCODE_field_BeginIdx]);
-        inspkg::Instruction ret_obj;
-        if (idx < this.type_to_address["I_TYPE"])
-            ret_obj = inspkg::RTypeInstruction::new(instruction_raw);
-        else if ((idx >= this.type_to_address["I_TYPE"]) && (idx < this.type_to_address["S_TYPE"]))
-            ret_obj = inspkg::ITypeInstruction::new(instruction_raw);
-        else if ((idx >= this.type_to_address["S_TYPE"]) && (idx < this.type_to_address["B_TYPE"]))
-            ret_obj = inspkg::STypeInstruction::new(instruction_raw);
-        else if ((idx >= this.type_to_address["B_TYPE"]) && (idx < this.type_to_address["U_TYPE"]))
-            ret_obj = inspkg::BTypeInstruction::new(instruction_raw);
-        else if ((idx >= this.type_to_address["U_TYPE"]) && (idx < this.type_to_address["J_TYPE"]))
-            ret_obj = inspkg::UTypeInstruction::new(instruction_raw);
-        else if (idx >= this.type_to_address["J_TYPE"])
-            ret_obj = inspkg::JTypeInstruction::new(instruction_raw);
-        else
-            ret_obj = null;
+    `_private function `inspkg::Instruction DecodeType(input `ivector instruction_raw);
+        `insformat format;
+        `inspkg::Instruction ret_obj;
+        
         return ret_obj;
     endfunction
 
-    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeRtype(input `inspkg::RTypeInstruction rtypeins);
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeRtype(input `inspkg::Instruction rtypeins);
         `uint steering_sum = rtypeins.Fields[2].ExtractFromInstr(rtypeins.Contents) + rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents); /**< Add FUNCT3 and FUNCT7 field */
         unique case (steering_sum)
             0: begin /**< ADD */
@@ -241,7 +226,7 @@ package ControlUnit_Class;
         endcase
     endfunction
 
-    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeItype(input `inspkg::ITypeInstruction itypeins);
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeItype(input `inspkg::Instruction itypeins);
         `uint steering_sum = itypeins.Fields[2].ExtractFromInstr(itypeins.Contents) + itypeins.Fields[0].ExtractFromInstr(itypeins.Contents); /**< Add FUNCT3 and OPCODE field */
         unique case (steering_sum)
             103: begin /**< JALR */
@@ -428,7 +413,7 @@ package ControlUnit_Class;
         endcase
     endfunction
 
-    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeStype(input `inspkg::STypeInstruction stypeins);
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeStype(input `inspkg::Instruction stypeins);
         `uint switch = stypeins.Fields[2].ExtractFromInstr(stypeins.Contents);
         unique case (switch)
             0: begin /**< SB */
@@ -477,7 +462,7 @@ package ControlUnit_Class;
         endcase
     endfunction
 
-    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeBtype(input `inspkg::BTypeInstruction btypeins);
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeBtype(input `inspkg::Instruction btypeins);
         `uint steering = btypeins.Fields[3].ExtractFromInstr(btypeins.Contents);
         unique case (steering)
             0: begin /**< BEQ */
@@ -569,7 +554,7 @@ package ControlUnit_Class;
         endcase
     endfunction
 
-    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeUtype(input `inspkg::UTypeInstruction utypeins);
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeUtype(input `inspkg::Instruction utypeins);
         `uint steering = utypeins.Fields[0].ExtractFromInstr(utypeins.Contents);
         unique case (steering)
             55: begin /**< LUI */
@@ -603,7 +588,7 @@ package ControlUnit_Class;
         endcase
     endfunction
 
-    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeJtype(input `inspkg::JTypeInstruction jtypeins);
+    `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeJtype(input `inspkg::Instruction jtypeins);
         `uint steering = jtypeins.Fields[0].ExtractFromInstr(jtypeins.Contents);
         unique case (steering)
             111: begin /**< JAL */
@@ -621,7 +606,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_ADD;
             end 
-            default: 
+            default: ; /**< Do nothing */
         endcase
     endfunction
     

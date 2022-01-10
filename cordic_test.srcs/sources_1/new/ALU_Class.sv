@@ -316,13 +316,15 @@ package ALU_Class;
             this.driver.alu_driver_mailbox = this.driver_mailbox;
             this.driver.alu_scoreboard_mailbox = this.scoreboard_drv_mailbox;
             this.monitor.alu_scoreboard_mailbox = this.scoreboard_mnt_mailbox;
+            this.scoreboard.alu_driver_mailbox = this.scoreboard_drv_mailbox;
+            this.scoreboard.alu_monitor_mailbox = this.scoreboard_mnt_mailbox;
         endfunction
 
         `_private task stimulate();
             AluTransactionItem item = new;
             `DLT_ALU_INFO("ALU Verification Environment", " Starting stimulus... ");
             repeat(`ALU_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS) begin
-                item.randomize();
+                void'(item.randomize());
                 @(`CLOCK_ACTIVE_EDGE this.aluinf.clk); /**< Transactions only on active edge of clock signal. */
                 this.driver_mailbox.put(item);
             end
