@@ -156,6 +156,7 @@ package ALU_Class;
             `DLT_ALU_INFO("ALU Driver", " Starting ALU Driver... ");
             forever begin
                 `DLT_ALU_INFO("ALU Driver", " Waiting for item... ");
+                this.item = new;
                 this.alu_driver_mailbox.get(this.item);
                 this.item.log("ALU Driver");
                 /**

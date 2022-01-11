@@ -20,7 +20,7 @@
 
 `include "CommonHeader.sv"
 
-module ControlUnit(
+module ControlUnit_Module (
     ControlUnitInterface.DUT cuinf
 );
     import ControlUnit_Class::*;
@@ -32,6 +32,20 @@ module ControlUnit(
     end
 
     always @(`CLOCK_ACTIVE_EDGE cuinf.clk) begin
+        if (cuinf.RESET == 1) begin
+            cuinf.CUJMPCTRL <= 0;
+            cuinf.CUBCTRL <= 0;
+            cuinf.MUX2 <= 1; /**< Choosing output of registry file */
+            cuinf.MUX3 <= 0; /**< Choosing the main ALU output */
+            cuinf.MUX4 <= 0; /**< Choosing output of registry file */
+            cuinf.RS1 <= 0; /**< Choosing the zero register */
+            cuinf.RS2 <= 0; /**< Choosing the zero register */
+            cuinf.RD <= 0; /**< Choosing the zero register */
+            cuinf.REGW <= 0; /**< Disable registry file write */
+            cuinf.MEMW <= 0; /**< Disable data memory write */
+            cuinf.MEMR <= 0; /**< Disable memory read */
+            cuinf.ALU0 <= ALU_ADD; /**< Choose addition operation for main ALU */
+        end
         cntrl.ControlUnitMainFunction(cuinf.INSTR);
     end
     

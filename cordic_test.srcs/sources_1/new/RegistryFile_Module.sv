@@ -20,7 +20,7 @@
 
 `include "CommonHeader.sv"
 
-module RegistryFile (
+module RegistryFile_Module (
     RegistryFileInterface.DUT reginf
     );
     import `regfilepkg::*;

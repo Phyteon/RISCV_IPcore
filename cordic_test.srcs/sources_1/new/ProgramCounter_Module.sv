@@ -25,7 +25,7 @@
 
 `include "CommonHeader.sv"
 
-module ProgramCounter (
+module ProgramCounter_Module (
     ProgramCounterInterface.DUT pcinf
     );
     import `pcpkg::*;

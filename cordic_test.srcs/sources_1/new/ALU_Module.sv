@@ -32,12 +32,17 @@ module ALU_Module(ALUInterface.DUT aluinf);
 
     `ifdef ALU_MODULE_DESIGN
         `alupkg::ALU alu;
+
+        initial begin
+            alu = new;
+        end
+
         always @(`CLOCK_ACTIVE_EDGE aluinf.clk) begin
             if (aluinf.reset)
                 aluinf.outcome = `ALU_OUTCOME_INITIAL_VALUE;
             else begin
-                aluinf.outcome <= alu.PerformOperation(aluinf.operation, aluinf.left_operand, aluinf.right_operand);
-                aluinf.alubctrl <= alu.branchctrl;
+                aluinf.outcome = alu.PerformOperation(aluinf.operation, aluinf.left_operand, aluinf.right_operand);
+                aluinf.alubctrl = alu.branchctrl;
             end // else
         end
     `elsif ALU_MODULE_IMPLEMENTATION
