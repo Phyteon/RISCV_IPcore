@@ -69,7 +69,7 @@ package Instruction_Classes;
         `_public InstructionFormat Format;
         `_public InstructionSet Set;
         `_public `ivector Contents;
-        `_public InstructionField Fields;
+        `_public InstructionField Fields[];
     endclass
     
     class RTypeInstruction extends Instruction;
