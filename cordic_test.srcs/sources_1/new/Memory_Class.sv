@@ -100,6 +100,11 @@ package Memory_Class;
             foreach(main_memory[icell])
                 main_memory[icell] = `MEMORY_INITIAL_VALUE;
         endfunction
+
+        `_public task LoadData(input string memfilepath);
+            if(memfilepath != "")
+                $readmemh(memfilepath, this.main_memory);
+        endtask
         
         `_public function `memorycell Read(input `uint address, input `uint bytes, input `rvtype extend_sign);
             `uint memcell_remainder = address % `MEMORY_CELL_SIZE_IN_BYTES;

@@ -29,7 +29,9 @@
 `define MEMORY_MODULE_DESIGN
 // `define MEMORY_MODULE_IMPLEMENTATION
 
-module Memory_Module(MemoryInterface.DUT memif);
+module Memory_Module #(string memfilepath = "")(
+    MemoryInterface.DUT memif
+);
     import Memory_Class::*;
     `ifdef MEMORY_MODULE_DESIGN
         // Creating class for handling memory reads and writes
@@ -38,6 +40,7 @@ module Memory_Module(MemoryInterface.DUT memif);
         `packed_arr(`rvtype, `READ_WRITE_CTRL_NUM_OF_INPUTS, read_write_control);
         initial begin
             main_memory = new;
+            main_memory.LoadData(memfilepath);
         end
         
         always @ (`CLOCK_ACTIVE_EDGE memif.clk) begin
