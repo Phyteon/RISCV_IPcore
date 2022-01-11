@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "cordic_test.srcs\\sources_1\\new\\CommonHeader.sv"
+`include "D:\\VivadoProjects\\cordic_test\\RISCV_IPcore\\cordic_test.srcs\\sources_1\\new\\CommonHeader.sv"
 
 import Memory_Class::*;
 import ALU_Class::*;
@@ -36,7 +36,8 @@ module RV_core_TB();
     `alupkg::AluTest alutest;
     
     // Interfaces
-    //MemoryInterface memif(clk);
+    MemoryInterface meminf(clk);
+    ControlUnitInterface cuinf(clk);
     ALUInterface aluinf(clk);
     
     // Clock

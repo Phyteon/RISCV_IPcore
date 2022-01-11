@@ -11,8 +11,24 @@ interface ALUInterface(input `rvtype clk);
     `rvtype reset;
     `alu_operation_type operation;
     `rvtype alubctrl;
-    modport DUT(input reset, input left_operand, input right_operand, input operation, output alubctrl, output outcome);
-    modport Testbench(output reset, output left_operand, output right_operand, output operation, input alubctrl, input outcome);
+    modport DUT(
+        input clk,
+        input reset,
+        input left_operand,
+        input right_operand,
+        input operation,
+        output alubctrl,
+        output outcome
+    );
+    modport Testbench(
+        input clk,
+        output reset,
+        output left_operand,
+        output right_operand,
+        output operation,
+        input alubctrl,
+        input outcome
+    );
 endinterface //ALUInterface
 
 interface ControlUnitInterface(input `rvtype clk);
@@ -55,6 +71,7 @@ interface ControlUnitInterface(input `rvtype clk);
     `rvector IMM1; /**< Immediate Value 1 */
 
     modport DUT (
+        input clk,
         input RESET,
         input INSTR,
         output CUJMPCTRL,
@@ -97,6 +114,7 @@ interface MemoryInterface(input `rvtype clk);
     `rvector MEMOUT; /**< Data out */
     
     modport Testbench (
+        input clk,
         output MEMW,
         output MEMR,
         output MSE,
@@ -107,6 +125,7 @@ interface MemoryInterface(input `rvtype clk);
         input MEMOUT
     );
     modport DUT (
+        input clk,
         input MEMW,
         input MEMR,
         input MSE,
@@ -154,6 +173,7 @@ interface RegistryFileInterface(input `rvtype clk);
     `rvector OP1;
     `rvector OP2;
     modport DUT(
+        input clk,
         input REGW,
         input RESET,
         input RS1,
@@ -170,5 +190,5 @@ interface ProgramCounterInterface(input `rvtype clk);
     `rvector ADDRIN;
     `rvector ADDROUT;
     `rvtype RESET;
-    modport DUT(input RESET, input ADDRIN, output ADDROUT);
+    modport DUT(input clk, input RESET, input ADDRIN, output ADDROUT);
 endinterface //ProgramCounterInterface

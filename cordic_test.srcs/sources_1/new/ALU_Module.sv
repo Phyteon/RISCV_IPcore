@@ -36,7 +36,8 @@ module ALU_Module(ALUInterface.DUT aluinf);
             if (aluinf.reset)
                 aluinf.outcome = `ALU_OUTCOME_INITIAL_VALUE;
             else begin
-                aluinf.outcome = alu.PerformOperation(aluinf.operation, aluinf.leftOperand, aluinf.rightOperand);
+                aluinf.outcome <= alu.PerformOperation(aluinf.operation, aluinf.left_operand, aluinf.right_operand);
+                aluinf.alubctrl <= alu.branchctrl;
             end // else
         end
     `elsif ALU_MODULE_IMPLEMENTATION

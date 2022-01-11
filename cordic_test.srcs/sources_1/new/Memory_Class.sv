@@ -201,9 +201,9 @@ package Memory_Class;
                 else if (remainder == 2)
                     intermediate[3 : 2] = item.DATAIN[2 * `BYTE_SIZE - 1 : 0];
                 else
-                    this.log(" |Misaligned address| ");
+                    ; /** < TODO: Add DLT here */
                 3: if (remainder != 0)
-                    this.log(" |Misaligned address| ");
+                    ; /**< TODO: Add DLT here */
                 else
                     intermediate = item.DATAIN;
                 default: ; /**< Do nothing */

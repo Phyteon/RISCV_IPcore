@@ -95,9 +95,11 @@ package ControlUnit_Class;
             end else begin /**< If opcode present in more than one format, check FUNCT3 field */
                 `uint funct3 = instruction_raw[`FUNCT3_field_BitWidth - 1 + `FUNCT3_field_BeginIdx : `FUNCT3_field_BeginIdx];
                 `uint query_hits[$]; /**< Create a queue for holding found FUNCT3 fields */
+                `uint temp_array[];
                 repeat(format.num()) begin /**< Check all formats */
                     if (this.opcode_mapping[opcode].exists(unsigned'(format))) begin /**< If entry for a given format exists, begin further checks */
-                        query_hits = this.opcode_mapping[opcode][unsigned'(format)].find(x) with (x == funct3); /**< Find FUNCT3 field in associated values */
+                        temp_array = this.opcode_mapping[opcode][unsigned'(format)];
+                        query_hits = temp_array.find(x) with (x == funct3); /**< Find FUNCT3 field in associated values */
                         if(query_hits.size() != 0) begin /**< If any value has been found, that means this is the encoding type */
                             unique case (format)
                                 Rtype: ret_obj = `inspkg::RTypeInstruction::new(instruction_raw);
@@ -275,7 +277,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX3 <= 1;
                 this.cuinf.MUX4 <= 0;
                 this.cuinf.IMM0 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -289,7 +291,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 2;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -305,7 +307,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 2;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -321,7 +323,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 2;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -337,7 +339,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 2;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -353,7 +355,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 2;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -369,7 +371,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -383,7 +385,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -397,7 +399,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ZeroStuff(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ZeroStuff(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -411,7 +413,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -425,7 +427,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -439,7 +441,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtactFromInstr(itypeins.Contents), itypeins.Fields[4].ImmBitWidth, 0);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(itypeins.Fields[4].ExtractFromInstr(itypeins.Contents), 12, 0);
                 this.cuinf.RS1 <= itypeins.Fields[3].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.RD <= itypeins.Fields[1].ExtractFromInstr(itypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -601,7 +603,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 0;
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(utypeins.Fields[2].ExtractFromInstr, utypeins.Fields[2].ImmBitWidth, 12);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(utypeins.Fields[2].ExtractFromInstr(utypeins.Contents), 20, 12);
                 this.cuinf.RS1 <= 0; /**< To ensure that zeros are added to extended immediate value */
                 this.cuinf.RD <= utypeins.Fields[1].ExtractFromInstr(utypeins.Contents);
                 this.cuinf.REGW <= 1;
@@ -615,7 +617,7 @@ package ControlUnit_Class;
                 this.cuinf.MUX2 <= 0;
                 this.cuinf.MUX3 <= 0;
                 this.cuinf.MUX4 <= 1; /**< Selecting current PC counter value as a left operand */
-                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(utypeins.Fields[2].ExtractFromInstr, utypeins.Fields[2].ImmBitWidth, 12);
+                this.cuinf.IMM1 <= `sepkg::SignExtender::ExtendSign(utypeins.Fields[2].ExtractFromInstr(utypeins.Contents), 20, 12);
                 this.cuinf.RD <= utypeins.Fields[1].ExtractFromInstr(utypeins.Contents);
                 this.cuinf.REGW <= 1;
                 this.cuinf.MEMW <= 0;
@@ -649,6 +651,6 @@ package ControlUnit_Class;
     endfunction
     
     endclass
-    
+
 endpackage
 

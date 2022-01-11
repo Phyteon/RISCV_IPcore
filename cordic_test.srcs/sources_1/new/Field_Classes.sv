@@ -37,7 +37,7 @@ package Field_Classes;
     import Architecture_AClass::*;
 
     virtual class InstructionField #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends `archpkg::Architecture;
-        `_public const string Info;
+        `_public string Info;
         
         `_public function `uint ExtractFromInstr(input `ivector _inst);
             `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
