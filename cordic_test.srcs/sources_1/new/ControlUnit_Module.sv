@@ -44,9 +44,9 @@ module ControlUnit_Module (
             cuinf.REGW <= 0; /**< Disable registry file write */
             cuinf.MEMW <= 0; /**< Disable data memory write */
             cuinf.MEMR <= 0; /**< Disable memory read */
-            cuinf.ALU0 <= ALU_ADD; /**< Choose addition operation for main ALU */
-        end
-        cntrl.ControlUnitMainFunction(cuinf.INSTR);
+            cuinf.ALU0 <= `alupkg::OperationType'(0); /**< Choose addition operation for main ALU */
+        end else
+            cntrl.ControlUnitMainFunction(cuinf.INSTR);
     end
     
 endmodule

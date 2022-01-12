@@ -70,22 +70,29 @@ module RV_core(input `rvtype clk, input `rvtype reset);
     `uint mux0_steer;
 
     /**
+    * Constants.
+    */
+    initial begin
+        pmac_aluinf0.operation <= `alupkg::OperationType'(0); /**< Always perform addition only */
+        pmac_aluinf1.operation <= `alupkg::OperationType'(0); /**< Always perform addition only */
+        pmac_aluinf1.left_operand <= `REGISTER_BYTE_SIZE; /**< One of the operands is always 4 */
+        progmem_inf.MEMW <= 0; /**< Never write program memory */
+        progmem_inf.MEMR <= 1; /**< Always read program memory */
+        progmem_inf.MSE <= 0; /**< Never sign-extend instructions */
+        progmem_inf.MBC <= 3; /**< Always read full words */
+    end
+
+    /**
     * Interconnections.
     */
     assign pmac_aluinf0.left_operand = cu_inf.IMM0;
     assign pmac_aluinf0.right_operand = mux1_inf.mux_output;
-    assign pmac_aluinf0.operation = ALU_ADD; /**< Always perform addition only */
-    assign pmac_aluinf1.left_operand = `REGISTER_BYTE_SIZE; /**< One of the operands is always 4 */
     assign pmac_aluinf1.right_operand = pc_inf.ADDROUT; /**< Loopback from program counter */
-    assign pmac_aluinf1.operation = ALU_ADD; /**< Always perform addition only */
     assign mux0_inf.inputs[1] = pmac_aluinf0.outcome;
     assign mux0_inf.inputs[0] = pmac_aluinf1.outcome;
     assign mux0_inf.steering = mux0_steer;
     assign pc_inf.ADDRIN = mux0_inf.mux_output;
-    assign progmem_inf.MEMW = 0; /**< Never write program memory */
-    assign progmem_inf.MEMR = 1; /**< Always read program memory */
-    assign progmem_inf.MSE = 0; /**< Never sign-extend instructions */
-    assign progmem_inf.MBC = 3; /**< Always read full words */
+
     assign cu_inf.INSTR = progmem_inf.MEMOUT; /**< Feed instructions into Control Unit */
     /**
     ****** Control Unit signals interconnections section.

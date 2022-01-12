@@ -52,9 +52,9 @@ package ControlUnit_Class;
         this.opcode_mapping[103] = '{1 : {0}}; /**< Only I-type format */
         this.opcode_mapping[3] = '{1 : {0, 1, 2, 4, 5}}; /**< Only I-type format */
         this.opcode_mapping[99] = '{3 : {0, 1, 4, 5, 6, 7}}; /**< Only B-type format */
-        this.opcode_mapping[55] = '{4: {}}; /**< Only U-type format */
-        this.opcode_mapping[23] = '{4: {}}; /**< Only U-type format */
-        this.opcode_mapping[111] = '{5: {}}; /**< Only J-type format */
+        this.opcode_mapping[55] = '{4: {0}}; /**< Only U-type format */
+        this.opcode_mapping[23] = '{4: {0}}; /**< Only U-type format */
+        this.opcode_mapping[111] = '{5: {0}}; /**< Only J-type format */
     endfunction
 
     `_public function `CONTROL_UNIT_OUTPUT_TYPE ControlUnitMainFunction(input `ivector instruction_raw);

@@ -24,7 +24,7 @@
 import Memory_Class::*;
 import ALU_Class::*;
 
-`define TESBENCH_CLOCK_FREQUENCY_KHZ 50000
+`define TESBENCH_CLOCK_FREQUENCY_KHZ 500000
 `define CLK_PERIOD_NS (1000000.0/(`TESBENCH_CLOCK_FREQUENCY_KHZ))
 `define CLK_CYCLES_TO_SIMULATE `ALU_TESTBENCH_STIMULUS_NUMBER_OF_TRANSACTIONS
 
@@ -33,13 +33,16 @@ module RV_core_TB();
     `rvtype clk;
     `rvtype reset;
     `rvtype enable;
+    ControlUnitInterface cuinf(clk);
+    ALUInterface aluinf(clk);
+    MemoryInterface memif(clk);
     
     // Clock
-    TB_Clocking_Module#(.frequency(50000)) clock(.enable(enable),
+    TB_Clocking_Module#(.frequency(`TESBENCH_CLOCK_FREQUENCY_KHZ)) clock(.enable(enable),
                                                 .clk(clk)); // Creating default clock
     
     // DUTs
-    RV_core core(.clk(clk), .reset(reset));
+    ControlUnit_Module cu(cuinf);
     
     /* Test body */
     initial begin
@@ -49,8 +52,13 @@ module RV_core_TB();
         reset <= 1;
         #(`CLK_PERIOD_NS/2) enable <= 1; // Enabling the clock module
         #(`CLK_PERIOD_NS) reset <= 0; // Reset state revoked
+        cuinf.INSTR = 32'h0640006F;
+        #(`CLK_PERIOD_NS) cuinf.INSTR = 32'h00000033;
+        #(`CLK_PERIOD_NS) cuinf.INSTR = 32'h0700006F;
         $dumpvars;
         #(`CLK_CYCLES_TO_SIMULATE * `CLK_PERIOD_NS) $finish;
     end // always
 
+    
+    
 endmodule

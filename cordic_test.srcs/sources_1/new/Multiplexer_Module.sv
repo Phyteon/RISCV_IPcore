@@ -26,9 +26,6 @@
 module MUX (
     interface muxinf
 );
-
-always_comb begin
-    muxinf.mux_output <= muxinf.inputs[muxinf.steering];
-end
+    assign muxinf.mux_output = muxinf.inputs[muxinf.steering];
     
 endmodule

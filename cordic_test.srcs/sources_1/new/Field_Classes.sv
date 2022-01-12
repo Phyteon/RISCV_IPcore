@@ -39,9 +39,7 @@ package Field_Classes;
     virtual class InstructionField #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends `archpkg::Architecture;
         `_public string Info;
         
-        `_public function `uint ExtractFromInstr(input `ivector _inst);
-            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
-            return temp;
+        `_public virtual function `uint ExtractFromInstr(input `ivector _inst);
         endfunction
     endclass
     
@@ -49,11 +47,21 @@ package Field_Classes;
         `_public function new();
             this.Info = "RD_field";
         endfunction
+
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
+        endfunction
     endclass
     
     class OPCODE_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "OPCODE_field";
+        endfunction
+        
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
         endfunction
     endclass
     
@@ -61,11 +69,21 @@ package Field_Classes;
         `_public function new();
             this.Info = "FUNCT3_field";
         endfunction
+
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
+        endfunction
     endclass
     
     class FUNCT7_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "FUNCT7_field";
+        endfunction
+
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
         endfunction
     endclass
     
@@ -73,11 +91,21 @@ package Field_Classes;
         `_public function new();
             this.Info = "RS1_field";
         endfunction
+
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
+        endfunction
     endclass
     
     class RS2_field #(BitWidth = `DEFAULT_PARAM, BeginIdx = `DEFAULT_PARAM) extends InstructionField;
         `_public function new();
             this.Info = "RS2_field";
+        endfunction
+
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
         endfunction
     endclass
     
@@ -86,6 +114,11 @@ package Field_Classes;
         `_public function new(input string _Info);
             this.Info = _Info;
             this.ImmBitWidth = BitWidth;
+        endfunction
+
+        `_public function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
         endfunction
     endclass
 endpackage
