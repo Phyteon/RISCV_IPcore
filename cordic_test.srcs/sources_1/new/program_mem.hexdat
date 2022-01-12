@@ -1,0 +1,21 @@
+
+
+/**
+* This file contains program memory data (instructions) for the RV core.
+*/
+
+@00000000 /**< Reset vector table */
+0640006F /**< JAL x0, RESET; Jump to RESET suborutine */
+
+@00000064 /**< RESET */
+00000033 /**< ADD x0, x0, x0; NOP to make sure that buses are clean */
+0700006F /** JAL x0, MAIN; */
+
+@00000070 /**< MAIN */
+0FF00093 /**< ADDI x1, x0, 255; Load 255 immediate value to reg x1 */
+0FA00113 /**< ADDI x2, x0, 250; Load 250 immediate value to reg x2 */
+402081B3 /**< SUB x3, x1, x2; Subtract x2 from x1 and store in x3 */
+/** LOOP **/
+FFF18193 /**< ADDI x3, x3, -1; Decrement x3 by 1 */
+06019E63 /**< BNE x3, x0, LOOP; */
+0700006F /**< JAL x0, MAIN; */

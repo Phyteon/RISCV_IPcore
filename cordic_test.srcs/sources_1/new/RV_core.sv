@@ -51,7 +51,7 @@ module RV_core(`rvtype clk, `rvtype reset);
     * Module instantiation.
     */
     ProgramCounter_Module pc(.pcinf(pc_inf));
-    Memory_Module prog_mem(.meminf(progmem_inf));
+    Memory_Module #("program_mem.hexdat") prog_mem(.meminf(progmem_inf));
     Memory_Module data_mem(.meminf(datamem_inf));
     ControlUnit_Module cu(.cuinf(cu_inf));
     RegistryFile_Module regfile(.reginf(reg_inf));
