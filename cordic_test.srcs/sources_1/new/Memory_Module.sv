@@ -52,7 +52,7 @@ module Memory_Module #(string memfilepath = "")(
                 unique case(read_write_control)
                     0: `MemoryIdleState("Default mode");
                     1: main_memory.Write(memif.ADDRIN, memif.DATAIN, memif.MBC);
-                    2: memif.outbus = main_memory.Read(memif.ADDRIN, memif.MBC, memif.MSE);
+                    2: memif.MEMOUT = main_memory.Read(memif.ADDRIN, memif.MBC, memif.MSE);
                     3: `MemoryIdleState("Forbidden state");
                 endcase
             end // else

@@ -34,7 +34,7 @@
     <Option Name="DSAVendor" Val="xilinx"/>
     <Option Name="DSABoardId" Val="arty-s7-50"/>
     <Option Name="DSANumComputeUnits" Val="60"/>
-    <Option Name="WTXSimLaunchSim" Val="129"/>
+    <Option Name="WTXSimLaunchSim" Val="139"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -71,17 +71,17 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_1_0/mb_design_axi_gpio_1_0.xci">
-          <Proxy FileSetName="mb_design_axi_gpio_1_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_0_0/mb_design_axi_gpio_0_0.xci">
-          <Proxy FileSetName="mb_design_axi_gpio_0_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_2_0/mb_design_axi_gpio_2_0.xci">
           <Proxy FileSetName="mb_design_axi_gpio_2_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_cordic_ip_0_0/mb_design_cordic_ip_0_0.xci">
           <Proxy FileSetName="mb_design_cordic_ip_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_0_0/mb_design_axi_gpio_0_0.xci">
+          <Proxy FileSetName="mb_design_axi_gpio_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="mb_design.bd" FileRelPathName="ip/mb_design_axi_gpio_1_0/mb_design_axi_gpio_1_0.xci">
+          <Proxy FileSetName="mb_design_axi_gpio_1_0"/>
         </CompFileExtendedInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/bd/mb_design/hdl/mb_design_wrapper.v">

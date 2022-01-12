@@ -31,36 +31,24 @@ import ALU_Class::*;
 module RV_core_TB();
     // Internal signals/variables/object handles
     `rvtype clk;
+    `rvtype reset;
     `rvtype enable;
-    //MemoryTest memtest;
-    `alupkg::AluTest alutest;
-    
-    // Interfaces
-    MemoryInterface meminf(clk);
-    ControlUnitInterface cuinf(clk);
-    ALUInterface aluinf(clk);
     
     // Clock
-    TB_Clocking_Module#(.frequency(50000)) clock(enable, clk); // Creating default clock
+    TB_Clocking_Module#(.frequency(50000)) clock(.enable(enable),
+                                                .clk(clk)); // Creating default clock
     
     // DUTs
-    //Memory_Module memory(.memif(memif)); // Initialising module with top-level interface
-    ALU_Module alu(.aluinf(aluinf));
+    RV_core core(.clk(clk), .reset(reset));
     
     /* Test body */
     initial begin
         `INIT_TASK;
-        $dumpfile("alutest.dump");
+        $dumpfile("coretest.dump");
         enable <= 0;
-        alutest = new;
-        alutest.aluinf = aluinf;
-        aluinf.reset = 1;
-        #(`CLK_PERIOD_NS/2) enable = 1; // Enabling the clock module
-        #(`CLK_PERIOD_NS) aluinf.reset = 0; // Reset state revoked
-    end //initial
-    
-    always @(posedge enable) begin
-        alutest.run();
+        reset <= 1;
+        #(`CLK_PERIOD_NS/2) enable <= 1; // Enabling the clock module
+        #(`CLK_PERIOD_NS) reset <= 0; // Reset state revoked
         $dumpvars;
         #(`CLK_CYCLES_TO_SIMULATE * `CLK_PERIOD_NS) $finish;
     end // always
