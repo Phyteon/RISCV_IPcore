@@ -120,9 +120,11 @@ package ControlUnit_Class;
     endfunction
 
     `_private function `CONTROL_UNIT_OUTPUT_TYPE DecodeRtype(input `inspkg::Instruction rtypeins);
-        `uint steering_sum = rtypeins.Fields[2].ExtractFromInstr(rtypeins.Contents) + rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents); /**< Add FUNCT3 and FUNCT7 field */
+        `uint steering_sum = rtypeins.Fields[2].ExtractFromInstr(rtypeins.Contents) + 
+                             rtypeins.Fields[5].ExtractFromInstr(rtypeins.Contents) +
+                             rtypeins.Fields[0].ExtractFromInstr(rtypeins.Contents); /**< Add OPCODE, FUNCT3 and FUNCT7 field */
         unique case (steering_sum)
-            0: begin /**< ADD */
+            51: begin /**< ADD */
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -136,7 +138,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_ADD;
             end
-            32: begin /**< SUB */
+            83: begin /**< SUB */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -150,7 +152,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_SUB;
             end
-            1: begin /**< SLL */
+            52: begin /**< SLL */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -164,7 +166,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_SLL;
             end
-            2: begin /**< SLT */
+            53: begin /**< SLT */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -178,7 +180,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_SLT;
             end
-            3: begin /**< SLTU */
+            54: begin /**< SLTU */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -192,7 +194,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_SLTU;
             end
-            4: begin /**< XOR */
+            55: begin /**< XOR */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -206,21 +208,37 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_XOR;
             end
-            5: begin /**< SLR */
-                this.cuinf.CUJMPCTRL <= 0;
-                this.cuinf.CUBCTRL <= 0;
-                this.cuinf.MUX2 <= 1;
-                this.cuinf.MUX3 <= 0;
-                this.cuinf.MUX4 <= 0;
-                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
-                this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
-                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
-                this.cuinf.REGW <= 1;
-                this.cuinf.MEMW <= 0;
-                this.cuinf.MEMR <= 0;
-                this.cuinf.ALU0 <= ALU_SRL;
+            56: begin /**< SLR  or SRAI */
+                if(rtypeins.Fields[0].ExtractFromInstr(rtypeins.Contents) == 51) begin /**< SLR */
+                    this.cuinf.CUJMPCTRL <= 0;
+                    this.cuinf.CUBCTRL <= 0;
+                    this.cuinf.MUX2 <= 1;
+                    this.cuinf.MUX3 <= 0;
+                    this.cuinf.MUX4 <= 0;
+                    this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                    this.cuinf.RS2 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                    this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                    this.cuinf.REGW <= 1;
+                    this.cuinf.MEMW <= 0;
+                    this.cuinf.MEMR <= 0;
+                    this.cuinf.ALU0 <= ALU_SRL;
+                end
+                else begin /**< SRAI */
+                    this.cuinf.CUJMPCTRL <= 0;
+                    this.cuinf.CUBCTRL <= 0;
+                    this.cuinf.MUX2 <= 0;
+                    this.cuinf.MUX3 <= 0;
+                    this.cuinf.MUX4 <= 0;
+                    this.cuinf.IMM1 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                    this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                    this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                    this.cuinf.REGW <= 1;
+                    this.cuinf.MEMW <= 0;
+                    this.cuinf.MEMR <= 0;
+                    this.cuinf.ALU0 <= ALU_SRA;
+                end
             end
-            37: begin /** SRA */
+            88: begin /** SRA */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -234,7 +252,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_SRA;
             end
-            6: begin /**< OR */
+            57: begin /**< OR */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -248,7 +266,7 @@ package ControlUnit_Class;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_OR;
             end
-            7: begin /**< AND */
+            58: begin /**< AND */
                 this.cuinf.CUJMPCTRL <= 0;
                 this.cuinf.CUBCTRL <= 0;
                 this.cuinf.MUX2 <= 1;
@@ -261,6 +279,34 @@ package ControlUnit_Class;
                 this.cuinf.MEMW <= 0;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_AND;
+            end
+            20: begin /**< SLLI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SLL;
+            end
+            24: begin /**< SRLI */
+                this.cuinf.CUJMPCTRL <= 0;
+                this.cuinf.CUBCTRL <= 0;
+                this.cuinf.MUX2 <= 0;
+                this.cuinf.MUX3 <= 0;
+                this.cuinf.MUX4 <= 0;
+                this.cuinf.IMM1 <= rtypeins.Fields[4].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RS1 <= rtypeins.Fields[3].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.RD <= rtypeins.Fields[1].ExtractFromInstr(rtypeins.Contents);
+                this.cuinf.REGW <= 1;
+                this.cuinf.MEMW <= 0;
+                this.cuinf.MEMR <= 0;
+                this.cuinf.ALU0 <= ALU_SRL;
             end
             default: ; /**< Do nothing */
         endcase

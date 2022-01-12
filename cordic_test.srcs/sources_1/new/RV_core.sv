@@ -30,6 +30,7 @@ import ControlUnit_Class::*;
 
 
 module RV_core(input `rvtype clk, input `rvtype reset);
+
     /**
     * Interfaces instantiation.
     */
@@ -51,7 +52,7 @@ module RV_core(input `rvtype clk, input `rvtype reset);
     * Module instantiation.
     */
     ProgramCounter_Module pc(.pcinf(pc_inf));
-    Memory_Module #("program_mem.hexdat") prog_mem(.memif(progmem_inf));
+    Memory_Module #("D:\\VivadoProjects\\cordic_test\\RISCV_IPcore\\cordic_test.srcs\\sources_1\\new\\program_mem.hexdat") prog_mem(.memif(progmem_inf));
     Memory_Module data_mem(.memif(datamem_inf));
     ControlUnit_Module cu(.cuinf(cu_inf));
     RegistryFile_Module regfile(.reginf(reg_inf));

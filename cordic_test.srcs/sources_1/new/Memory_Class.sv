@@ -118,7 +118,7 @@ package Memory_Class;
                         intermediate_val[1:0] = this.main_memory[address - memcell_remainder][3:2];
                     else
                         $error("Misalingned address!");
-                4:
+                3:
                     if(memcell_remainder != 0) $error("Misaligned address!");
                     else intermediate_val = this.main_memory[address];
                 
@@ -145,7 +145,7 @@ package Memory_Class;
                         this.main_memory[address - memcell_remainder][3:2] = data[1:0];
                     else
                         $error("Misalingned address!");
-                4:
+                3:
                     if(memcell_remainder != 0) $error("Misaligned address!");
                     else this.main_memory[address] = data;
                 default:

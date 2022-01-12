@@ -29,6 +29,12 @@ interface ALUInterface(input `rvtype clk);
         input alubctrl,
         input outcome
     );
+    clocking alu @(`CLOCK_ACTIVE_EDGE clk)
+        default output #1;
+        input reset;
+        input left_operand;
+        input right_operand;
+    endclocking
 endinterface //ALUInterface
 
 interface ControlUnitInterface(input `rvtype clk);

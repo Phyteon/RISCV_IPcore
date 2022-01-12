@@ -42,7 +42,7 @@ module RV_core_TB();
                                                 .clk(clk)); // Creating default clock
     
     // DUTs
-    ControlUnit_Module cu(cuinf);
+    RV_core core(clk, reset);
     
     /* Test body */
     initial begin
@@ -52,12 +52,9 @@ module RV_core_TB();
         reset <= 1;
         #(`CLK_PERIOD_NS/2) enable <= 1; // Enabling the clock module
         #(`CLK_PERIOD_NS) reset <= 0; // Reset state revoked
-        cuinf.INSTR = 32'h0640006F;
-        #(`CLK_PERIOD_NS) cuinf.INSTR = 32'h00000033;
-        #(`CLK_PERIOD_NS) cuinf.INSTR = 32'h0700006F;
         $dumpvars;
         #(`CLK_CYCLES_TO_SIMULATE * `CLK_PERIOD_NS) $finish;
-    end // always
+    end // inital
 
     
     
