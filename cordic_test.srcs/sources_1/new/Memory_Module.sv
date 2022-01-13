@@ -43,7 +43,7 @@ module Memory_Module #(string memfilepath = "")(
             main_memory.LoadData(memfilepath);
         end
         
-        always @ (`CLOCK_ACTIVE_EDGE memif.clk) begin
+        always_comb begin
             if (memif.RESET)
                 memif.MEMOUT = `RESET_REG_VAL;
             else begin

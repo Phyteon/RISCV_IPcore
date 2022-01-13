@@ -24,7 +24,7 @@
 `include "CommonHeader.sv"
 
 module MUX (
-    interface muxinf
+    MUXInterface muxinf
 );
     assign muxinf.mux_output = muxinf.inputs[muxinf.steering];
     

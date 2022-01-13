@@ -93,7 +93,7 @@ module RV_core(input `rvtype clk, input `rvtype reset);
     assign mux0_inf.inputs[0] = pmac_aluinf1.outcome;
     assign mux0_inf.steering = mux0_steer;
     assign pc_inf.ADDRIN = mux0_inf.mux_output;
-
+    assign progmem_inf.ADDRIN = pc_inf.ADDROUT;
     assign cu_inf.INSTR = progmem_inf.MEMOUT; /**< Feed instructions into Control Unit */
     /**
     ****** Control Unit signals interconnections section.

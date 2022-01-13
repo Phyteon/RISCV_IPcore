@@ -40,6 +40,8 @@ package Field_Classes;
         `_public string Info;
         
         `_public virtual function `uint ExtractFromInstr(input `ivector _inst);
+            `uint temp = _inst[BitWidth + BeginIdx - 1 : BeginIdx];
+            return temp;
         endfunction
     endclass
     

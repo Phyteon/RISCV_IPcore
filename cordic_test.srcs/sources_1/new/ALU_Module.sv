@@ -37,7 +37,7 @@ module ALU_Module(ALUInterface aluinf);
             alu = new;
         end
 
-        always @(`CLOCK_ACTIVE_EDGE aluinf.clk) begin
+        always_comb begin
             if (aluinf.alu_clk.reset)
                 aluinf.alu_clk.outcome <= `ALU_OUTCOME_INITIAL_VALUE;
             else begin

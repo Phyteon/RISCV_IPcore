@@ -30,7 +30,6 @@ interface ALUInterface(input `rvtype clk);
         input outcome
     );
     clocking alu_clk @(`CLOCK_ACTIVE_EDGE clk);
-        default output #1;
         input reset;
         input left_operand;
         input right_operand;
@@ -102,7 +101,6 @@ interface ControlUnitInterface(input `rvtype clk);
         output IMM1
     );
     clocking cu_clk @(`CLOCK_ACTIVE_EDGE clk);
-        default output #1;
         input RESET;
         input INSTR;
         output CUJMPCTRL;

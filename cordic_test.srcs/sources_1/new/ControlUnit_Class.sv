@@ -687,7 +687,7 @@ package ControlUnit_Class;
                 this.cuinf.IMM0 <= 0;
                 this.cuinf.IMM1 <= `sepkg::SignExtender::ConcatentateJTypeImmediate(jtypeins);
                 this.cuinf.RD <= jtypeins.Fields[1].ExtractFromInstr(jtypeins.Contents);
-                this.cuinf.REGW <= 0;
+                this.cuinf.REGW <= 1;
                 this.cuinf.MEMW <= 0;
                 this.cuinf.MEMR <= 0;
                 this.cuinf.ALU0 <= ALU_ADD;
