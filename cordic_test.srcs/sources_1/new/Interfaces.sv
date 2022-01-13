@@ -1,4 +1,4 @@
-
+`timescale 1ns/1ps
 `include "CommonHeader.sv"
 
 import ALU_Class::*;
@@ -29,11 +29,14 @@ interface ALUInterface(input `rvtype clk);
         input alubctrl,
         input outcome
     );
-    clocking alu @(`CLOCK_ACTIVE_EDGE clk)
+    clocking alu_clk @(`CLOCK_ACTIVE_EDGE clk);
         default output #1;
         input reset;
         input left_operand;
         input right_operand;
+        input operation;
+        output alubctrl;
+        output outcome;
     endclocking
 endinterface //ALUInterface
 
@@ -98,6 +101,28 @@ interface ControlUnitInterface(input `rvtype clk);
         output IMM0,
         output IMM1
     );
+    clocking cu_clk @(`CLOCK_ACTIVE_EDGE clk);
+        default output #1;
+        input RESET;
+        input INSTR;
+        output CUJMPCTRL;
+        output CUBCTRL;
+        output MUX1;
+        output MUX2;
+        output MUX4;
+        output REGW;
+        output MEMW;
+        output MEMR;
+        output MSE;
+        output MUX3;
+        output MBC;
+        output ALU0;
+        output RS1;
+        output RS2;
+        output RD;
+        output IMM0;
+        output IMM1;
+    endclocking
 endinterface //ControlUnitInterface
 
 interface MemoryInterface(input `rvtype clk);

@@ -27,7 +27,7 @@
 `define ALU_MODULE_DESIGN
 //`define ALU_MODULE_IMPLEMENTATION
 
-module ALU_Module(ALUInterface.DUT aluinf);
+module ALU_Module(ALUInterface aluinf);
     import ALU_Class::*;
 
     `ifdef ALU_MODULE_DESIGN
@@ -38,11 +38,11 @@ module ALU_Module(ALUInterface.DUT aluinf);
         end
 
         always @(`CLOCK_ACTIVE_EDGE aluinf.clk) begin
-            if (aluinf.reset)
-                aluinf.outcome = `ALU_OUTCOME_INITIAL_VALUE;
+            if (aluinf.alu_clk.reset)
+                aluinf.alu_clk.outcome <= `ALU_OUTCOME_INITIAL_VALUE;
             else begin
-                aluinf.outcome = alu.PerformOperation(aluinf.operation, aluinf.left_operand, aluinf.right_operand);
-                aluinf.alubctrl = alu.branchctrl;
+                aluinf.alu_clk.outcome <= alu.PerformOperation(aluinf.operation, aluinf.left_operand, aluinf.right_operand);
+                aluinf.alu_clk.alubctrl <= alu.branchctrl;
             end // else
         end
     `elsif ALU_MODULE_IMPLEMENTATION

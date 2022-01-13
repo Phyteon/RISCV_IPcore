@@ -65,7 +65,7 @@ package Instruction_Classes;
                    RV64D
                          } InstructionSet;
     
-    class Instruction extends Architecture_AClass::Architecture;
+    virtual class Instruction extends Architecture_AClass::Architecture;
         `_public InstructionFormat Format;
         `_public InstructionSet Set;
         `_public `ivector Contents;

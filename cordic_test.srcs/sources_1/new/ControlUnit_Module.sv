@@ -21,7 +21,7 @@
 `include "CommonHeader.sv"
 
 module ControlUnit_Module (
-    ControlUnitInterface.DUT cuinf
+    ControlUnitInterface cuinf
 );
     import ControlUnit_Class::*;
     `cupkg::ControlUnit cntrl;
@@ -32,19 +32,19 @@ module ControlUnit_Module (
     end
 
     always @(`CLOCK_ACTIVE_EDGE cuinf.clk) begin
-        if (cuinf.RESET == 1) begin
-            cuinf.CUJMPCTRL <= 0;
-            cuinf.CUBCTRL <= 0;
-            cuinf.MUX2 <= 1; /**< Choosing output of registry file */
-            cuinf.MUX3 <= 0; /**< Choosing the main ALU output */
-            cuinf.MUX4 <= 0; /**< Choosing output of registry file */
-            cuinf.RS1 <= 0; /**< Choosing the zero register */
-            cuinf.RS2 <= 0; /**< Choosing the zero register */
-            cuinf.RD <= 0; /**< Choosing the zero register */
-            cuinf.REGW <= 0; /**< Disable registry file write */
-            cuinf.MEMW <= 0; /**< Disable data memory write */
-            cuinf.MEMR <= 0; /**< Disable memory read */
-            cuinf.ALU0 <= `alupkg::OperationType'(0); /**< Choose addition operation for main ALU */
+        if (cuinf.cu_clk.RESET == 1) begin
+            cuinf.cu_clk.CUJMPCTRL <= 0;
+            cuinf.cu_clk.CUBCTRL <= 0;
+            cuinf.cu_clk.MUX2 <= 1; /**< Choosing output of registry file */
+            cuinf.cu_clk.MUX3 <= 0; /**< Choosing the main ALU output */
+            cuinf.cu_clk.MUX4 <= 0; /**< Choosing output of registry file */
+            cuinf.cu_clk.RS1 <= 0; /**< Choosing the zero register */
+            cuinf.cu_clk.RS2 <= 0; /**< Choosing the zero register */
+            cuinf.cu_clk.RD <= 0; /**< Choosing the zero register */
+            cuinf.cu_clk.REGW <= 0; /**< Disable registry file write */
+            cuinf.cu_clk.MEMW <= 0; /**< Disable data memory write */
+            cuinf.cu_clk.MEMR <= 0; /**< Disable memory read */
+            cuinf.cu_clk.ALU0 <= `alupkg::OperationType'(0); /**< Choose addition operation for main ALU */
         end else
             cntrl.ControlUnitMainFunction(cuinf.INSTR);
     end

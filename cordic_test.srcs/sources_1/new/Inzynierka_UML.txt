@@ -3,191 +3,156 @@ hide empty members
 skinparam groupInheritance 2
 
 abstract class Architecture {
-  + const int InstructionBitWidth
-  + const int RegisterBitWidth
+  
 }
 
 abstract class Instruction {
-  + const InstructionFormat Format
-  + const InstructionSet Set
-  + const logic [InstructionBitWidth - 1 : 0] Contents
-  - InstructionField Fields []
-  + InstructionFormat GetFormat()
-  + InstructionSet GetInstrSet()
-  + InstructionField [] GetFields()
+  + InstructionFormat Format
+  + InstructionSet Set
+  + ivector Contents
+  + InstructionField Fields []
 }
 
 class RTypeInstruction {
-  - const OPCODE_field opcode
-  - const RD_field rd
-  - const FUNCT3_field funct3
-  - const RS1_field rs1
-  - const RS2_field rs2
-  - const FUNCT7_field funct7
-  
-  + RTypeInstruction([fields])
-  + logic[opcode.BitWidth - 1 : opcode.BeginIdx] GetOpcodeField()
-  ..Analogical Getters..
+  + new(ivector _contents)
+  ..Specific constructor..
 }
 
 class ITypeInstruction {
-  - const OPCODE_field opcode
-  - const RD_field rd
-  - const FUNCT3_field funct3
-  - const RS1_field rs1
-  - const IMM_field imm
+  + new(ivector _contents)
+  ..Specific constructor..
+}
 
-  + ITypeInstruction([fields])
-  + logic[opcode.BitWidth - 1 : opcode.BeginIdx] GetOpcodeField()
-  ..Analogical Getters..
+class BTypeInstruction {
+  + new(ivector _contents)
+  ..Specific constructor..
+}
+
+class JTypeInstruction {
+  + new(ivector _contents)
+  ..Specific constructor..
 }
 
 class STypeInstruction {
-  - const OPCODE_field opcode
-  - const IMM_field imm1
-  - const FUNCT3_field funct3
-  - const RS1_field rs1
-  - const RS2_field rs2
-  - const IMM_field imm2
-
-  + STypeInstruction([fields])
-  + logic[opcode.BitWidth - 1 : opcode.BeginIdx] GetOpcodeField()
-  ..Analogical Getters..
+  + new(ivector _contents)
+  ..Specific constructor..
 }
 
 class UTypeInstruction {
-  - const OPCODE_field opcode
-  - const RD_field rd
-  - const IMM_field imm
-
-  + UTypeInstruction([field])
-  + logic[opcode.BitWidth - 1 : opcode.BeginIdx] GetOpcodeField()
-  ..Analogical Getters..
+  + new(ivector _contents)
+  ..Specific constructor..
 }
 
 abstract class InstructionField {
+  ..Fields are passed as parameters..
   + int BitWidth
   + int BeginIdx
   + string Info
 }
 
 class RD_field {
-
+..Fields are passed as parameters..
 }
 
 class OPCODE_field {
-
+..Fields are passed as parameters..
 }
 
 class FUNCT3_field {
-
+..Fields are passed as parameters..
 }
 
 class RS1_field {
-
+..Fields are passed as parameters..
 }
 
 class RS2_field {
-
+..Fields are passed as parameters..
 }
 
 class FUNCT7_field {
-
+..Fields are passed as parameters..
 }
 
 class IMM_field {
-
+..Fields are passed as parameters..
 }
 
 class Register {
-  - logic[RegisterBitWidth-1 : 0] contents
-  + Register(logic[RegisterBitWidth-1 : 0] _contents)
-  + logic[RegisterBitWidth-1 : 0] Read()
-  + logic Write(logic[RegisterBitWidth-1 : 0] _toWrite)
+  # rvector contents
+  + new(rvector _contents)
+  + rvector Read()
+  + void Write(rvector writeval)
 }
 
 class ALU {
-  - Register localReg1
-  - Register localReg2
-  - Register result
-  + logic PerformOperation(Register _reg1, Register _reg2, ALUOperation _oper)
+  + rvtype branchctrl
+  + aluvector PerformOperation(...)
 }
 
-class RegisterBank {
-  - Register registers[]
-  + RegisterBank(int _numOfRegs)
+class RegistryFile {
+  - Register registers[32]
+  ..Constructor initialises all regs..
+  + rvector_dynamic_array ReadPair(uint rs1, uint rs2)
+  + void Write(rvector val, uint rd)
 }
 
-class InstructionMemory {
-  - Instruction instructions[]
-  
+class ControlUnit {
+  + virtual ControlUnitInterface cuinf
+  - dict_uintKey_uintlistVal opcode_mapping[uint]
+  - insformat indexer
+  + void ControlUnitMainFunction(ivector instruction_raw)
+  - Instruction DecodeType(ivector instruction_raw)
+  - void DecodeRtype(Instruction rtypeins)
+  - void DecodeItype(Instruction itypeins)
+  - void DecodeStype(Instruction stypeins)
+  - void DecodeBtype(Instruction btypeins)
+  - void DecodeUtype(Instruction utypeins)
+  - void DecodeJtype(Instruction jtypeins) 
 }
 
-note left of ALU::PerformOperation
-	Return type still to
-	be chosen
-end note
-
-class List {
-  - GlobalListType list[]
-  + GlobalListType Get()
-  + logic Add(GlobalListType _element)
-  + logic Delete(int _idx)
-  + logic Set(GlobalListType _element, int _idx)
-  + int Length()
+class Memory {
+  # MemoryType main_memory
+  + (task) LoadData(string memfilepath)
+  + memorycell Read(uint address, uint bytes, rvtype extend_sign)
+  + void Write(address, memorycell data, bytes)
 }
 
-note right of List::list
-	GlobalListType is a
-	user defined macro
-	designating chosen
-	list type (not ideal,
-	but has to suffice)
-end note
-
-enum InstructionFormat {
-  Rtype
-  Itype
-  Stype
-  Btype
-  Utype
-  Jtype
+abstract class SignExtender {
+  + static rvector ExtendSign(rvector imm, uint bitwidth, uint position)
+  + static rvector ZeroStuff(rvector imm, uint position)
+  + static rvector ConcatentateSTypeImmediate(Instruction stypeins)
+  + static rvector ConcatentateBTypeImmediate(Instruction btypeins)
+  + static rvector ConcatentateJTypeImmediate(Instruction jtypeins)
 }
 
-enum ALUOperation {
-  ADD
-  SUB
-  NEG
-  NOR
-  OR
-  XOR
-}
-
-enum InstructionSet {
-  RV32I
-  RV32E
-}
-
+/'
 Architecture <|-- Instruction
+Architecture <|-up- Memory
+Architecture <|-right- SignExtender
+Architecture <|-left- ControlUnit
+Architecture <|-- RegistryFile
+Architecture <|-- Register
+Architecture <|-- ALU
+'/
 Instruction <|-left- RTypeInstruction
-Instruction <|-left- ITypeInstruction
-Instruction <|-- STypeInstruction
+Instruction <|-right- ITypeInstruction
+Instruction <|-up- STypeInstruction
 Instruction <|-- UTypeInstruction
+Instruction <|-- BTypeInstruction
+Instruction <|-- JTypeInstruction
 
-note top of InstructionField
-  Its children are used by
-  children of <color:royalBlue>Instruction</color>
-  class
-end note
 
-InstructionField <|-- RD_field
-InstructionField <|-- OPCODE_field
-InstructionField <|-- FUNCT3_field
-InstructionField <|-- RS1_field
-InstructionField <|-- RS2_field
-InstructionField <|-- FUNCT7_field
-InstructionField <|-- IMM_field
 
-Instruction <.. InstructionFormat : used by
-Instruction <.. InstructionSet : used by
+/'
+InstructionField <|-left- RD_field
+InstructionField <|-down- OPCODE_field
+InstructionField <|-down- FUNCT3_field
+InstructionField <|-down- RS1_field
+InstructionField <|-down- RS2_field
+InstructionField <|-right- FUNCT7_field
+InstructionField <|-up- IMM_field
+'/
+
+
 @enduml
